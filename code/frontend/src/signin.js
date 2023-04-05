@@ -6,6 +6,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
+import axios from 'axios'
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -32,6 +33,7 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignIn() {
+  const [error, setError] = React.useState('');
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -39,6 +41,22 @@ export default function SignIn() {
       email: data.get('email'),
       password: data.get('password'),
     });
+    const signinData = {
+      email: data.get('email'),
+      password: data.get('password'),
+    };
+    axios.post('http://localhost:5000/login',signinData)
+    .then((resp)=>{   // if no error
+        console.log(resp);
+        if(resp.error) {
+          setError(resp.error);
+        } else { // redirect to home page
+          setError('Logged in successfully!'); // subject to change
+        }
+    })
+    .catch((err)=>{
+        console.log(err);
+    })
   };
 
   return (
@@ -80,10 +98,6 @@ export default function SignIn() {
               id="password"
               autoComplete="current-password"
             />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
             <Button
               type="submit"
               fullWidth
@@ -92,6 +106,9 @@ export default function SignIn() {
             >
               Sign In
             </Button>
+            <Typography component="h3" variant="h5">
+               {error}
+            </Typography>
             <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2">
