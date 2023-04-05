@@ -1,11 +1,8 @@
 import * as React from 'react';
-import Toggle from './misc/toggle'
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import axios from 'axios'
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
@@ -45,17 +42,13 @@ export default function SignIn() {
       email: data.get('email'),
       password: data.get('password'),
     };
-    axios.post('http://localhost:5000/login',signinData)
+    axios.post('http://localhost:5000/user/login',signinData)
     .then((resp)=>{   // if no error
-        console.log(resp);
-        if(resp.error) {
-          setError(resp.error);
-        } else { // redirect to home page
-          setError('Logged in successfully!'); // subject to change
-        }
+      console.log(resp);
+      setError('Logged in successfully!'); // subject to change
     })
     .catch((err)=>{
-        console.log(err);
+      setError(err.response.data.error);
     })
   };
 

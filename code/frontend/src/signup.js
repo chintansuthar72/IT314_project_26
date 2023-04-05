@@ -3,8 +3,6 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -43,26 +41,23 @@ export default function SignUp() {
       password: data.get('password'),
       phone: data.get('phone'),
       role: data.get('role'),
-      username: data.get('firstName') + ' ' + data.get('lastName')
+      username: data.get('firstName') + ' ' + data.get('lastName'),
     });
     const signupData = {
       email: data.get('email'),
       password: data.get('password'),
       phone: data.get('phone'),
       role: data.get('role'),
-      username: data.get('firstName') + ' ' + data.get('lastName')
+      username: data.get('firstName') + ' ' + data.get('lastName'),
     };
-    axios.post('http://localhost:5000/signup',signupData)
+    axios.post('http://localhost:5000/user/signup',signupData)
     .then((resp)=>{   // if no error
-        console.log(resp);
-        if(resp.error) {
-          setError(resp.error);
-        } else { // redirect to home page
-          setError('signed up successfully!'); // subject to change
-        }
+      console.log(resp);
+      setError('Signed up successfully!'); // subject to change
     })
     .catch((err)=>{
-        console.log(err);
+      console.log(err);
+      setError(err.response.data.error);
     })
   };
 
@@ -83,9 +78,6 @@ export default function SignUp() {
           </Avatar>
           <Typography component="h1" variant="h5">
             Sign up
-          </Typography>
-          <Typography component="h3" variant="h5">
-               {error}
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
@@ -154,8 +146,9 @@ export default function SignUp() {
                 </Select>
               </Grid>
             </Grid>
-            
-            
+            <Typography component="h3" variant="h5">
+               {error}
+            </Typography>
             <Button
               type="submit"
               fullWidth
