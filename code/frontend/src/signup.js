@@ -12,6 +12,10 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import axios from 'axios'
+import Select from '@mui/material/Select';
 
 function Copyright(props) {
   return (
@@ -29,13 +33,37 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignUp() {
+  const [error, setError] = React.useState('');
+  
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({
       email: data.get('email'),
       password: data.get('password'),
+      phone: data.get('phone'),
+      role: data.get('role'),
+      username: data.get('firstName') + ' ' + data.get('lastName')
     });
+    const signupData = {
+      email: data.get('email'),
+      password: data.get('password'),
+      phone: data.get('phone'),
+      role: data.get('role'),
+      username: data.get('firstName') + ' ' + data.get('lastName')
+    };
+    axios.post('http://localhost:5000/signup',signupData)
+    .then((resp)=>{   // if no error
+        console.log(resp);
+        if(resp.error) {
+          setError(resp.error);
+        } else { // redirect to home page
+          setError('signed up successfully!'); // subject to change
+        }
+    })
+    .catch((err)=>{
+        console.log(err);
+    })
   };
 
   return (
@@ -55,6 +83,9 @@ export default function SignUp() {
           </Avatar>
           <Typography component="h1" variant="h5">
             Sign up
+          </Typography>
+          <Typography component="h3" variant="h5">
+               {error}
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
@@ -100,7 +131,31 @@ export default function SignUp() {
                   autoComplete="new-password"
                 />
               </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  name="phone"
+                  label="phone"
+                  id="phone"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <InputLabel>Role</InputLabel>
+                <Select
+                  fullWidth
+                  id="role"
+                  name='role'
+                  // value={age}
+                  label="Age"
+                >
+                  <MenuItem value={'TEACHER'}>Instructor</MenuItem>
+                  <MenuItem value={'STUDENT'}>Student</MenuItem>
+                </Select>
+              </Grid>
             </Grid>
+            
+            
             <Button
               type="submit"
               fullWidth
