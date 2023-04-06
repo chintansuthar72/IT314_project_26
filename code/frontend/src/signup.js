@@ -142,7 +142,7 @@ export default function SignUp() {
                 />
               </Grid>
               <Grid item xs={12}>
-    
+                /*Added Form selection according to style */
               <FormControl fullWidth required>
                 <InputLabel id="role-label">Role</InputLabel>
                 <Select
