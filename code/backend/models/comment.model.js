@@ -11,15 +11,20 @@ const commentSchema = new mongoose.Schema({
         ref: 'User',
         required: true,
     },
-    text: {
+    description : {
         type: String,
         required: true,
         trim: true,
     },
-    files: [{
+    announcement: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'File',
-    }],
+        ref: 'Announcement',
+        required: true,
+    },
+    // files: [{
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'File',
+    // }],
     // folders: [{
     //     type: mongoose.Schema.Types.ObjectId,
     //     ref: 'Folder',
