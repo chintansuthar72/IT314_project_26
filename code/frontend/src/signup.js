@@ -3,8 +3,6 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -12,6 +10,10 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import axios from 'axios'
+import Select from '@mui/material/Select';
 
 function Copyright(props) {
   return (
@@ -29,13 +31,34 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignUp() {
+  const [error, setError] = React.useState('');
+  
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({
       email: data.get('email'),
       password: data.get('password'),
+      phone: data.get('phone'),
+      role: data.get('role'),
+      username: data.get('firstName') + ' ' + data.get('lastName'),
     });
+    const signupData = {
+      email: data.get('email'),
+      password: data.get('password'),
+      phone: data.get('phone'),
+      role: data.get('role'),
+      username: data.get('firstName') + ' ' + data.get('lastName'),
+    };
+    axios.post('http://localhost:5000/user/signup',signupData)
+    .then((resp)=>{   // if no error
+      console.log(resp);
+      setError('Signed up successfully!'); // subject to change
+    })
+    .catch((err)=>{
+      console.log(err);
+      setError(err.response.data.error);
+    })
   };
 
   return (
@@ -100,7 +123,32 @@ export default function SignUp() {
                   autoComplete="new-password"
                 />
               </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  name="phone"
+                  label="phone"
+                  id="phone"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <InputLabel>Role</InputLabel>
+                <Select
+                  fullWidth
+                  id="role"
+                  name='role'
+                  // value={age}
+                  label="Age"
+                >
+                  <MenuItem value={'TEACHER'}>Instructor</MenuItem>
+                  <MenuItem value={'STUDENT'}>Student</MenuItem>
+                </Select>
+              </Grid>
             </Grid>
+            <Typography component="h3" variant="h5">
+               {error}
+            </Typography>
             <Button
               type="submit"
               fullWidth
@@ -111,7 +159,7 @@ export default function SignUp() {
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href = {"./"} variant="body2">
+                <Link href = {"./signin"} variant="body2">
                   Already have an account? Sign in
                 </Link>
               </Grid>

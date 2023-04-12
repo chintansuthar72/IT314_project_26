@@ -1,11 +1,9 @@
 import * as React from 'react';
-import Toggle from './misc/toggle'
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
+import axios from 'axios'
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -32,6 +30,7 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignIn() {
+  const [error, setError] = React.useState('');
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -39,6 +38,18 @@ export default function SignIn() {
       email: data.get('email'),
       password: data.get('password'),
     });
+    const signinData = {
+      email: data.get('email'),
+      password: data.get('password'),
+    };
+    axios.post('http://localhost:5000/user/login',signinData)
+    .then((resp)=>{   // if no error
+      console.log(resp);
+      setError('Logged in successfully!'); // subject to change
+    })
+    .catch((err)=>{
+      setError(err.response.data.error);
+    })
   };
 
   return (
@@ -80,10 +91,6 @@ export default function SignIn() {
               id="password"
               autoComplete="current-password"
             />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
             <Button
               type="submit"
               fullWidth
@@ -92,6 +99,9 @@ export default function SignIn() {
             >
               Sign In
             </Button>
+            <Typography component="h3" variant="h5">
+               {error}
+            </Typography>
             <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2">
@@ -99,7 +109,7 @@ export default function SignIn() {
                 </Link>
               </Grid>
               <Grid item>
-                <Link href={"./SignUp"} variant="body2">
+                <Link href={"./signup"} variant="body2">
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>
