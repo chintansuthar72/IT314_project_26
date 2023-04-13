@@ -1,0 +1,12 @@
+.ztd-form {
+  display: flex;
+  flex-direction: column;
+  max-width: 400px;
+  & label {
+    max-width: 100%;
+  }
+  & input {
+    font-size: 30px;
+    padding: 20px;
+  }
+}
