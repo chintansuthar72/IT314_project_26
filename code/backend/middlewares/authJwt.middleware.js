@@ -14,8 +14,8 @@ const verifyToken = async (req, res, next) => {
             }
             req.id = decoded.id;
             const user = await User.findById(req.id);
-            // req.role = user.role;
-            req.role = 'ADMIN';
+            req.role = user.role;
+            // req.role = 'ADMIN';
             next();
         });
     } catch (err) {
