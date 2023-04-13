@@ -10,3 +10,5 @@ router.get('/submission/:id',[verifyToken], gradeController.getGradeBySubmission
 
 // get grade by student id
 router.get('/student/:id',[verifyToken], gradeController.getGradeByStudent);
+
+module.exports = router;
