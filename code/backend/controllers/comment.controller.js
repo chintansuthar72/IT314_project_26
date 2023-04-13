@@ -32,18 +32,31 @@ const postCommentInAnnouncement = async (req, res) => {
     }
 }
 
-// const postCommentInSubmission = async (req, res) => {
-//     try {
-//         const comment = await Comment.create({
-//             description: req.body.description,
-//             commentator : req.id,
-//             announcement: req.params.id,
-//         });
-//         return response.successResponse(res, comment);
-//     } catch (err) {
-//         return response.serverErrorResponse(res, err);
-//     }
-// }
+const postCommentInAssignment = async (req, res) => {
+    try {
+        const comment = await Comment.create({
+            description: req.body.description,
+            commentator : req.id,
+            assignment: req.params.id,
+        });
+        return response.successResponse(res, comment);
+    } catch (err) {
+        return response.serverErrorResponse(res, err);
+    }
+}
+
+const postCommentInSubmission = async (req, res) => {
+    try {
+        const comment = await Comment.create({
+            description: req.body.description,
+            commentator : req.id,
+            submission : req.params.id,
+        });
+        return response.successResponse(res, comment);
+    } catch (err) {
+        return response.serverErrorResponse(res, err);
+    }
+}
 
 const updateCommentById = async (req, res) => {
     try {
@@ -71,7 +84,8 @@ module.exports = {
     getAllComments,
     getCommentById,
     postCommentInAnnouncement,
-    // postCommentInSubmission,
+    postCommentInSubmission,
+    postCommentInAssignment,
     deleteCommentById,
     updateCommentById
 };
