@@ -1,6 +1,6 @@
 const response = require('../utils/responses.util');
 const Announcement = require('../models/announcement.model');
-
+const Course = require('../models/course.model');
 
 const addAnnouncement = async (req, res) => {
     try {
@@ -8,7 +8,13 @@ const addAnnouncement = async (req, res) => {
             return response.unauthorizedResponse(res);
         req.body.course = req.params.id;
         req.body.teacher = req.id;
+        const course = await Course.findById(req.params.id);
+        if(course.teacher != req.id) {
+            return response.unauthorizedResponse(res);
+        }
         const newAnnouncement = await Announcement.create(req.body);
+        course.announcements.push(newAnnouncement._id);
+        await course.save();
         return response.successfullyCreatedResponse(res, newAnnouncement);
     } catch (err) {
         return response.serverErrorResponse(res, err);
