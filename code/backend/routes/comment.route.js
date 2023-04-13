@@ -1,25 +1,27 @@
 const router = require('express').Router();
 const {commentController} = require('../controllers/index.controller');
+const {verifyToken} = require('../middlewares/authJwt.middleware');
+
 
 // GET all comments
-router.get('/', commentController.getAllComments);
+router.get('/', [verifyToken], commentController.getAllComments);
 
 // GET comment by id
-router.get('/:id', commentController.getCommentById);
+router.get('/:id', [verifyToken], commentController.getCommentById);
 
 // POST new comment in announcement
-router.post('/announcement/:id', commentController.postCommentInAnnouncement);
+router.post('/announcement/:id', [verifyToken], commentController.postCommentInAnnouncement);
 
 // POST new comment in assignment
-router.post('/assignment/:id', commentController.postCommentInAssignment);
+router.post('/assignment/:id', [verifyToken], commentController.postCommentInAssignment);
 
 // POST new comment in submission
-router.post('/submission/:id', commentController.postCommentInSubmission);
+router.post('/submission/:id', [verifyToken], commentController.postCommentInSubmission);
 
 // PUT comment by id
-router.put('/:id', commentController.updateCommentById);
+router.put('/:id', [verifyToken], commentController.updateCommentById);
 
 // DELETE comment by id
-router.delete('/:id', commentController.deleteCommentById);
+router.delete('/:id', [verifyToken], commentController.deleteCommentById);
 
 module.exports = router;
