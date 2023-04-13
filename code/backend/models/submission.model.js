@@ -19,10 +19,10 @@ const submissionSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Grade',
     }],
-    files: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'File',
-    }],
+    // files: [{
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'File',
+    // }],
     // folders: [{
     //     type: mongoose.Schema.Types.ObjectId,
     //     ref: 'Folder',
