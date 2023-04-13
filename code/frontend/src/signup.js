@@ -13,7 +13,9 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import axios from 'axios'
+import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+
 
 function Copyright(props) {
   return (
@@ -33,6 +35,13 @@ const theme = createTheme();
 export default function SignUp() {
   const [error, setError] = React.useState('');
   
+  /*for select role*/
+  const [role, setRole] = React.useState('');
+
+  const handleChange = (event) => {
+    setRole(event.target.value);
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -128,22 +137,28 @@ export default function SignUp() {
                   required
                   fullWidth
                   name="phone"
-                  label="phone"
+                  label="Phone"
                   id="phone"
                 />
               </Grid>
               <Grid item xs={12}>
-                <InputLabel>Role</InputLabel>
+                /*Added Form selection according to style */
+              <FormControl fullWidth required>
+                <InputLabel id="role-label">Role</InputLabel>
                 <Select
-                  fullWidth
+                  labelId="role"
                   id="role"
                   name='role'
-                  // value={age}
-                  label="Age"
+                  value={role}
+                  onChange={handleChange}
+                  autoWidth
+                  label="Role"
                 >
                   <MenuItem value={'TEACHER'}>Instructor</MenuItem>
                   <MenuItem value={'STUDENT'}>Student</MenuItem>
                 </Select>
+              </FormControl>
+
               </Grid>
             </Grid>
             <Typography component="h3" variant="h5">
