@@ -6,9 +6,9 @@ exports.addAssignment = async (req, res) => {
     try {
         if (!['ADMIN', 'TEACHER'].includes(req.role))
             return response.unauthorizedResponse(res);
-        req.body.teacher = req.id;
-        req.body.students = [];
-        req.body.files = [];
+        req.body.course = req.params.id;
+        req.body.submissions = [];
+        req.body.comments = [];
         const assignment = new Assignment(req.body);
         await assignment.save();
         return response.successfullyCreatedResponse(res, assignment);
@@ -21,9 +21,9 @@ exports.addAssignment = async (req, res) => {
 exports.getAllAssignments = async (req, res) => {
     try {
         const assignments = await Assignment.find();
-        response.success(res, assignments);
+        return response.successResponse(res, assignments);
     } catch (err) {
-        response.error(res, err);
+        return response.serverErrorResponse(res, err);
     }
 }
 
@@ -31,9 +31,11 @@ exports.getAllAssignments = async (req, res) => {
 exports.getAssignmentById = async (req, res) => {
     try {
         const assignment = await Assignment.findById(req.params.id);
-        response.success(res, assignment);
+        if(!assignment)
+            return response.notFoundResponse(res, 'Assignment not found');
+        return response.successResponse(res, assignment);
     } catch (err) {
-        response.error(res, err);
+        return response.serverErrorResponse(res, err);
     }
 }
 
@@ -42,6 +44,9 @@ exports.updateAssignmentById = async (req, res) => {
     try {
         if (!['ADMIN', 'TEACHER'].includes(req.role))
             return response.unauthorizedResponse(res);
+        const assignment = await Assignment.findById(req.params.id);
+        if(!assignment)
+            return response.notFoundResponse(res, 'Assignment not found');
         const updatedAssignment = await Assignment.findByIdAndUpdate(req.id, {
             name: req.body.name,
             description: req.body.description,
@@ -60,6 +65,8 @@ exports.deleteAssignmentById = async (req, res) => {
         if (!['ADMIN', 'TEACHER'].includes(req.role))
             return response.unauthorizedResponse(res);
         const assignment = await Assignment.findById(req.params.id);
+        if(!assignment)
+            return response.notFoundResponse(res, 'Assignment not found');
         const deletedAssignment = await Assignment.findByIdAndDelete(req.params.id);
         return response.successResponse(res, deletedAssignment);
     } catch (err) {
