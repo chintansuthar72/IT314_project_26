@@ -1,5 +1,7 @@
 const response = require('../utils/responses.util');
 const Assignment = require('../models/assignment.model');
+const Course = require('../models/course.model');
+const Submission = require('../models/submission.model');
 
 // POST new assignment
 exports.addAssignment = async (req, res) => {
@@ -9,9 +11,28 @@ exports.addAssignment = async (req, res) => {
         req.body.course = req.params.id;
         req.body.submissions = [];
         req.body.comments = [];
-        const assignment = new Assignment(req.body);
-        await assignment.save();
-        return response.successfullyCreatedResponse(res, assignment);
+        const assignment = await Assignment.create(req.body);
+
+        // Add submission for all students in course
+        const course = await Course.findById(req.params.id);
+        if (!course)
+            return response.notFoundResponse(res, 'Course not found');
+
+        for (let i = 0; i < course.students.length; i++) {
+            const submission = await Submission.create({
+                student: course.students[i],
+                assignment: assignment._id,
+                files : [],
+                grade: 0,
+                graded: false,
+                comments: [],
+            });
+            assignment.submissions.push(submission._id);
+        }
+        const updatedAssignment = await Assignment.findByIdAndUpdate(assignment._id, {
+            submissions: assignment.submissions
+        });
+        return response.successfullyCreatedResponse(res, updatedAssignment);
     } catch (err) {
         return response.serverErrorResponse(res, err);
     }

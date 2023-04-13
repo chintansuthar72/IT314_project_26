@@ -11,8 +11,7 @@ exports.addCourse = async (req, res) => {
         req.body.assignments = [];
         req.body.announcements = [];
         req.body.files = [];
-        const course = new Course(req.body);
-        await course.save();
+        const course = await Course.create(req.body);
         return response.successfullyCreatedResponse(res, course);
     } catch (err) {
         return response.serverErrorResponse(res, err);
@@ -23,9 +22,9 @@ exports.addCourse = async (req, res) => {
 exports.getAllCourses = async (req, res) => {
     try {
         const courses = await Course.find();
-        response.success(res, courses);
+        return response.successResponse(res, courses);
     } catch (err) {
-        response.error(res, err);
+        return response.serverErrorResponse(res, err);
     }
 }
 
@@ -33,9 +32,11 @@ exports.getAllCourses = async (req, res) => {
 exports.getCourseById = async (req, res) => {
     try {
         const course = await Course.findById(req.params.id);
-        response.success(res, course);
+        if(!course)
+            return response.notFoundResponse(res, 'Course not found');
+        return response.successResponse(res, course);
     } catch (err) {
-        response.error(res, err);
+        return response.serverErrorResponse(res, err);
     }
 }
 
@@ -45,6 +46,8 @@ exports.updateCourseById = async (req, res) => {
         if (!['ADMIN', 'TEACHER'].includes(req.role))
             return response.unauthorizedResponse(res);
         const course = await Course.findById(req.params.id);
+        if (!course)
+            return response.notFoundResponse(res, 'Course not found');
         if (course.teacher != req.id)
             return response.unauthorizedResponse(res);
         const updatedCourse = await Course.findByIdAndUpdate(req.id, {
@@ -65,6 +68,8 @@ exports.deleteCourseById = async (req, res) => {
         if (!['ADMIN', 'TEACHER'].includes(req.role))
             return response.unauthorizedResponse(res);
         const course = await Course.findById(req.params.id);
+        if (!course)
+            return response.notFoundResponse(res, 'Course not found');
         if (course.teacher != req.id)
             return response.unauthorizedResponse(res);
         const deletedCourse = await Course.findByIdAndDelete(req.params.id);
