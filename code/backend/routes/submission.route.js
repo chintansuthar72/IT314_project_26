@@ -17,4 +17,10 @@ router.put('/:id', [verifyToken], submissionController.updateSubmissionById);
 // DELETE submission by id
 router.delete('/:id', [verifyToken], submissionController.deleteSubmissionById);
 
+// Get submissions by assignment id
+router.get('/assignment/:id', [verifyToken], submissionController.getSubmissionsByAssignmentId);
+
+// update grade by submission id
+router.put('/grade/:id', [verifyToken], submissionController.updateGradeById);
+
 module.exports = router;

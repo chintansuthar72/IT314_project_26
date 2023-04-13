@@ -4,9 +4,12 @@ const Submission = require('../models/submission.model');
 // POST new submission
 exports.addSubmission = async (req, res) => {
     try {
-        if (!['ADMIN', 'TEACHER', 'STUDENT'].includes(req.role))
-            return response.unauthorizedResponse(res);
         req.body.student = req.id;
+        req.body.comments = [];
+        req.body.assignment = req.params.id;
+        req.body.graded = false;
+        req.body.grade = 0;
+        req.body.files = [];
         const submission = new Submission(req.body);
         await submission.save();
         return response.successfullyCreatedResponse(res, submission);
@@ -18,10 +21,12 @@ exports.addSubmission = async (req, res) => {
 // GET all submissions
 exports.getAllSubmissions = async (req, res) => {
     try {
+        if (!['ADMIN', 'TEACHER'].includes(req.role))
+            return response.unauthorizedResponse(res);
         const submissions = await Submission.find();
-        response.success(res, submissions);
+        return response.successResponse(res, submissions);
     } catch (err) {
-        response.error(res, err);
+        return response.serverErrorResponse(res, err);
     }
 }
 
@@ -29,9 +34,11 @@ exports.getAllSubmissions = async (req, res) => {
 exports.getSubmissionById = async (req, res) => {
     try {
         const submission = await Submission.findById(req.params.id);
-        response.success(res, submission);
+        if (!submission)
+            return response.notFoundResponse(res, 'Submission not found');
+        return response.successResponse(res, submission);
     } catch (err) {
-        response.error(res, err);
+        return response.serverErrorResponse(res, err);
     }
 }
 
@@ -51,8 +58,36 @@ exports.updateSubmissionById = async (req, res) => {
 // DELETE submission by id
 exports.deleteSubmissionById = async (req, res) => {
     try {
+        if(!['ADMIN', 'TEACHER'].includes(req.role))
+            return response.unauthorizedResponse(res);
         const deletedSubmission = await Submission.findByIdAndDelete(req.id);
         return response.successResponse(res, deletedSubmission);
+    } catch (err) {
+        return response.serverErrorResponse(res, err);
+    }
+}
+
+// Get submissions by assignment id
+exports.getSubmissionsByAssignmentId = async (req, res) => {
+    try {
+        if(!['ADMIN', 'TEACHER'].includes(req.role))
+            return response.unauthorizedResponse(res);
+        const submissions = await Submission.find({assignment: req.params.id, student: req.id});
+        return response.successResponse(res, submissions);
+    } catch (err) {
+        return response.serverErrorResponse(res, err);
+    }
+}
+
+exports.updateGradeById = async (req, res) => {
+    try {
+        if(!['ADMIN', 'TEACHER'].includes(req.role))
+            return response.unauthorizedResponse(res);
+        const updatedSubmission = await Submission.findByIdAndUpdate(req.params.id, {
+            grade: req.body.grade,
+            graded: true,
+        });
+        return response.successResponse(res, updatedSubmission);
     } catch (err) {
         return response.serverErrorResponse(res, err);
     }
