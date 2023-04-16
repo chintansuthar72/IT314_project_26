@@ -32,6 +32,8 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import Deposits from './Deposits';
 import Orders from './Orders';
 import { useNavigate } from 'react-router-dom';
+import LogoutIcon from '@mui/icons-material/Logout';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
 function Copyright(props) {
   return (
@@ -94,7 +96,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 const mdTheme = createTheme();
 
-function DashboardContent({setIsLoggedIn }) {
+function DashboardContent({setIsLoggedIn,navigate }) {
   const [open, setOpen] = React.useState(true);
   const toggleDrawer = () => {
     setOpen(!open);
@@ -160,17 +162,25 @@ function DashboardContent({setIsLoggedIn }) {
               </ListItemIcon>
               <ListItemText primary="Dashboard" />
             </ListItemButton>
-            <ListItemButton>
+            {/* <ListItemButton>
               <ListItemIcon>
                 <ShoppingCartIcon />
               </ListItemIcon>
               <ListItemText primary="My Profile" />
-            </ListItemButton>
+            </ListItemButton> */}
             <ListItemButton>
               <ListItemIcon>
                 <PeopleIcon />
               </ListItemIcon>
-              <ListItemText primary="edit Profile" />
+              <ListItemText primary="Profile" />
+            </ListItemButton>
+            <ListItemButton onClick={() => {
+              navigate('/create');
+            }}>
+              <ListItemIcon>
+                <AddCircleOutlineIcon/>
+              </ListItemIcon>
+              <ListItemText primary="New Course" />
             </ListItemButton>
             <ListItemButton>
               <ListItemIcon>
@@ -184,7 +194,7 @@ function DashboardContent({setIsLoggedIn }) {
               setIsLoggedIn(false);
             }}>
               <ListItemIcon>
-                <LayersIcon />
+                <LogoutIcon />
               </ListItemIcon>
               <ListItemText primary="Log out" />
             </ListItemButton>
@@ -254,5 +264,5 @@ export default function Dashboard() {
       navigate('/');
     }
   },[isLoggedIn]);
-  return <DashboardContent  setIsLoggedIn={setIsLoggedIn} />;
+  return <DashboardContent  setIsLoggedIn={setIsLoggedIn} navigate={navigate}/>;
 }

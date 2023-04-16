@@ -5,12 +5,13 @@ const Course = require('../models/course.model');
 exports.addCourse = async (req, res) => {
     try {
         if (!['ADMIN', 'TEACHER'].includes(req.role))
-            return response.unauthorizedResponse(res);
+            return response.unauthorizedResponse(res, 'You are not authorized to create a course');
         req.body.teacher = req.id;
         req.body.students = [];
         req.body.assignments = [];
         req.body.announcements = [];
         req.body.files = [];
+        req.body.messages = [];
         const course = await Course.create(req.body);
         return response.successfullyCreatedResponse(res, course);
     } catch (err) {
