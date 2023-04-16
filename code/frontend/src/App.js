@@ -1,23 +1,23 @@
 import React, { useState } from 'react'
-// import './App.css'
 import SignIn from './signin'
 import SignUp from './signup'
-import Navbar from './Navbar';
+import CourseCreation from './CourseCreation';
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-function App() {
+import Dashboard from './Student_DashBoard_components/Dashboard';
+// import Chat from './Forum';
 
+export default function App() {
   return (
     <div className='App'>
-      <Navbar />
       <BrowserRouter>
         <Routes>
-          <Route path="/signin" element={<SignIn />} />
+          <Route path="/" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/create" element={<CourseCreation />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          {/* <Route path="/forum" element={<Chat />} /> */}
         </Routes>
       </BrowserRouter>
     </div>
   )
 }
-
-export default App
-

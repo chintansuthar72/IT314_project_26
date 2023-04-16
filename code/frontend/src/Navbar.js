@@ -9,16 +9,22 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
+import Link from '@mui/material/Link';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 // import SchoolIcon from '@mui/icons-material/School';
 import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
+// import { useNavigate } from 'react-router-dom';
+import { ButtonBase } from '@mui/material';
 
 const pages = ['Home', 'Dashboard', 'Create/Join Class'];
 const settings = ['Profile', 'Dashboard', 'Logout'];
 
 function Navbar() {
+
+  // const navigate = useNavigate();
+
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
@@ -36,6 +42,12 @@ function Navbar() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  const getName = (page) => {
+    const first = page.split(" ")[0][0].toLowerCase();
+    const other = page.split(" ")[0].slice(1);
+    return `/${first}${other}`;
+  }
 
   return (
     <AppBar position="static">
@@ -91,7 +103,22 @@ function Navbar() {
             >
               {pages.map((page) => (
                 <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
+                  <Typography textAlign="center">
+                  <Link to={getName(page)}>
+                    {page}
+                  </Link>
+                  <ButtonBase 
+                    // sx={{mt: 1, mb: 1}}
+                    // style={{
+                      // color: 'blue',
+                      // textDecoration: 'underline',
+                      // cursor: 'pointer',
+                    // }}
+                    // onClick={() => navigate(`/${getName(page)}`)}
+                    >
+                      {getName(page)}
+                  </ButtonBase>
+                  </Typography>
                 </MenuItem>
               ))}
             </Menu>
@@ -122,7 +149,17 @@ function Navbar() {
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
-                {page}
+                <ButtonBase 
+                  sx={{mt: 1, mb: 1}}
+                  style={{
+                    color: 'blue',
+                    // textDecoration: 'underline',
+                    cursor: 'pointer',
+                  }}
+                  // onClick={() => navigate("/signup")}
+                  >
+                    {"Don't have an account? Sign Up"}
+                </ButtonBase>
               </Button>
             ))}
           </Box>

@@ -15,7 +15,8 @@ import MenuItem from '@mui/material/MenuItem';
 import axios from 'axios'
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-
+import { ButtonBase } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 function Copyright(props) {
   return (
@@ -33,6 +34,7 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignUp() {
+  const navigate = useNavigate();
   const [error, setError] = React.useState('');
   
   /*for select role*/
@@ -142,7 +144,6 @@ export default function SignUp() {
                 />
               </Grid>
               <Grid item xs={12}>
-                /*Added Form selection according to style */
               <FormControl fullWidth required>
                 <InputLabel id="role-label">Role</InputLabel>
                 <Select
@@ -174,9 +175,14 @@ export default function SignUp() {
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href = {"./signin"} variant="body2">
-                  Already have an account? Sign in
-                </Link>
+                <ButtonBase 
+                  sx={{mt: 1, mb: 1}}
+                  style={{
+                    color: 'blue',
+                    // textDecoration: 'underline',
+                    cursor: 'pointer',
+                  }}
+                  onClick={() => navigate("/")}>{"Already have an account? Sign in"}</ButtonBase>
               </Grid>
             </Grid>
           </Box>
