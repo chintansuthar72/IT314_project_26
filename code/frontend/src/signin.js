@@ -60,8 +60,13 @@ export default function SignIn() {
       // add token from response header to local storage
       localStorage.setItem('token',resp.data.data.token);
       localStorage.setItem('role',resp.data.data.user.role);
-      localStorage.setItem('user',JSON.stringify(resp.data.data.user.username));
-      setIsLoggedIn(true);
+      localStorage.setItem('user',resp.data.data.user.username);
+      // setIsLoggedIn(true);
+      navigate('/dashboard', {
+        state: {
+          user : resp.data.data,
+        }
+      });
     })
     .catch((err)=>{
       setError(err.response.data.error);

@@ -128,7 +128,7 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import LogoutIcon from '@mui/icons-material/Logout';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate , useLocation} from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 function Copyright(props) {
@@ -202,7 +202,7 @@ function Title(props) {
 Title.propTypes = {
   children: PropTypes.node,
 };
-function DashboardContent({setIsLoggedIn,navigate }) {
+function DashboardContent({setIsLoggedIn,navigate,user }) {
   const [open, setOpen] = React.useState(false);
   const toggleDrawer = () => {
     setOpen(!open);
@@ -297,7 +297,13 @@ function DashboardContent({setIsLoggedIn,navigate }) {
           <Divider />
           <List component="nav">
             {/* {mainListItems}*/}
-            <ListItemButton>
+            <ListItemButton onClick={() => {
+              navigate('/dashboard', {
+                state: {
+                  user : user
+                }
+              });
+            }}>
               <ListItemIcon>
                 <DashboardIcon />
               </ListItemIcon>
@@ -309,21 +315,37 @@ function DashboardContent({setIsLoggedIn,navigate }) {
               </ListItemIcon>
               <ListItemText primary="My Profile" />
             </ListItemButton> */}
-            <ListItemButton>
+            <ListItemButton onClick={() => {
+              navigate('/profile', {
+                state: {
+                  user : user
+                }
+              });
+            }}>
               <ListItemIcon>
                 <PeopleIcon />
               </ListItemIcon>
               <ListItemText primary="Profile" />
             </ListItemButton>
             <ListItemButton onClick={() => {
-              navigate('/create');
+              navigate('/create', {
+                state: {
+                  user : user
+                }
+              });
             }}>
               <ListItemIcon>
                 <AddCircleOutlineIcon/>
               </ListItemIcon>
               <ListItemText primary="New Course" />
             </ListItemButton>
-            <ListItemButton>
+            <ListItemButton onClick={() => {
+              navigate('/progress', {
+                state: {
+                  user : user
+                }
+              });
+            }}>
               <ListItemIcon>
                 <BarChartIcon />
               </ListItemIcon>
@@ -440,11 +462,12 @@ function DashboardContent({setIsLoggedIn,navigate }) {
 
 export default function CourseCreation() {
   const navigate = useNavigate();
+  const {state} = useLocation();  
   const [isLoggedIn, setIsLoggedIn] = React.useState(localStorage.getItem('token') !== null);
   React.useEffect(() => {
     if(localStorage.getItem('token') == null){
       navigate('/');
     }
   },[isLoggedIn]);
-  return <DashboardContent  setIsLoggedIn={setIsLoggedIn} navigate={navigate}/>;
+  return <DashboardContent  setIsLoggedIn={setIsLoggedIn} navigate={navigate} user={state.user} />;
 }

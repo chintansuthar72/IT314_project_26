@@ -30,7 +30,7 @@ import LayersIcon from '@mui/icons-material/Layers';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,useLocation } from 'react-router-dom';
 import Deposits from './Student_DashBoard_components/Deposits';
 
 
@@ -95,7 +95,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 const mdTheme = createTheme();
 
-function DashboardContent({setIsLoggedIn,navigate }) {
+function DashboardContent({setIsLoggedIn,navigate,user }) {
   const [open, setOpen] = React.useState(false);
   const toggleDrawer = () => {
     setOpen(!open);
@@ -130,7 +130,7 @@ function DashboardContent({setIsLoggedIn,navigate }) {
               noWrap
               sx={{ flexGrow: 1 }}
             >
-              Dashboard
+              Profile
             </Typography>
             {/* <IconButton color="inherit">
               <Badge badgeContent={4} color="secondary">
@@ -155,7 +155,13 @@ function DashboardContent({setIsLoggedIn,navigate }) {
           <Divider />
           <List component="nav">
             {/* {mainListItems}*/}
-            <ListItemButton>
+            <ListItemButton onClick={() => {
+              navigate('/dashboard', {
+                state: {
+                  user : user
+                }
+              });
+            }}>
               <ListItemIcon>
                 <DashboardIcon />
               </ListItemIcon>
@@ -167,21 +173,37 @@ function DashboardContent({setIsLoggedIn,navigate }) {
               </ListItemIcon>
               <ListItemText primary="My Profile" />
             </ListItemButton> */}
-            <ListItemButton>
+            <ListItemButton onClick={() => {
+              navigate('/profile', {
+                state: {
+                  user : user
+                }
+              });
+            }}>
               <ListItemIcon>
                 <PeopleIcon />
               </ListItemIcon>
               <ListItemText primary="Profile" />
             </ListItemButton>
             <ListItemButton onClick={() => {
-              navigate('/create');
+              navigate('/create', {
+                state: {
+                  user : user
+                }
+              });
             }}>
               <ListItemIcon>
                 <AddCircleOutlineIcon/>
               </ListItemIcon>
               <ListItemText primary="New Course" />
             </ListItemButton>
-            <ListItemButton>
+            <ListItemButton onClick={() => {
+              navigate('/progress', {
+                state: {
+                  user : user
+                }
+              });
+            }}>
               <ListItemIcon>
                 <BarChartIcon />
               </ListItemIcon>
@@ -215,7 +237,7 @@ function DashboardContent({setIsLoggedIn,navigate }) {
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
-              <Grid item xs={12} md={4} lg={3}>
+              <Grid item xs={12}>
                 <Paper
                   sx={{
                     p: 2,
@@ -224,7 +246,7 @@ function DashboardContent({setIsLoggedIn,navigate }) {
                     height: 240,
                   }}
                 >
-                  <Deposits />
+                  <Deposits user={user}/>
                 </Paper>
               </Grid>
             </Grid>
@@ -238,11 +260,12 @@ function DashboardContent({setIsLoggedIn,navigate }) {
 
 export default function Profile() {
   const navigate = useNavigate();
+  const user = useLocation().state.user;
   const [isLoggedIn, setIsLoggedIn] = React.useState(localStorage.getItem('token') !== null);
   React.useEffect(() => {
     if(localStorage.getItem('token') == null){
       navigate('/');
     }
   },[isLoggedIn]);
-  return <DashboardContent  setIsLoggedIn={setIsLoggedIn} navigate={navigate}/>;
+  return <DashboardContent  setIsLoggedIn={setIsLoggedIn} navigate={navigate} user={user} />;
 }
