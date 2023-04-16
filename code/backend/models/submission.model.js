@@ -15,14 +15,25 @@ const submissionSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Comment',
     }],
-    grades: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Grade',
-    }],
+    graded: {
+        type: Boolean,
+        required: true,
+        default: false,
+    },
+    grade: {
+        type: Number,
+        required: true,
+        min: 0,
+        max: 100,
+    },
     files: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'File',
     }],
+    // grades: [{
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'Grade',
+    // }],
     // folders: [{
     //     type: mongoose.Schema.Types.ObjectId,
     //     ref: 'Folder',

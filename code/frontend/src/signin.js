@@ -1,11 +1,8 @@
 import * as React from 'react';
-import Toggle from './misc/toggle'
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import axios from 'axios'
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
@@ -14,13 +11,14 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-
+import { ButtonBase, ButtonGroup } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
+      <Link color="inherit" href="./home">
         Online Course Managment System
       </Link>{' '}
       {new Date().getFullYear()}
@@ -33,6 +31,17 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignIn() {
+  const navigate = useNavigate();
+
+  const [isLoggedIn, setIsLoggedIn] = React.useState(localStorage.getItem('token') !== null);
+
+  React.useEffect(() => {
+    if(localStorage.getItem('token') !== null){
+      navigate('/dashboard');
+    }
+  }, [isLoggedIn]);
+
+
   const [error, setError] = React.useState('');
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -45,17 +54,16 @@ export default function SignIn() {
       email: data.get('email'),
       password: data.get('password'),
     };
-    axios.post('http://localhost:5000/login',signinData)
+    axios.post('http://localhost:5000/user/login',signinData)
     .then((resp)=>{   // if no error
-        console.log(resp);
-        if(resp.error) {
-          setError(resp.error);
-        } else { // redirect to home page
-          setError('Logged in successfully!'); // subject to change
-        }
+      console.log(resp);
+      // add token from response header to local storage
+      localStorage.setItem('token',resp.data.data.token);
+      localStorage.setItem('user',JSON.stringify(resp.data.data.user.username));
+      setIsLoggedIn(true);
     })
     .catch((err)=>{
-        console.log(err);
+      setError(err.response.data.error);
     })
   };
 
@@ -109,16 +117,25 @@ export default function SignIn() {
             <Typography component="h3" variant="h5">
                {error}
             </Typography>
-            <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
-                  Forgot password?
-                </Link>
+            <Grid container >
+              <Grid item xs container justifyContent={'flex-end'}>
+                <ButtonBase 
+                  style={{
+                    color: 'red',
+                    // textDecoration: 'underline',
+                    cursor: 'pointer',
+                  }}
+                  onClick={() => navigate("/")}>{"Forgot Password?"}</ButtonBase>
               </Grid>
-              <Grid item>
-                <Link href={"./SignUp"} variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </Link>
+              <Grid item container justifyContent={'flex-end'}>
+                <ButtonBase 
+                  sx={{mt: 1, mb: 1}}
+                  style={{
+                    color: 'blue',
+                    // textDecoration: 'underline',
+                    cursor: 'pointer',
+                  }}
+                  onClick={() => navigate("/signup")}>{"Don't have an account? Sign Up"}</ButtonBase>
               </Grid>
             </Grid>
           </Box>
