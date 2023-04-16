@@ -462,10 +462,14 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
 
 export default function CourseCreation() {
   const navigate = useNavigate();
-  const {state} = useLocation();  
+  const {state} = useLocation();
   const [isLoggedIn, setIsLoggedIn] = React.useState(localStorage.getItem('token') !== null);
   React.useEffect(() => {
-    if(localStorage.getItem('token') == null){
+    if(localStorage.getItem('token') === null ){
+      navigate('/');
+    }
+    if( state === null) {
+      localStorage.removeItem('token');
       navigate('/');
     }
   },[isLoggedIn]);

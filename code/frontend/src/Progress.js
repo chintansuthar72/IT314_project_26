@@ -261,12 +261,16 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
 
 export default function Progress() {
   const navigate = useNavigate();
-  const user = useLocation().state.user;
+  const {state} = useLocation();
   const [isLoggedIn, setIsLoggedIn] = React.useState(localStorage.getItem('token') !== null);
   React.useEffect(() => {
-    if(localStorage.getItem('token') == null){
+    if(localStorage.getItem('token') === null ){
+      navigate('/');
+    }
+    if( state === null) {
+      localStorage.removeItem('token');
       navigate('/');
     }
   },[isLoggedIn]);
-  return <DashboardContent  setIsLoggedIn={setIsLoggedIn} navigate={navigate} user={user} />;
+  return <DashboardContent  setIsLoggedIn={setIsLoggedIn} navigate={navigate} user={state.user} />;
 }

@@ -64,7 +64,8 @@ export default function SignUp() {
     axios.post('http://localhost:5000/user/signup',signupData)
     .then((resp)=>{   // if no error
       console.log(resp);
-      setError('Signed up successfully!'); // subject to change
+      // setError('Signed up successfully!'); // subject to change
+      navigate('/');
     })
     .catch((err)=>{
       console.log(err);

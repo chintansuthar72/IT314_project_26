@@ -44,6 +44,8 @@ import Title from './Title';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
+import { Button } from '@mui/material';
+import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
 
 function Copyright(props) {
   return (
@@ -311,8 +313,14 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
                             <TableCell>{row.course.courseCode}</TableCell>
                             <TableCell>{row.course.name}</TableCell>
                             <TableCell>{row.instructor}</TableCell>
-                            {/* <TableCell>{row.paymentMethod}</TableCell>
-                            <TableCell align="right">{`${row.amount}`}</TableCell> */}
+                            <TableCell align='right'><Button onClick={() => {
+                              navigate('/manage',{
+                                state: {
+                                  course: row.course,
+                                  user: user,
+                                }
+                              })
+                            }}>Open</Button></TableCell>
                           </TableRow>
                         ))}
                       </TableBody>
@@ -335,10 +343,13 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
 export default function Dashboard() {
   const navigate = useNavigate();
   const {state} = useLocation();
-  console.log(state.user);
   const [isLoggedIn, setIsLoggedIn] = React.useState(localStorage.getItem('token') !== null);
   React.useEffect(() => {
-    if(localStorage.getItem('token') == null){
+    if(localStorage.getItem('token') === null ){
+      navigate('/');
+    }
+    if( state === null) {
+      localStorage.removeItem('token');
       navigate('/');
     }
   },[isLoggedIn]);
