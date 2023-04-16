@@ -10,19 +10,31 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Badge from '@mui/material/Badge';
-// import Container from '@mui/material/Container';
-// import Grid from '@mui/material/Grid';
-// import Paper from '@mui/material/Paper';
-// import Link from '@mui/material/Link';
+import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import Link from '@mui/material/Link';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-
 import { mainListItems, secondaryListItems } from './listItems';
-import About from './About';
+import Navbar1 from './Navbar1';
+// import Chart from './Chart';
+// import Deposits from './Deposits';
+// import Orders from './Orders';
+
+function Copyright(props) {
+  return (
+    <Typography variant="body2" color="text.secondary" align="center" {...props}>
+      {'Copyright © '}
+      <Link color="inherit" href="https://mui.com/">
+        Your Website
+      </Link>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
+  );
+}
 
 const drawerWidth = 240;
 
@@ -71,37 +83,6 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 const mdTheme = createTheme();
-function a11yProps(index) {
-  return {
-    id: 'simple-tab-' + index,
-    'aria-controls': 'simple-tabpanel-' + index,
-  };
-}
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
-
-
-
-
-
-
 
 function DashboardContent() {
   const [open, setOpen] = React.useState(true);
@@ -109,18 +90,15 @@ function DashboardContent() {
     setOpen(!open);
   };
 
-  const [value, setValue] = React.useState(0);
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-  
-
   return (
-    <>
+     <>
+     <Navbar1/>
+     
+     
     <ThemeProvider theme={mdTheme}>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
-        <AppBar position="absolute" open={open}>
+        {/* <AppBar position="absolute" open={open}>
           <Toolbar
             sx={{
               pr: '24px', // keep right padding when drawer closed
@@ -130,7 +108,7 @@ function DashboardContent() {
               edge="start"
               color="inherit"
               aria-label="open drawer"
-              // onClick={toggleDrawer}
+              onClick={toggleDrawer}
               sx={{
                 marginRight: '36px',
                 ...(open && { display: 'none' }),
@@ -145,15 +123,10 @@ function DashboardContent() {
               noWrap
               sx={{ flexGrow: 1 }}
             >
-              Course_Name
+              Dashboard
             </Typography>
-            <IconButton color="inherit">
-              <Badge badgeContent={4} color="secondary">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
           </Toolbar>
-        </AppBar>
+        </AppBar> */}
         <Drawer variant="permanent" open={open}>
           <Toolbar
             sx={{
@@ -174,7 +147,7 @@ function DashboardContent() {
             {secondaryListItems}
           </List>
         </Drawer>
-        <Box
+        {/* <Box
           component="main"
           sx={{
             backgroundColor: (theme) =>
@@ -187,42 +160,50 @@ function DashboardContent() {
           }}
         >
           <Toolbar />
-
-
-      <Box sx={{ width: '100%' }}>
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-            <Tab label="Announcement" {...a11yProps(0)} />
-            <Tab label="Material" {...a11yProps(1)} />
-            <Tab label="Submit" {...a11yProps(2)} />
-            <Tab label="Join Discussion Forum" {...a11yProps(3)} />
-          </Tabs>
-        </Box>
-        <TabPanel value={value} index={0}>
-          <About Item={1}/>
-        </TabPanel>
-        <TabPanel value={value} index={1}>
-          <About Item={2}/>
-        </TabPanel>
-        <TabPanel value={value} index={2}>
-          <About Item={3}/>
-        </TabPanel>
-        <TabPanel value={value} index={3}>
-          {/* discussion forum link */}
-        </TabPanel>
-      </Box>
-
-        </Box>
+          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+            <Grid container spacing={3}>
+          
+              <Grid item xs={12} md={8} lg={9}>
+                <Paper
+                  sx={{
+                    p: 2,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    height: 240,
+                  }}
+                >
+                
+                </Paper>
+              </Grid>
+          
+              <Grid item xs={12} md={4} lg={3}>
+                <Paper
+                  sx={{
+                    p: 2,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    height: 240,
+                  }}
+                >
+                 
+                </Paper>
+              </Grid>
+           
+              <Grid item xs={12}>
+                <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
+                 
+                </Paper>
+              </Grid>
+            </Grid>
+           
+          </Container>
+        </Box> */}
       </Box>
     </ThemeProvider>
     </>
   );
 }
 
-export default function manage() {
-  return (
-    <>
-      <DashboardContent />
-    </>
-  )
+export default function Dashboard() {
+  return <DashboardContent />;
 }

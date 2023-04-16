@@ -11,16 +11,25 @@ export default function Deposits() {
   return (
     <React.Fragment>
       <Title>Details</Title>
-      <Typography component="p" variant="h4">
-        name
-      </Typography>
-      <Typography color="text.secondary" sx={{ flex: 1 }}>
-        phone
-      </Typography>
-      <div>
-        {/* <Link color="primary" href="#" onClick={preventDefault}>
+      <div className="container">
+        <Typography component="p" variant="h4">
+          Priyanshu09
+        </Typography>
+        <Typography color="text.secondary" sx={{ flex: 1 }}>
+          #123456789
+        </Typography>
+      </div>
+      {/* <h3>Name</h3>
+      <h5>Phone</h5> */}
+      {/* <div>
+        <Link color="primary" href="#" onClick={preventDefault}>
           View balance
-        </Link> */}
+        </Link>
+      </div> */}
+      <div>
+        <div className="container mx-1 my-4"> 
+            <img src={require('./unnamed.png')} />
+        </div>
       </div>
     </React.Fragment>
   );
