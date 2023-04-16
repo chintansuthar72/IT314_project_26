@@ -11,6 +11,9 @@ router.post('/login', userController.loginUser);
 // GET all users
 router.get('/', [ verifyToken ], userController.getAllUsers);
 
+// GET all courses of a user
+router.get('/courses', [ verifyToken ] , userController.getAllCoursesOfUser);
+
 // GET user by id
 router.get('/:id', [ verifyToken ], userController.getUserById);
 
@@ -19,5 +22,8 @@ router.put('/:id', [ verifyToken ] , userController.updateUserById);
 
 // DELETE user by id
 router.delete('/:id', [ verifyToken ] , userController.deleteUserById);
+
+// Add course to user
+router.get('/course/:id', [ verifyToken ] , userController.addCourseToUser);
 
 module.exports = router;

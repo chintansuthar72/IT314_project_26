@@ -1,4 +1,4 @@
-const {User} = require('../models/index.model');
+const {User,Course} = require('../models/index.model');
 const response = require('../utils/responses.util');
 const {userValidation} = require('../validations/index.validation');
 const bcrypt = require('bcrypt');
@@ -90,6 +90,40 @@ const updateUserById = async (req, res) => {
     }
 }
 
+const getAllCoursesOfUser = async (req, res) => {
+    try {
+        const userDetail = await User.findById(req.id);
+        const courses = userDetail.courses;
+        let coursesArray = [];
+        for(let i=0; i<courses.length; i++){
+            const temp = await Course.findById(courses[i]);
+            const teacher = await User.findById(temp.teacher);
+            let data = {
+                instructor: teacher.username,
+                course : temp
+            }
+            coursesArray.push(data);
+        }
+        return response.successResponse(res, coursesArray);
+    } catch (err) {
+        return response.serverErrorResponse(res, err);
+    }
+}
+
+const addCourseToUser = async (req, res) => {
+    try {
+        const userDetail = await User.findById(req.id);
+        const courses = userDetail.courses;
+        courses.push(req.params.id);
+        const updatedUser = await User.findByIdAndUpdate(req.id,{
+            courses: courses
+        });
+        return response.successResponse(res, updatedUser);
+    } catch (err) {
+        return response.serverErrorResponse(res, err);
+    }
+}
+
 module.exports = {
     loginUser,
     getAllUsers,
@@ -97,4 +131,6 @@ module.exports = {
     addUser,
     deleteUserById,
     updateUserById,
+    getAllCoursesOfUser,
+    addCourseToUser
 }
