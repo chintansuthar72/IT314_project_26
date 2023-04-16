@@ -1,6 +1,4 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
-
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
@@ -20,7 +18,6 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 // import { mainListItems, secondaryListItems } from './listItems';
-import Chart from './Chart';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -33,16 +30,8 @@ import LayersIcon from '@mui/icons-material/Layers';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import LogoutIcon from '@mui/icons-material/Logout';
-import Deposits from './Deposits';
-import Orders from './Orders';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Title from './Title';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Chart from './Student_DashBoard_components/Chart';
 
 function Copyright(props) {
   return (
@@ -110,20 +99,6 @@ function DashboardContent({setIsLoggedIn,navigate }) {
   const toggleDrawer = () => {
     setOpen(!open);
   };
-
-  const [error, setError] = useState(null);
-  const [rows, setRows] = useState([]);
-  useEffect(() => {
-    axios.get('http://localhost:5000/user/courses',{headers:{'Authorization':localStorage.getItem('token')}})
-      .then((resp)=>{   // if no error
-        console.log(resp);
-        setRows(resp.data.data);
-      })
-      .catch((err)=>{
-        console.log(err);
-        setError(err.response.data.error);
-      })
-  },[]);
 
   return (
     <ThemeProvider theme={mdTheme}>
@@ -240,7 +215,7 @@ function DashboardContent({setIsLoggedIn,navigate }) {
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
               {/* Chart */}
-              {/* <Grid item xs={12} md={8} lg={9}>
+              <Grid item xs={12} md={8} lg={9}>
                 <Paper
                   sx={{
                     p: 2,
@@ -250,54 +225,6 @@ function DashboardContent({setIsLoggedIn,navigate }) {
                   }}
                 >
                   <Chart />
-                </Paper>
-              </Grid> */}
-              {/* Recent Deposits */}
-              {/* <Grid item xs={12} md={4} lg={3}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 240,
-                  }}
-                >
-                  <Deposits />
-                </Paper>
-              </Grid> */}
-              {/* Recent Orders */}
-              <Grid item xs={12}>
-                <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                  {/* <Orders /> */}
-                  {error && <div>{error}</div>}
-                  <>
-                    <Title>Classes</Title>
-                    <Table size="medium">
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>Course Code</TableCell>
-                          <TableCell>Name</TableCell>
-                          <TableCell>Instructor</TableCell>
-                          {/* <TableCell>Class link</TableCell>
-                          <TableCell align="right">number of students</TableCell> */}
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {rows.map((row) => (
-                          <TableRow key={row.course._id}>
-                            <TableCell>{row.course.courseCode}</TableCell>
-                            <TableCell>{row.course.name}</TableCell>
-                            <TableCell>{row.instructor}</TableCell>
-                            {/* <TableCell>{row.paymentMethod}</TableCell>
-                            <TableCell align="right">{`${row.amount}`}</TableCell> */}
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                    {/* <Link color="primary" href="#" onClick={preventDefault} sx={{ mt: 3 }}>
-                      See more orders
-                    </Link> */}
-                  </>
                 </Paper>
               </Grid>
             </Grid>
@@ -309,7 +236,7 @@ function DashboardContent({setIsLoggedIn,navigate }) {
   );
 }
 
-export default function Dashboard() {
+export default function Progress() {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = React.useState(localStorage.getItem('token') !== null);
   React.useEffect(() => {

@@ -59,6 +59,7 @@ export default function SignIn() {
       console.log(resp);
       // add token from response header to local storage
       localStorage.setItem('token',resp.data.data.token);
+      localStorage.setItem('role',resp.data.data.user.role);
       localStorage.setItem('user',JSON.stringify(resp.data.data.user.username));
       setIsLoggedIn(true);
     })

@@ -204,6 +204,6 @@ function DashboardContent() {
   );
 }
 
-export default function Dashboard() {
+export default function DashboardStudentRegister() {
   return <DashboardContent />;
 }
