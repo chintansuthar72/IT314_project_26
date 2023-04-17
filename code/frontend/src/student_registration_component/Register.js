@@ -22,6 +22,69 @@ import Navbar1 from './Navbar1';
 // import Chart from './Chart';
 // import Deposits from './Deposits';
 // import Orders from './Orders';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Button from '@mui/material/Button';
+
+
+
+function createData(id, date, name, shipTo,Button) {
+     return { id, date, name, shipTo,Button};
+   }
+   
+   const rows = [
+     createData(
+       0,
+       'it314',
+       'Course_Name',
+       'UG'
+   
+     ),
+     createData(
+       1,
+       'hm',
+       'eco',
+       'pg'
+   
+     ),
+     createData(
+          2,
+           'ct',
+            'Mtech',
+             'pg'
+       ),
+     createData(
+       3,
+       'sc',
+       'Mtech',
+       'sir'
+     ),
+     createData(
+       4,
+       'el',
+       'Btech-Mtech',
+       'sir'
+     ),
+     createData(
+      4,
+      'el',
+      'Btech-Mtech',
+      'sir'
+    ),
+    createData(
+      4,
+      'el',
+      'Btech-Mtech',
+      'sir'
+    ),
+   ];
+   
+   function preventDefault(event) {
+     event.preventDefault();
+   }
 
 function Copyright(props) {
   return (
@@ -198,12 +261,48 @@ function DashboardContent() {
            
           </Container>
         </Box> */}
-      </Box>
+     
+    
+    <React.Fragment>
+      {/* <Title>Classes</Title> */}
+      <Table size="small">
+        <TableHead>
+          <TableRow>
+            <TableCell>Course Code</TableCell>
+            <TableCell>Course Name</TableCell>
+            <TableCell>UG/PG</TableCell>
+            <TableCell>Enroll</TableCell>
+    
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {rows.map((row) => (
+            <TableRow key={row.id}>
+              <TableCell>{row.date}</TableCell>
+              <TableCell>{row.name}</TableCell>
+              <TableCell>{row.shipTo}</TableCell>
+              <TableCell>{ <Button variant="contained">Enroll</Button>}</TableCell>
+             
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+      {/* <Link color="primary" href="#" onClick={preventDefault} sx={{ mt: 3 }}>
+        See more orders
+      </Link> */}
+    </React.Fragment>
+    </Box>
     </ThemeProvider>
     </>
   );
 }
 
-export default function DashboardStudentRegister() {
+export default function Dashboard() {
   return <DashboardContent />;
 }
+
+
+
+
+
+
