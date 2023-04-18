@@ -3,6 +3,7 @@ import SignIn from './signin'
 import SignUp from './signup'
 import CourseCreation from './CourseCreation';
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+
 import Dashboard from './Student_DashBoard_components/Dashboard';
 // import Chat from './Forum';
 import DashboardStudentRegister from './student_registration_component/Register';
@@ -27,7 +28,7 @@ export default function App() {
           <Route path="/progress" element={<Progress />} />
           {/* <Route path="/forum" element={<Chat />} /> */}
         </Routes>
-      </BrowserRouter>
+      </BrowserRouter> */}
     </div>
   )
 }
