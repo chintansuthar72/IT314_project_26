@@ -10,18 +10,19 @@ function preventDefault(event) {
 export default function Deposits() {
   return (
     <React.Fragment>
-      <Title>Details</Title>
-      <Typography component="p" variant="h4">
-        name
+      <Title>Instructor Profile details</Title>
+      <Typography color="text.secondary" sx={{ flex: 1 }}>
+        User ID
       </Typography>
       <Typography color="text.secondary" sx={{ flex: 1 }}>
-        phone
+        Phone number
       </Typography>
-      <div>
-        {/* <Link color="primary" href="#" onClick={preventDefault}>
-          View balance
-        </Link> */}
-      </div>
+      <Typography color="text.secondary" sx={{ flex: 1 }}>
+        Qualification
+      </Typography>
+      <Typography color="text.secondary" sx={{ flex: 1 }}>
+        Office number
+      </Typography>
     </React.Fragment>
   );
 }

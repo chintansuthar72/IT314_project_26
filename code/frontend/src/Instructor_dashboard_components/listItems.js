@@ -20,53 +20,54 @@ export const mainListItems = (
     </ListItemButton>
     <ListItemButton>
       <ListItemIcon>
-        <ShoppingCartIcon />
+        <PeopleIcon />
       </ListItemIcon>
-      <ListItemText primary="Orders" />
+      <ListItemText primary="My Profile" />
     </ListItemButton>
     <ListItemButton>
       <ListItemIcon>
         <PeopleIcon />
       </ListItemIcon>
-      <ListItemText primary="Customers" />
+      <ListItemText primary="Edit Profile" />
     </ListItemButton>
     <ListItemButton>
       <ListItemIcon>
         <BarChartIcon />
       </ListItemIcon>
-      <ListItemText primary="Reports" />
+      <ListItemText primary="Edit Courses" />
     </ListItemButton>
     <ListItemButton>
       <ListItemIcon>
         <LayersIcon />
       </ListItemIcon>
-      <ListItemText primary="Integrations" />
+      <ListItemText primary="Logout" />
     </ListItemButton>
   </React.Fragment>
 );
 
 export const secondaryListItems = (
-  <React.Fragment>
-    <ListSubheader component="div" inset>
-      Saved reports
-    </ListSubheader>
-    <ListItemButton>
-      <ListItemIcon>
-        <AssignmentIcon />
-      </ListItemIcon>
-      <ListItemText primary="Current month" />
-    </ListItemButton>
-    <ListItemButton>
-      <ListItemIcon>
-        <AssignmentIcon />
-      </ListItemIcon>
-      <ListItemText primary="Last quarter" />
-    </ListItemButton>
-    <ListItemButton>
-      <ListItemIcon>
-        <AssignmentIcon />
-      </ListItemIcon>
-      <ListItemText primary="Year-end sale" />
-    </ListItemButton>
-  </React.Fragment>
+  // <React.Fragment>
+  //   <ListSubheader component="div" inset>
+  //     Saved reports
+  //   </ListSubheader>
+  //   <ListItemButton>
+  //     <ListItemIcon>
+  //       <AssignmentIcon />
+  //     </ListItemIcon>
+  //     <ListItemText primary="Current month" />
+  //   </ListItemButton>
+  //   <ListItemButton>
+  //     <ListItemIcon>
+  //       <AssignmentIcon />
+  //     </ListItemIcon>
+  //     <ListItemText primary="Last quarter" />
+  //   </ListItemButton>
+  //   <ListItemButton>
+  //     <ListItemIcon>
+  //       <AssignmentIcon />
+  //     </ListItemIcon>
+  //     <ListItemText primary="Year-end sale" />
+  //   </ListItemButton>
+  // </React.Fragment>
+  <>  </>
 );

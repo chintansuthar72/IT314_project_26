@@ -1,25 +1,32 @@
 const mongoose = require('mongoose');
 
 const commentSchema = new mongoose.Schema({
-    // submission: {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'Submission',
-    //     required: true,
-    // },
+    submission: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Submission',
+    },
     commentator: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true,
     },
-    text: {
+    description : {
         type: String,
         required: true,
         trim: true,
     },
-    files: [{
+    announcement: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'File',
-    }],
+        ref: 'Announcement',
+    },
+    assignment: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Assignment',
+    }
+    // files: [{
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'File',
+    // }],
     // folders: [{
     //     type: mongoose.Schema.Types.ObjectId,
     //     ref: 'Folder',

@@ -3,7 +3,7 @@ import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
+import MuiAppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
@@ -18,11 +18,75 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { mainListItems, secondaryListItems } from './listItems';
-import Chart from './Chart';
-import Deposits from './Deposits';
-import Orders from './Orders';
+import Navbar1 from './Navbar1';
+// import Chart from './Chart';
+// import Deposits from './Deposits';
+// import Orders from './Orders';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Button from '@mui/material/Button';
 
-function Copyright(props: any) {
+
+
+function createData(id, date, name, shipTo,Button) {
+     return { id, date, name, shipTo,Button};
+   }
+   
+   const rows = [
+     createData(
+       0,
+       'it314',
+       'Course_Name',
+       'UG'
+   
+     ),
+     createData(
+       1,
+       'hm',
+       'eco',
+       'pg'
+   
+     ),
+     createData(
+          2,
+           'ct',
+            'Mtech',
+             'pg'
+       ),
+     createData(
+       3,
+       'sc',
+       'Mtech',
+       'sir'
+     ),
+     createData(
+       4,
+       'el',
+       'Btech-Mtech',
+       'sir'
+     ),
+     createData(
+      4,
+      'el',
+      'Btech-Mtech',
+      'sir'
+    ),
+    createData(
+      4,
+      'el',
+      'Btech-Mtech',
+      'sir'
+    ),
+   ];
+   
+   function preventDefault(event) {
+     event.preventDefault();
+   }
+
+function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
@@ -35,15 +99,11 @@ function Copyright(props: any) {
   );
 }
 
-const drawerWidth: number = 240;
-
-interface AppBarProps extends MuiAppBarProps {
-  open?: boolean;
-}
+const drawerWidth = 240;
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
-})<AppBarProps>(({ theme, open }) => ({
+})(({ theme, open }) => ({
   zIndex: theme.zIndex.drawer + 1,
   transition: theme.transitions.create(['width', 'margin'], {
     easing: theme.transitions.easing.sharp,
@@ -94,10 +154,14 @@ function DashboardContent() {
   };
 
   return (
+     <>
+     <Navbar1/>
+     
+     
     <ThemeProvider theme={mdTheme}>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
-        <AppBar position="absolute" open={open}>
+        {/* <AppBar position="absolute" open={open}>
           <Toolbar
             sx={{
               pr: '24px', // keep right padding when drawer closed
@@ -124,13 +188,8 @@ function DashboardContent() {
             >
               Dashboard
             </Typography>
-            <IconButton color="inherit">
-              <Badge badgeContent={4} color="secondary">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
           </Toolbar>
-        </AppBar>
+        </AppBar> */}
         <Drawer variant="permanent" open={open}>
           <Toolbar
             sx={{
@@ -151,7 +210,7 @@ function DashboardContent() {
             {secondaryListItems}
           </List>
         </Drawer>
-        <Box
+        {/* <Box
           component="main"
           sx={{
             backgroundColor: (theme) =>
@@ -166,7 +225,7 @@ function DashboardContent() {
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
-              {/* Chart */}
+          
               <Grid item xs={12} md={8} lg={9}>
                 <Paper
                   sx={{
@@ -176,10 +235,10 @@ function DashboardContent() {
                     height: 240,
                   }}
                 >
-                  <Chart />
+                
                 </Paper>
               </Grid>
-              {/* Recent Deposits */}
+          
               <Grid item xs={12} md={4} lg={3}>
                 <Paper
                   sx={{
@@ -189,24 +248,61 @@ function DashboardContent() {
                     height: 240,
                   }}
                 >
-                  <Deposits />
+                 
                 </Paper>
               </Grid>
-              {/* Recent Orders */}
+           
               <Grid item xs={12}>
                 <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                  <Orders />
+                 
                 </Paper>
               </Grid>
             </Grid>
-            <Copyright sx={{ pt: 4 }} />
+           
           </Container>
-        </Box>
-      </Box>
+        </Box> */}
+     
+    
+    <React.Fragment>
+      {/* <Title>Classes</Title> */}
+      <Table size="small">
+        <TableHead>
+          <TableRow>
+            <TableCell>Course Code</TableCell>
+            <TableCell>Course Name</TableCell>
+            <TableCell>UG/PG</TableCell>
+            <TableCell>Enroll</TableCell>
+    
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {rows.map((row) => (
+            <TableRow key={row.id}>
+              <TableCell>{row.date}</TableCell>
+              <TableCell>{row.name}</TableCell>
+              <TableCell>{row.shipTo}</TableCell>
+              <TableCell>{ <Button variant="contained">Enroll</Button>}</TableCell>
+             
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+      {/* <Link color="primary" href="#" onClick={preventDefault} sx={{ mt: 3 }}>
+        See more orders
+      </Link> */}
+    </React.Fragment>
+    </Box>
     </ThemeProvider>
+    </>
   );
 }
 
 export default function Dashboard() {
   return <DashboardContent />;
 }
+
+
+
+
+
+

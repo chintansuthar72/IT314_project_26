@@ -15,38 +15,38 @@ function createData(id, date, name, shipTo, paymentMethod, amount) {
 const rows = [
   createData(
     0,
-    'it',
-    'Btech',
-    'sir',
-    'link',
-    100,
+    'Distributed Systems',
+    'IT-314',
+    'B-Tech',
+    80,
+    '5/2/2023',
   ),
   createData(
     1,
-    'hm',
-    'Btech',
-    'sir',
-    'link',
-    100,
+    'Indian Literature',
+    'HM-101',
+    'B-Tech',
+    50,
+    'None',
   ),
-  createData(2, 'ct', 'Mtech', 'sir',
-  'link',
-  100,),
+  createData(2, 'Software Verification', 'IT-559', 'M-Tech',
+  50,
+  '23/2/2023',),
   createData(
     3,
-    'sc',
-    'Mtech',
-    'sir',
-    'link',
-    100,
+    'Environmental Studies',
+    'SC-402',
+    'B-Tech',
+    120,
+    '7/2/2023',
   ),
   createData(
     4,
-    'el',
-    'Btech-Mtech',
-    'sir',
-    'link',
-    100,
+    'Embedded Hardware',
+    'EL-203',
+    'M-Tech',
+    40,
+    'None',
   ),
 ];
 
@@ -57,15 +57,17 @@ function preventDefault(event) {
 export default function Orders() {
   return (
     <React.Fragment>
-      <Title>Classes</Title>
+      <Title>My Courses</Title>
       <Table size="small">
         <TableHead>
           <TableRow>
+            <TableCell>Course Name</TableCell>
             <TableCell>Course Code</TableCell>
             <TableCell>Batch</TableCell>
-            <TableCell>Instructor</TableCell>
-            <TableCell>Class link</TableCell>
-            <TableCell align="right">number of students</TableCell>
+            <TableCell>Student Count</TableCell>
+            <TableCell>Upcoming Deadlines</TableCell>
+            {/* <TableCell>Class link</TableCell>
+            <TableCell align="right">number of students</TableCell> */}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -75,7 +77,7 @@ export default function Orders() {
               <TableCell>{row.name}</TableCell>
               <TableCell>{row.shipTo}</TableCell>
               <TableCell>{row.paymentMethod}</TableCell>
-              <TableCell align="right">{`${row.amount}`}</TableCell>
+              <TableCell>{`${row.amount}`}</TableCell>
             </TableRow>
           ))}
         </TableBody>

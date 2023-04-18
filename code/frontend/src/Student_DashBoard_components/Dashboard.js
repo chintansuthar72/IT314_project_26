@@ -1,106 +1,3 @@
-// import React, { useState } from 'react';
-import './CourseCreation.css';
-// import axios from 'axios';
-// import { useNavigate } from 'react-router-dom';
-
-// function CourseCreation() {
-//   const [error, setError] = useState('');
-//   const navigate = useNavigate();
-//   const [isLoggedIn, setIsLoggedIn] = React.useState(localStorage.getItem('token') !== null);
-//   React.useEffect(() => {
-//     if(localStorage.getItem('token') == null){
-//       navigate('/');
-//     }
-//   },[isLoggedIn]);
-
-//   const [courseName, setCourseName] = useState('');
-//   const [courseCode, setCourseCode] = useState('');
-//   const [description, setDescription] = useState('');
-//   const [instructorName, setInstructorName] = useState('');
-
-//   const handleSubmit = (event) => {
-//     event.preventDefault();
-//     const data = new FormData(event.currentTarget);
-//     console.log({
-//       name : courseName,
-//       courseCode: courseCode,
-//       description: description,
-//     });
-//     const signupData = {
-//       name : courseName,
-//       courseCode: courseCode,
-//       description: description,
-//     };
-//     axios.post('http://localhost:5000/course',signupData, {headers:{'Authorization':localStorage.getItem('token')}})
-//     .then((resp)=>{   // if no error
-//       console.log(resp);
-//       // setError('Signed up successfully!'); // subject to change
-//       // if(resp.response.status == 401){
-//       //   setError('You can not create a course!');
-//       // } else {
-//         navigate('/dashboard');
-//       // }
-//     })
-//     .catch((err)=>{
-//       console.log(err);
-//       setError(err.response.data.message.message);
-//     })
-//   };
-
-//   return (
-//     <div className="course-creation">
-//       <h1>Create a Course</h1>
-//       <form onSubmit={handleSubmit}>
-//         <div className="form-group">
-//           <label htmlFor="courseName">Course Name</label>
-//           <input
-//             type="text"
-//             name="courseName"
-//             value={courseName}
-//             onChange={(event) => setCourseName(event.target.value)}
-//           />
-//         </div>
-//         <div className="form-group">
-//           <label htmlFor="courseCode">Course Code</label>
-//           <input
-//             type="text"
-//             name="courseCode"
-//             value={courseCode}
-//             onChange={(event) => setCourseCode(event.target.value)}
-//           />
-//         </div>
-//         <div className="form-group">
-//           <label htmlFor="description">Description</label>
-//           <textarea
-//             name="description"
-//             value={description}
-//             onChange={(event) => setDescription(event.target.value)}
-//           ></textarea>
-//         </div>
-//         {/* <div className="form-group">
-//           <label htmlFor="instructorName">Instructor Name</label>
-//           <input
-//             type="text"
-//             name="instructorName"
-//             value={instructorName}
-//             onChange={(event) => setInstructorName(event.target.value)}
-//           />
-//         </div> */}
-//         <div className="form-group">
-//           <label style={{color:'red'}}>{error}</label>
-//         </div>
-//         <button type="submit">Create Course</button>
-//       </form>
-//     </div>
-//   );
-// }
-
-// export default CourseCreation;
-
-
-
-
-
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 
@@ -114,22 +11,41 @@ import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
+import Badge from '@mui/material/Badge';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
 import Link from '@mui/material/Link';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+// import { mainListItems, secondaryListItems } from './listItems';
+import Chart from './Chart';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import ListSubheader from '@mui/material/ListSubheader';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import PeopleIcon from '@mui/icons-material/People';
 import BarChartIcon from '@mui/icons-material/BarChart';
+import LayersIcon from '@mui/icons-material/Layers';
+import AssignmentIcon from '@mui/icons-material/Assignment';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import LogoutIcon from '@mui/icons-material/Logout';
+import Deposits from './Deposits';
+import Orders from './Orders';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Title from './Title';
 import axios from 'axios';
-import { useNavigate , useLocation} from 'react-router-dom';
-import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { Button } from '@mui/material';
+import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
 
 function Copyright(props) {
   return (
@@ -191,57 +107,26 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 const mdTheme = createTheme();
-function Title(props) {
-  return (
-    <Typography component="h2" variant="h6" color="primary" gutterBottom>
-      {props.children}
-    </Typography>
-  );
-}
 
-Title.propTypes = {
-  children: PropTypes.node,
-};
 function DashboardContent({setIsLoggedIn,navigate,user }) {
   const [open, setOpen] = React.useState(false);
   const toggleDrawer = () => {
     setOpen(!open);
   };
-  const [error, setError] = useState('');
 
-  const [courseName, setCourseName] = useState('');
-  const [courseCode, setCourseCode] = useState('');
-  const [description, setDescription] = useState('');
-  const [instructorName, setInstructorName] = useState('');
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      name : courseName,
-      courseCode: courseCode,
-      description: description,
-    });
-    const signupData = {
-      name : courseName,
-      courseCode: courseCode,
-      description: description,
-    };
-    axios.post('http://localhost:5000/course',signupData, {headers:{'Authorization':localStorage.getItem('token')}})
-    .then((resp)=>{   // if no error
-      console.log(resp);
-      // setError('Signed up successfully!'); // subject to change
-      // if(resp.response.status == 401){
-      //   setError('You can not create a course!');
-      // } else {
-        navigate('/dashboard');
-      // }
-    })
-    .catch((err)=>{
-      console.log(err);
-      setError(err.response.data.message.message);
-    })
-  };
+  const [error, setError] = useState(null);
+  const [rows, setRows] = useState([]);
+  useEffect(() => {
+    axios.get('http://localhost:5000/user/courses',{headers:{'Authorization':localStorage.getItem('token')}})
+      .then((resp)=>{   // if no error
+        console.log(resp);
+        setRows(resp.data.data);
+      })
+      .catch((err)=>{
+        console.log(err);
+        setError(err.response.data.error);
+      })
+  },[]);
 
   return (
     <ThemeProvider theme={mdTheme}>
@@ -272,7 +157,7 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
               noWrap
               sx={{ flexGrow: 1 }}
             >
-              Create Course
+              Dashboard
             </Typography>
             {/* <IconButton color="inherit">
               <Badge badgeContent={4} color="secondary">
@@ -318,7 +203,7 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
             <ListItemButton onClick={() => {
               navigate('/profile', {
                 state: {
-                  user : user
+                  user : user,
                 }
               });
             }}>
@@ -330,7 +215,7 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
             <ListItemButton onClick={() => {
               navigate('/create', {
                 state: {
-                  user : user
+                  user : user,
                 }
               });
             }}>
@@ -342,7 +227,7 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
             <ListItemButton onClick={() => {
               navigate('/progress', {
                 state: {
-                  user : user
+                  user : user,
                 }
               });
             }}>
@@ -407,49 +292,44 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
               </Grid> */}
               {/* Recent Orders */}
               <Grid item xs={12}>
-              <div className="course-creation">
-                <form onSubmit={handleSubmit}>
-                  <div className="form-group">
-                    <label htmlFor="courseName">Course Name</label>
-                    <input
-                      type="text"
-                      name="courseName"
-                      value={courseName}
-                      onChange={(event) => setCourseName(event.target.value)}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="courseCode">Course Code</label>
-                    <input
-                      type="text"
-                      name="courseCode"
-                      value={courseCode}
-                      onChange={(event) => setCourseCode(event.target.value)}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="description">Description</label>
-                    <textarea
-                      name="description"
-                      value={description}
-                      onChange={(event) => setDescription(event.target.value)}
-                    ></textarea>
-                  </div>
-                  {/* <div className="form-group">
-                    <label htmlFor="instructorName">Instructor Name</label>
-                    <input
-                      type="text"
-                      name="instructorName"
-                      value={instructorName}
-                      onChange={(event) => setInstructorName(event.target.value)}
-                    />
-                  </div> */}
-                  <div className="form-group">
-                    <label style={{color:'red'}}>{error}</label>
-                  </div>
-                  <button type="submit">Create Course</button>
-                </form>
-              </div>
+                <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
+                  {/* <Orders /> */}
+                  {error && <div>{error}</div>}
+                  <>
+                    <Title>Classes</Title>
+                    <Table size="medium">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Course Code</TableCell>
+                          <TableCell>Name</TableCell>
+                          <TableCell>Instructor</TableCell>
+                          {/* <TableCell>Class link</TableCell>
+                          <TableCell align="right">number of students</TableCell> */}
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {rows.map((row) => (
+                          <TableRow key={row.course._id}>
+                            <TableCell>{row.course.courseCode}</TableCell>
+                            <TableCell>{row.course.name}</TableCell>
+                            <TableCell>{row.instructor}</TableCell>
+                            <TableCell align='right'><Button onClick={() => {
+                              navigate('/manage',{
+                                state: {
+                                  course: row.course,
+                                  user: user,
+                                }
+                              })
+                            }}>Open</Button></TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                    {/* <Link color="primary" href="#" onClick={preventDefault} sx={{ mt: 3 }}>
+                      See more orders
+                    </Link> */}
+                  </>
+                </Paper>
               </Grid>
             </Grid>
             {/* <Copyright sx={{ pt: 4 }} /> */}
@@ -460,7 +340,7 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
   );
 }
 
-export default function CourseCreation() {
+export default function Dashboard() {
   const navigate = useNavigate();
   const {state} = useLocation();
   const [isLoggedIn, setIsLoggedIn] = React.useState(localStorage.getItem('token') !== null);
@@ -473,5 +353,5 @@ export default function CourseCreation() {
       navigate('/');
     }
   },[isLoggedIn]);
-  return <DashboardContent  setIsLoggedIn={setIsLoggedIn} navigate={navigate} user={state.user} />;
+  return <DashboardContent  setIsLoggedIn={setIsLoggedIn} navigate={navigate} user={state.user}/>;
 }
