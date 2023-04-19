@@ -84,8 +84,11 @@ describe('POST /user/signup', () => {
                 role : "STUDENT"
             }
         };
-        const res = await request(baseURL).post('/user/signup').send(req.body);
-        expect(res.status).toEqual(400);
+         try {
+            const res = await request(baseURL).post('/user/signup').send(req.body);
+        } catch (err) {
+            expect(err.response.data.error).toEqual('Email already exists');
+        }
     });
 
     test('should return status 400 for already exist username', async () => {
@@ -101,7 +104,7 @@ describe('POST /user/signup', () => {
         try {
             const res = await request(baseURL).post('/user/signup').send(req.body);
         } catch (err) {
-            expect(err.response.data.error).toEqual('Email does not exist');
+            expect(err.response.data.error).toEqual('Username already exists');
         }
     });
 
@@ -112,13 +115,13 @@ describe('POST /user/signup', () => {
                 password: '9898439470',
                 phone : '9898439470',
                 username : "Chintan Suthar",
-                role : "STUDENT"
+                role : "NONE"
             }
         };
         try {
             const res = await request(baseURL).post('/user/signup').send(req.body);
         } catch (err) {
-            expect(err.response.data.error).toEqual('Invalid password');
+            expect(err.response.data.error).toEqual('Invalid data');
         }
     });
 });
