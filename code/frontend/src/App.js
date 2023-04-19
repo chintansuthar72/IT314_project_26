@@ -8,7 +8,6 @@ import Dashboard from './Student_DashBoard_components/Dashboard';
 // import Chat from './Forum';
 import DashboardStudentRegister from './student_registration_component/Register';
 import ManageInstructor from './Course_manage_instructor_components/Manage';
-import ManageStudent from './Course_manage_student_components/Manage';
 import Profile from './Profile';
 import Progress from './Progress';
 
@@ -67,7 +66,7 @@ export default function App() {
           <Route path="/progress" element={<Progress />} />
           {/* <Route path="/forum" element={<Chat />} /> */}
         </Routes>
-      </BrowserRouter> */}
+      </BrowserRouter>
     </div>
   )
 }

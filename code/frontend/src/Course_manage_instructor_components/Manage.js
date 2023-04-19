@@ -37,8 +37,6 @@ import { useNavigate } from 'react-router-dom';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 
-import { mainListItems, secondaryListItems } from './listItems';
-import About from './About';
 import Announcement from './Announcement';
 import Material from './Material';
 import Chat from './Chat';
