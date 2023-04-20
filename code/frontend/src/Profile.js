@@ -411,12 +411,13 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
                       {/* )} */}
                       </Stack>
                     </Box>
+
                 </div>
                 {/*  */}
 
               </Grid>
             </Grid>
-            {/* <Copyright sx={{ pt: 4 }} /> */}
+            {/* <Copyright sx={{ pt: 4  */}
           </Container>
         </Box>
       </Box>
