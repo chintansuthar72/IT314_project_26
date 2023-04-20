@@ -143,7 +143,27 @@ function Copyright(props) {
     </Typography>
   );
 }
-
+const set = (keyName, keyValue, ttl) => {
+  const data = {
+      value: keyValue,                  // store the value within this object
+      ttl: Date.now() + (ttl * 1000),   // store the TTL (time to live)
+  }
+  localStorage.setItem(keyName, JSON.stringify(data));
+};
+const get = (keyName) => {
+  const data = localStorage.getItem(keyName);
+  if (!data) {     // if no value exists associated with the key, return null
+      return null;
+  }
+  const item = JSON.parse(data);
+  if (Date.now() > item.ttl) {
+    localStorage.removeItem(keyName);
+    localStorage.removeItem('role');
+    localStorage.removeItem('user');
+      return null;
+  }
+  return item.value;
+};
 const drawerWidth = 240;
 
 const AppBar = styled(MuiAppBar, {
@@ -227,19 +247,23 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
       courseCode: courseCode,
       description: description,
     };
-    axios.post('http://localhost:5000/course',signupData, {headers:{'Authorization':localStorage.getItem('token')}})
+    axios.post('http://localhost:5000/course',signupData, {headers:{'Authorization':get('token')}})
     .then((resp)=>{   // if no error
       console.log(resp);
       // setError('Signed up successfully!'); // subject to change
       // if(resp.response.status == 401){
       //   setError('You can not create a course!');
       // } else {
-        navigate('/dashboard');
+        navigate('/dashboard', {
+          state: {
+            user : user
+          }
+        });
       // }
     })
     .catch((err)=>{
       console.log(err);
-      setError(err.response.data.message.message);
+      setError(err.response.data.message);
     })
   };
 
@@ -463,9 +487,9 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
 export default function CourseCreation() {
   const navigate = useNavigate();
   const {state} = useLocation();
-  const [isLoggedIn, setIsLoggedIn] = React.useState(localStorage.getItem('token') !== null);
+  const [isLoggedIn, setIsLoggedIn] = React.useState(get('token') !== null);
   React.useEffect(() => {
-    if(localStorage.getItem('token') === null ){
+    if(get('token') === null ){
       navigate('/');
     }
     if( state === null) {
