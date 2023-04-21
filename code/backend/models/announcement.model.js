@@ -17,7 +17,7 @@ const announcementSchema = new mongoose.Schema({
         trim: true,
         minlength: 3
     },
-    text: {
+    description : {
         type: String,
         required: true,
         trim: true,

@@ -13,7 +13,10 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import axios from 'axios'
+import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import { ButtonBase } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 function Copyright(props) {
   return (
@@ -31,8 +34,16 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignUp() {
+  const navigate = useNavigate();
   const [error, setError] = React.useState('');
   
+  /*for select role*/
+  const [role, setRole] = React.useState('');
+
+  const handleChange = (event) => {
+    setRole(event.target.value);
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -53,7 +64,8 @@ export default function SignUp() {
     axios.post('http://localhost:5000/user/signup',signupData)
     .then((resp)=>{   // if no error
       console.log(resp);
-      setError('Signed up successfully!'); // subject to change
+      // setError('Signed up successfully!'); // subject to change
+      navigate('/');
     })
     .catch((err)=>{
       console.log(err);
@@ -128,22 +140,27 @@ export default function SignUp() {
                   required
                   fullWidth
                   name="phone"
-                  label="phone"
+                  label="Phone"
                   id="phone"
                 />
               </Grid>
               <Grid item xs={12}>
-                <InputLabel>Role</InputLabel>
+              <FormControl fullWidth required>
+                <InputLabel id="role-label">Role</InputLabel>
                 <Select
-                  fullWidth
+                  labelId="role"
                   id="role"
                   name='role'
-                  // value={age}
-                  label="Age"
+                  value={role}
+                  onChange={handleChange}
+                  autoWidth
+                  label="Role"
                 >
                   <MenuItem value={'TEACHER'}>Instructor</MenuItem>
                   <MenuItem value={'STUDENT'}>Student</MenuItem>
                 </Select>
+              </FormControl>
+
               </Grid>
             </Grid>
             <Typography component="h3" variant="h5">
@@ -159,9 +176,14 @@ export default function SignUp() {
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href = {"./signin"} variant="body2">
-                  Already have an account? Sign in
-                </Link>
+                <ButtonBase 
+                  sx={{mt: 1, mb: 1}}
+                  style={{
+                    color: 'blue',
+                    // textDecoration: 'underline',
+                    cursor: 'pointer',
+                  }}
+                  onClick={() => navigate("/")}>{"Already have an account? Sign in"}</ButtonBase>
               </Grid>
             </Grid>
           </Box>

@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 
 const dotenv = require("dotenv");
-const { userRoute } = require("./routes/index.route");
+const { userRoute, announcementRoute, messageRoute, commentRoute, assignmentRoute, submissionRoute, gradeRoute, courseRoute } = require("./routes/index.route");
 dotenv.config();
 
 const app = express();
@@ -28,6 +28,13 @@ app.get("/api", (req, res) => {
 );
 
 app.use('/user',userRoute);
+app.use('/comment',commentRoute);
+app.use('/announcement',announcementRoute);
+app.use('/message',messageRoute);
+app.use('/assignment',assignmentRoute);
+app.use('/submission',submissionRoute);
+app.use('/grade',gradeRoute);
+app.use('/course',courseRoute);
 
 app.listen(PORT, () => {
     console.log("Server is running on Port: " + PORT);
