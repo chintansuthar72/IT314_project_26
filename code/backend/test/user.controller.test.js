@@ -1,7 +1,3 @@
-const {
-    loginUser,
-    addUser,
-} = require('./user.controller');
 const request = require('supertest');
 
 const baseURL = "http://localhost:5000";
