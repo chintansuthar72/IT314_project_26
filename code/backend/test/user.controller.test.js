@@ -1,7 +1,3 @@
-const {
-    loginUser,
-    addUser,
-} = require('./user.controller');
 const request = require('supertest');
 
 const baseURL = "http://localhost:5000";
@@ -36,11 +32,13 @@ describe('POST /user/login', () => {
                 password: '9898439470'
             }
         };
-        try {
-            const res = await request(baseURL).post('/user/login').send(req.body);
-        } catch (err) {
-            expect(err.response.data.error).toEqual('Email does not exist');
-        }
+        const res = await request(baseURL).post('/user/login').send(req.body);
+        expect(res.status).toEqual(400);
+        // try {
+        //     const res = await request(baseURL).post('/user/login').send(req.body);
+        // } catch (err) {
+        //     expect(err.response.data.error).toEqual('Email does not exist');
+        // }
     });
 
     test('should return status 400 for invalid password', async () => {
@@ -50,11 +48,13 @@ describe('POST /user/login', () => {
                 password: '989843947'
             }
         };
-        try {
-            const res = await request(baseURL).post('/user/login').send(req.body);
-        } catch (err) {
-            expect(err.response.data.error).toEqual('Invalid password');
-        }
+        const res = await request(baseURL).post('/user/login').send(req.body);
+        expect(res.status).toEqual(400);
+        // try {
+        //     const res = await request(baseURL).post('/user/login').send(req.body);
+        // } catch (err) {
+        //     expect(err.response.data.error).toEqual('Invalid password');
+        // }
     });
 });
 
@@ -63,10 +63,10 @@ describe('POST /user/signup', () => {
     test('should return status 201 for Successful signup', async () => {
         const req = {
             body: {
-                email: 'chintansuthar233@gmail.com',
+                email: 'chintansuthar23345@gmail.com',
                 password: '9898439470',
                 phone : '9898439470',
-                username : "Chintan N Suthar 123",
+                username : "Chintan N Suthar 12345",
                 role : "STUDENT"
             }
         };
@@ -101,11 +101,13 @@ describe('POST /user/signup', () => {
                 role : "STUDENT"
             }
         };
-        try {
-            const res = await request(baseURL).post('/user/signup').send(req.body);
-        } catch (err) {
-            expect(err.response.data.error).toEqual('Username already exists');
-        }
+        const res = await request(baseURL).post('/user/signup').send(req.body);
+        expect(res.status).toEqual(400);
+        // try {
+        //     const res = await request(baseURL).post('/user/signup').send(req.body);
+        // } catch (err) {
+        //     expect(err.response.data.error).toEqual('Email does not exist');
+        // }
     });
 
     test('should return status 400 for invalid data', async () => {
@@ -118,10 +120,12 @@ describe('POST /user/signup', () => {
                 role : "NONE"
             }
         };
-        try {
-            const res = await request(baseURL).post('/user/signup').send(req.body);
-        } catch (err) {
-            expect(err.response.data.error).toEqual('Invalid data');
-        }
+        const res = await request(baseURL).post('/user/signup').send(req.body);
+        expect(res.status).toEqual(400);
+        // try {
+        //     const res = await request(baseURL).post('/user/signup').send(req.body);
+        // } catch (err) {
+        //     expect(err.response.data.error).toEqual('Invalid password');
+        // }
     });
 });
