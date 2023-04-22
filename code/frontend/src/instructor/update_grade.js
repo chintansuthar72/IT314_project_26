@@ -37,6 +37,7 @@ const initialRows = [
     lastupdate: randomUpdatedDate(),
     maxscore : (Math.floor(Math.random() * 10))*10,
     grade : 0,
+    feedback : "Add Comments",
   },
   {
     id: randomId(),
@@ -44,6 +45,7 @@ const initialRows = [
     lastupdate: randomUpdatedDate(),
     maxscore : (Math.floor(Math.random() * 10))*10,
     grade : 0,
+    feedback : "Add Comments",
   },
   {
     id: randomId(),
@@ -51,6 +53,7 @@ const initialRows = [
     lastupdate: randomUpdatedDate(),
     maxscore : (Math.floor(Math.random() * 10))*10,
     grade : 0,
+    feedback : "Add Comments",
   },
   {
     id: randomId(),
@@ -58,6 +61,7 @@ const initialRows = [
     lastupdate: randomUpdatedDate(),
     maxscore : (Math.floor(Math.random() * 10))*10,
     grade : 0,
+    feedback : "Add Comments",
   },
   {
     id: randomId(),
@@ -65,6 +69,7 @@ const initialRows = [
     lastupdate: randomUpdatedDate(),
     maxscore : (Math.floor(Math.random() * 10))*10,
     grade : 0,
+    feedback : "Add Comments",
   },
 ];
 
@@ -123,41 +128,46 @@ export default function UpdateGrade() {
     { 
         field: 'id', 
         headerName: 'ID', 
-        width: 300, 
+        width: 180, 
         editable: false
       },
     { 
       field: 'name', 
       headerName: 'Name', 
-      width: 200, 
+      width: 150, 
       editable: false 
     },
     {
       field: 'lastupdate',
       headerName: 'Last Modified',
       type: 'dateTime',
-      width: 200,
+      width: 180,
       editable: false,
     },
     {
         field: 'maxscore',
         headerName: 'Max Score',
-        width: 100,
+        width: 80,
         editable: false,  
     },
     {
         field: 'grade',
         headerName: 'Grade',
         type : 'number',
-        width: 100,
+        width: 80,
         editable: true,  
     },
-    
+    {
+        field: 'feedback',
+        headerName: 'Feedback',
+        width: 300,
+        editable: true,  
+    },
     {
       field: 'actions',
       type: 'actions',
       headerName: 'Edit',
-      width: 200,
+      width: 50,
       cellClassName: 'actions',
       getActions: ({ id }) => {
         const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
