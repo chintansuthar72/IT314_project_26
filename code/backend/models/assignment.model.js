@@ -30,14 +30,14 @@ const assignmentSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Comment',
     }],
-    grades: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Grade',
-    }],
-    files: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'File',
-    }],
+    // files: [{
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'File',
+    // }],
+    // grades: [{
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'Grade',
+    // }],
     // folders: [{
     //     type: mongoose.Schema.Types.ObjectId,
     //     ref: 'Folder',

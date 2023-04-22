@@ -1,109 +1,4 @@
-// import React, { useState } from 'react';
-import './CourseCreation.css';
-// import axios from 'axios';
-// import { useNavigate } from 'react-router-dom';
-
-// function CourseCreation() {
-//   const [error, setError] = useState('');
-//   const navigate = useNavigate();
-//   const [isLoggedIn, setIsLoggedIn] = React.useState(localStorage.getItem('token') !== null);
-//   React.useEffect(() => {
-//     if(localStorage.getItem('token') == null){
-//       navigate('/');
-//     }
-//   },[isLoggedIn]);
-
-//   const [courseName, setCourseName] = useState('');
-//   const [courseCode, setCourseCode] = useState('');
-//   const [description, setDescription] = useState('');
-//   const [instructorName, setInstructorName] = useState('');
-
-//   const handleSubmit = (event) => {
-//     event.preventDefault();
-//     const data = new FormData(event.currentTarget);
-//     console.log({
-//       name : courseName,
-//       courseCode: courseCode,
-//       description: description,
-//     });
-//     const signupData = {
-//       name : courseName,
-//       courseCode: courseCode,
-//       description: description,
-//     };
-//     axios.post('http://localhost:5000/course',signupData, {headers:{'Authorization':localStorage.getItem('token')}})
-//     .then((resp)=>{   // if no error
-//       console.log(resp);
-//       // setError('Signed up successfully!'); // subject to change
-//       // if(resp.response.status == 401){
-//       //   setError('You can not create a course!');
-//       // } else {
-//         navigate('/dashboard');
-//       // }
-//     })
-//     .catch((err)=>{
-//       console.log(err);
-//       setError(err.response.data.message.message);
-//     })
-//   };
-
-//   return (
-//     <div className="course-creation">
-//       <h1>Create a Course</h1>
-//       <form onSubmit={handleSubmit}>
-//         <div className="form-group">
-//           <label htmlFor="courseName">Course Name</label>
-//           <input
-//             type="text"
-//             name="courseName"
-//             value={courseName}
-//             onChange={(event) => setCourseName(event.target.value)}
-//           />
-//         </div>
-//         <div className="form-group">
-//           <label htmlFor="courseCode">Course Code</label>
-//           <input
-//             type="text"
-//             name="courseCode"
-//             value={courseCode}
-//             onChange={(event) => setCourseCode(event.target.value)}
-//           />
-//         </div>
-//         <div className="form-group">
-//           <label htmlFor="description">Description</label>
-//           <textarea
-//             name="description"
-//             value={description}
-//             onChange={(event) => setDescription(event.target.value)}
-//           ></textarea>
-//         </div>
-//         {/* <div className="form-group">
-//           <label htmlFor="instructorName">Instructor Name</label>
-//           <input
-//             type="text"
-//             name="instructorName"
-//             value={instructorName}
-//             onChange={(event) => setInstructorName(event.target.value)}
-//           />
-//         </div> */}
-//         <div className="form-group">
-//           <label style={{color:'red'}}>{error}</label>
-//         </div>
-//         <button type="submit">Create Course</button>
-//       </form>
-//     </div>
-//   );
-// }
-
-// export default CourseCreation;
-
-
-
-
-
 import * as React from 'react';
-import { useState, useEffect } from 'react';
-
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
@@ -114,22 +9,46 @@ import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
+import Badge from '@mui/material/Badge';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
 import Link from '@mui/material/Link';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+// import { mainListItems, secondaryListItems } from './listItems';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import ListSubheader from '@mui/material/ListSubheader';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import PeopleIcon from '@mui/icons-material/People';
 import BarChartIcon from '@mui/icons-material/BarChart';
+import LayersIcon from '@mui/icons-material/Layers';
+import AssignmentIcon from '@mui/icons-material/Assignment';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import LogoutIcon from '@mui/icons-material/Logout';
-import axios from 'axios';
-import { useNavigate , useLocation} from 'react-router-dom';
-import PropTypes from 'prop-types';
+import { useNavigate,useLocation } from 'react-router-dom';
+import Chart from './Student_DashBoard_components/Chart';
+
+import { Button, TextField  } from '@mui/material';
+
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import CloseIcon from '@mui/icons-material/Close';
+
+import Dialog from '@mui/material/Dialog';
+import { Transition } from 'react-transition-group';
+import Stack from '@mui/material/Stack';
+import Slide from '@mui/material/Slide';
+
+// import ListItemButton from '@mui/material/ListItemButton';
+// import ListItemIcon from '@mui/material/ListItemIcon';
+// import ListItemText from '@mui/material/ListItemText';
+import ListItem from '@mui/material/ListItem';
+
 
 function Copyright(props) {
   return (
@@ -165,6 +84,17 @@ const get = (keyName) => {
   return item.value;
 };
 const drawerWidth = 240;
+
+const TransitionX = React.forwardRef(function TransitionX(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: 'center',
+  color: theme.palette.text.secondary,
+}));
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
@@ -211,61 +141,53 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 const mdTheme = createTheme();
-function Title(props) {
-  return (
-    <Typography component="h2" variant="h6" color="primary" gutterBottom>
-      {props.children}
-    </Typography>
-  );
-}
 
-Title.propTypes = {
-  children: PropTypes.node,
-};
 function DashboardContent({setIsLoggedIn,navigate,user }) {
   const [open, setOpen] = React.useState(false);
+  const [openEdit, setOpenEdit] = React.useState(false);
+
   const toggleDrawer = () => {
     setOpen(!open);
   };
-  const [error, setError] = useState('');
-
-  const [courseName, setCourseName] = useState('');
-  const [courseCode, setCourseCode] = useState('');
-  const [description, setDescription] = useState('');
-  const [instructorName, setInstructorName] = useState('');
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      name : courseName,
-      courseCode: courseCode,
-      description: description,
-    });
-    const signupData = {
-      name : courseName,
-      courseCode: courseCode,
-      description: description,
-    };
-    axios.post('http://localhost:5000/course',signupData, {headers:{'Authorization':get('token')}})
-    .then((resp)=>{   // if no error
-      console.log(resp);
-      // setError('Signed up successfully!'); // subject to change
-      // if(resp.response.status == 401){
-      //   setError('You can not create a course!');
-      // } else {
-        navigate('/dashboard', {
-          state: {
-            user : user
-          }
-        });
-      // }
-    })
-    .catch((err)=>{
-      console.log(err);
-      setError(err.response.data.message);
-    })
+  const handleClickOpenEdit = () => {
+    setOpenEdit(true);
   };
+
+  const handleCloseEdit = () => {
+    setOpenEdit(false);
+  };
+
+  const handleSave = () => {
+    // axios.post(`http://localhost:5000/announcement/course/${course._id}`,{
+    //   title : title,
+    //   description : description,
+    //   files : [],
+    //   comments : []
+    // },{headers:{'Authorization':get('token')}})
+    // .then((resp)=>{   // if no error
+    //   console.log("HandleSave:\n");
+    //   console.log(resp);
+    //   setOpen(false);
+    //   setChanged(!changed);
+    // })
+    // .catch((err)=>{
+    //   console.log(err);
+    //   setError1(err.response.data.message.message);
+    // })
+  }
+  const handleDelete = (id) => {
+    // axios.delete(`http://localhost:5000/announcement/${id}`,{headers:{'Authorization':get('token')}})
+    // .then((resp)=>{   // if no error
+    //   console.log("HandleDelete:\n");
+    //   console.log(resp);
+    //   setOpen(false);
+    //   setChanged(!changed);
+    // })
+    // .catch((err)=>{
+    //   console.log(err);
+    //   setError(err.response.data.message);
+    // })
+  }
 
   return (
     <ThemeProvider theme={mdTheme}>
@@ -296,7 +218,7 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
               noWrap
               sx={{ flexGrow: 1 }}
             >
-              Create Course
+              Progress
             </Typography>
             {/* <IconButton color="inherit">
               <Badge badgeContent={4} color="secondary">
@@ -404,8 +326,8 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
               {/* Chart */}
-              {/* <Grid item xs={12} md={8} lg={9}>
-                <Paper
+              <Grid item xs={12}>
+                {/* <Paper
                   sx={{
                     p: 2,
                     display: 'flex',
@@ -414,77 +336,127 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
                   }}
                 >
                   <Chart />
-                </Paper>
-              </Grid> */}
-              {/* Recent Deposits */}
-              {/* <Grid item xs={12} md={4} lg={3}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 240,
-                  }}
-                >
-                  <Deposits />
-                </Paper>
-              </Grid> */}
-              {/* Recent Orders */}
-              <Grid item xs={12}>
-              <div className="course-creation">
-                <form onSubmit={handleSubmit}>
-                  <div className="form-group">
-                    <label htmlFor="courseName">Course Name</label>
-                    <input
-                      type="text"
-                      name="courseName"
-                      value={courseName}
-                      onChange={(event) => setCourseName(event.target.value)}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="courseCode">Course Code</label>
-                    <input
-                      type="text"
-                      name="courseCode"
-                      value={courseCode}
-                      onChange={(event) => setCourseCode(event.target.value)}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="description">Description</label>
-                    <textarea
-                      name="description"
-                      value={description}
-                      onChange={(event) => setDescription(event.target.value)}
-                    ></textarea>
-                  </div>
-                  {/* <div className="form-group">
-                    <label htmlFor="instructorName">Instructor Name</label>
-                    <input
-                      type="text"
-                      name="instructorName"
-                      value={instructorName}
-                      onChange={(event) => setInstructorName(event.target.value)}
-                    />
-                  </div> */}
-                  <div className="form-group">
-                    <label style={{color:'red'}}>{error}</label>
-                  </div>
-                  <button type="submit">Create Course</button>
-                </form>
-              </div>
+                </Paper> */}
+
+                {/*  */}
+                <div className="Progress">
+                    <div>
+                    {/* <Button variant="outlined"  onClick={handleClickOpenEdit}>
+                      Edit Profile
+                    </Button> */}
+                    {/* {error ? <Alert severity="error">{error}</Alert> : ""} */}
+                    {/* <div style={{padding:"10px"}}></div>
+                    <Dialog
+                      fullScreen
+                      open={openEdit}
+                      onClose={handleCloseEdit}
+                      TransitionComponent={TransitionX}
+                    >
+                      <AppBar sx={{ position: 'relative' }}>
+                        <Toolbar>
+                          <IconButton
+                            edge="start"
+                            color="inherit"
+                            onClick={handleCloseEdit}
+                            aria-label="close"
+                          >
+                            <CloseIcon />
+                          </IconButton>
+                          <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+                           Edit Profile
+                          </Typography>
+                          <Button autoFocus color="inherit" onClick={handleSave}>
+                            save
+                          </Button>
+                        </Toolbar>
+                      </AppBar>
+                      <List>
+                        <ListItem>
+                        <TextField fullWidth id="standard-basic" label="username" variant="filled" />
+                          
+                        </ListItem>
+                        <Divider />
+                        <ListItem>
+                        <TextField fullWidth id="standard-basic" label="phone number" variant="filled" />
+                        </ListItem>
+                        <Divider />
+                        <ListItem>
+                        <TextField fullWidth id="standard-basic" label="password" variant="filled" />
+                        </ListItem>
+                         {error1 ? <Alert severity="error">{error1}</Alert> : ""} 
+
+                      </List>
+                    </Dialog> */}
+                    </div>
+                    <Box sx={{ width: '100%' }}>
+                      <Stack spacing={2}>
+                      {/* {rows.map(announcement =>  */}
+                        <Item>
+                          <ListItem alignItems="flex-start">
+                            <ListItemText
+                              primary={"Course name: "}
+                            />
+                            <div>
+                            <Button variant="outlined"  onClick={handleClickOpenEdit}>
+                              Check
+                            </Button>
+                            {/* {error ? <Alert severity="error">{error}</Alert> : ""} */}
+                             <div style={{padding:"10px"}}></div>
+                            <Dialog
+                              fullScreen
+                              open={openEdit}
+                              onClose={handleCloseEdit}
+                              TransitionComponent={TransitionX}
+                            >
+                              <AppBar sx={{ position: 'relative' }}>
+                                <Toolbar>
+                                  <IconButton
+                                    edge="start"
+                                    color="inherit"
+                                    onClick={handleCloseEdit}
+                                    aria-label="close"
+                                  >
+                                    <CloseIcon />
+                                  </IconButton>
+                                  <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+                                      Your Progress
+                                  </Typography>
+                                </Toolbar>
+                              </AppBar>
+              
+                              <Paper
+                                sx={{
+                                  p: 2,
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                  height: 240,
+                                }}
+                              >
+                                <Chart />
+                              </Paper>
+                            </Dialog> 
+                            </div>
+                          </ListItem>
+                          {/* {error1 ? <Alert severity="error">{error1}</Alert> : ""}   */}
+                        </Item>
+                      {/* )} */}
+                      </Stack>
+                    </Box>
+
+                </div>
+                {/*  */}
+
               </Grid>
             </Grid>
             {/* <Copyright sx={{ pt: 4 }} /> */}
-          </Container>
+          </Container> 
         </Box>
       </Box>
     </ThemeProvider>
   );
 }
 
-export default function CourseCreation() {
+export default function Progress() {
   const navigate = useNavigate();
   const {state} = useLocation();
   const [isLoggedIn, setIsLoggedIn] = React.useState(get('token') !== null);
