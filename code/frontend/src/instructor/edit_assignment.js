@@ -7,6 +7,11 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Close';
+import Typography from '@mui/material/Typography';
+import CssBaseline from '@mui/material/CssBaseline';
+import Avatar from '@mui/material/Avatar';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {
   GridRowModes,
   DataGridPro,
@@ -19,45 +24,47 @@ import {
   randomUpdatedDate,
   randomId,
 } from '@mui/x-data-grid-generator';
+import Container from '@mui/material/Container';
+
+const theme = createTheme();
+
 
 //dummy data
 const initialRows = [
   {
     id: randomId(),
     name: randomTraderName(),
-    description : 'This is a description for a Assignment',
+    description : 'This is a description for a Assignment and can be edit or delete',
     dateCreated: randomCreatedDate(),
-    lastLogin: randomUpdatedDate(),
+    lastupdate: randomUpdatedDate(),
   },
   {
     id: randomId(),
     name: randomTraderName(),
     description : 'This is a description for a Assignment',
     dateCreated: randomCreatedDate(),
-    lastLogin: randomUpdatedDate(),
+    lastupdate: randomUpdatedDate(),
   },
   {
     id: randomId(),
     name: randomTraderName(),
     description : 'This is a description for a Assignment',
     dateCreated: randomCreatedDate(),
-    lastLogin: randomUpdatedDate(),
+    lastupdate: randomUpdatedDate(),
   },
   {
     id: randomId(),
     name: randomTraderName(),
     description : 'This is a description for a Assignment',
-    age: 28,
     dateCreated: randomCreatedDate(),
-    lastLogin: randomUpdatedDate(),
+    lastupdate: randomUpdatedDate(),
   },
   {
     id: randomId(),
     name: randomTraderName(),
     description : 'This is a description for a Assignment',
-    age: 23,
     dateCreated: randomCreatedDate(),
-    lastLogin: randomUpdatedDate(),
+    lastupdate: randomUpdatedDate(),
   },
 ];
 
@@ -120,34 +127,34 @@ export default function EditAssignment() {
     { 
       field: 'name', 
       headerName: 'Title', 
-      width: 150, 
+      width: 200, 
       editable: true 
     },
     { 
       field: 'description', 
       headerName: 'Description', 
-      width: 300, 
+      width: 420, 
       editable: true 
     },
     {
       field: 'dateCreated',
       headerName: 'Date Created',
       type: 'date',
-      width: 120,
+      width: 150,
       editable: false,
     },
     {
-      field: 'lastLogin',
+      field: 'lastupdate',
       headerName: 'Due Date',
       type: 'dateTime',
-      width: 180,
+      width: 200,
       editable: true,
     },
     {
       field: 'actions',
       type: 'actions',
       headerName: 'Edit/Delete',
-      width: 100,
+      width: 150,
       cellClassName: 'actions',
       getActions: ({ id }) => {
         const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
@@ -189,9 +196,17 @@ export default function EditAssignment() {
   ];
 
   return (
+    <ThemeProvider theme={theme}>
+      <Container component="main">
+      <CssBaseline/>
+
     <Box
     sx={{
       marginTop: 10,
+      // display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
       width: '100%',
         '& .actions': {
           color: 'text.secondary',
@@ -201,6 +216,13 @@ export default function EditAssignment() {
         },
     }}
     >
+      
+    <Avatar sx={{ m: 1, bgcolor: 'secondary.main' , margin : "auto"}} >
+          <EditOutlinedIcon />
+    </Avatar>
+    <Typography component="h1" variant="h5">
+      Edit Assignment
+    </Typography>
       <DataGridPro
         rows={rows}
         columns={columns}
@@ -218,5 +240,7 @@ export default function EditAssignment() {
         }}
       />
     </Box>
+    </Container>
+    </ThemeProvider>
   );
 }
