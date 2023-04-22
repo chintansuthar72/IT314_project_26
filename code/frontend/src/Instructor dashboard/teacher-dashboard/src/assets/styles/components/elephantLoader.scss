@@ -1,0 +1,43 @@
+.eleph-loader-wrapper {
+  text-align: center;
+  width: 100%;
+  height: 10em;
+  animation: colorshift 4s 0s infinite linear alternate, fadein 1s 0s 1 linear;
+}
+
+.eleph-loader {
+  display: inline-block;
+  animation: bounce 1.2s 1s infinite;
+  height: 5em;
+  width: 5em;
+}
+
+@keyframes bounce {
+  0% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(1em);
+  }
+  60% {
+    transform: translateY(-1em);
+  }
+  80% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes colorshift {
+  to {
+    filter: hue-rotate(360deg);
+  }
+}
+
+@keyframes fadein {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}

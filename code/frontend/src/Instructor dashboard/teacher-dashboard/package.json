@@ -1,0 +1,43 @@
+{
+  "name": "zeeguu-teacher-dashboard",
+  "version": "0.1.0",
+  "homepage": "/teacher-react/",
+  "private": true,
+  "dependencies": {
+    "@material-ui/core": "^3.9.2",
+    "@reach/dialog": "^0.1.3",
+    "@reach/router": "^1.2.1",
+    "axios": "^0.18.0",
+    "clsx": "^1.0.3",
+    "node-sass": "^4.11.0",
+    "react": "^16.8.3",
+    "react-cookie": "^3.0.8",
+    "react-dom": "^16.8.3",
+    "react-dropzone": "^10.0.5",
+    "react-epic-spinners": "^0.3.0",
+    "react-icons": "^3.4.0",
+    "react-scripts": "2.1.5",
+    "typeface-roboto": "0.0.54",
+    "universal-cookie": "^3.0.7"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "prettier": {
+    "tabWidth": 2,
+    "semi": false,
+    "singleQuote": true
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
+}

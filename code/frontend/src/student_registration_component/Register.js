@@ -29,6 +29,46 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Button from '@mui/material/Button';
 
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import ListSubheader from '@mui/material/ListSubheader';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import PeopleIcon from '@mui/icons-material/People';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import LayersIcon from '@mui/icons-material/Layers';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import LogoutIcon from '@mui/icons-material/Logout';
+
+const set = (keyName, keyValue, ttl) => {
+  const data = {
+      value: keyValue,                  // store the value within this object
+      ttl: Date.now() + (ttl * 1000),   // store the TTL (time to live)
+  }
+  localStorage.setItem(keyName, JSON.stringify(data));
+};
+const get = (keyName) => {
+  const data = localStorage.getItem(keyName);
+  if (!data) {     // if no value exists associated with the key, return null
+      return null;
+  }
+  const item = JSON.parse(data);
+  if (Date.now() > item.ttl) {
+      localStorage.removeItem(keyName);
+      localStorage.removeItem('role');
+      localStorage.removeItem('user');
+      return null;
+  }
+  return item.value;
+};
+
+
 
 
 function createData(id, date, name, shipTo,Button) {
@@ -147,11 +187,25 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 const mdTheme = createTheme();
 
-function DashboardContent() {
-  const [open, setOpen] = React.useState(true);
+function DashboardContent({setIsLoggedIn,navigate,user }) {
+  const [open, setOpen] = React.useState(false);
   const toggleDrawer = () => {
     setOpen(!open);
   };
+
+  // const [error, setError] = useState(null);
+  // const [rows, setRows] = useState([]);
+  // useEffect(() => {
+  //   axios.get('http://localhost:5000/user/courses',{headers:{'Authorization': get('token')}})
+  //     .then((resp)=>{   // if no error
+  //       console.log(resp);
+  //       setRows(resp.data.data);
+  //     })
+  //     .catch((err)=>{
+  //       console.log(err);
+  //       setError(err.response.data.error);
+  //     })
+  // },[]);
 
   return (
      <>
@@ -205,9 +259,86 @@ function DashboardContent() {
           </Toolbar>
           <Divider />
           <List component="nav">
-            {mainListItems}
-            <Divider sx={{ my: 1 }} />
-            {secondaryListItems}
+          <ListItemButton onClick={() => {
+              navigate('/dashboard', {
+                state: {
+                  user : user
+                }
+              });
+            }}>
+              <ListItemIcon>
+                <DashboardIcon />
+              </ListItemIcon>
+              <ListItemText primary="Dashboard" />
+            </ListItemButton>
+            {/* <ListItemButton>
+              <ListItemIcon>
+                <ShoppingCartIcon />
+              </ListItemIcon>
+              <ListItemText primary="My Profile" />
+            </ListItemButton> */}
+            <ListItemButton onClick={() => {
+              navigate('/profile', {
+                state: {
+                  user : user,
+                }
+              });
+            }}>
+              <ListItemIcon>
+                <PeopleIcon />
+              </ListItemIcon>
+              <ListItemText primary="Profile" />
+            </ListItemButton>
+            {
+              get('role') == "TEACHER" ? 
+              <ListItemButton onClick={() => {
+                navigate('/create', {
+                  state: {
+                    user : user,
+                  }
+                });
+              }}>
+                <ListItemIcon>
+                  <AddCircleOutlineIcon/>
+                </ListItemIcon>
+                <ListItemText primary="New Course" />
+              </ListItemButton> : 
+              <ListItemButton onClick={() => {
+                navigate('/join', {
+                  state: {
+                    user : user,
+                  }
+                });
+              }}>
+                <ListItemIcon>
+                  <AddCircleOutlineIcon/>
+                </ListItemIcon>
+                <ListItemText primary="New Course" />
+              </ListItemButton>
+            }
+            <ListItemButton onClick={() => {
+              navigate('/progress', {
+                state: {
+                  user : user,
+                }
+              });
+            }}>
+              <ListItemIcon>
+                <BarChartIcon />
+              </ListItemIcon>
+              <ListItemText primary="Your Progress" />
+            </ListItemButton>
+            <ListItemButton onClick={() => {
+              localStorage.removeItem('token');
+              localStorage.removeItem('user');
+              localStorage.removeItem('role');
+              setIsLoggedIn(false);
+            }}>
+              <ListItemIcon>
+                <LogoutIcon />
+              </ListItemIcon>
+              <ListItemText primary="Log out" />
+            </ListItemButton>
           </List>
         </Drawer>
         {/* <Box
@@ -297,8 +428,20 @@ function DashboardContent() {
   );
 }
 
-export default function Dashboard() {
-  return <DashboardContent />;
+export default function JoinCourse() {
+  const navigate = useNavigate();
+  const {state} = useLocation();
+  const [isLoggedIn, setIsLoggedIn] = React.useState(get('token') !== null);
+  React.useEffect(() => {
+    if(get('token') === null ){
+      navigate('/');
+    }
+    if( state === null) {
+      localStorage.removeItem('token');
+      navigate('/');
+    }
+  },[isLoggedIn]);
+  return <DashboardContent setIsLoggedIn={setIsLoggedIn} navigate={navigate} user={state.user} />;
 }
 
 

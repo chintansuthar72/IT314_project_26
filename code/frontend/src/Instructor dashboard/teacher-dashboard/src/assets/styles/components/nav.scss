@@ -1,0 +1,32 @@
+@import '../shared.scss';
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+  background-color: white;
+  margin-bottom: 20px;
+
+  & a {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+  }
+
+  .navigation__links {
+    display: flex;
+  }
+}
+
+.logo {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+}
+
+.link-text {
+  color: $color-link;
+  font-size: $font-size-medium;
+}

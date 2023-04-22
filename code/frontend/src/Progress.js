@@ -33,6 +33,22 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate,useLocation } from 'react-router-dom';
 import Chart from './Student_DashBoard_components/Chart';
 
+import { Button, TextField  } from '@mui/material';
+
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import CloseIcon from '@mui/icons-material/Close';
+
+import Dialog from '@mui/material/Dialog';
+import { Transition } from 'react-transition-group';
+import Stack from '@mui/material/Stack';
+import Slide from '@mui/material/Slide';
+
+// import ListItemButton from '@mui/material/ListItemButton';
+// import ListItemIcon from '@mui/material/ListItemIcon';
+// import ListItemText from '@mui/material/ListItemText';
+import ListItem from '@mui/material/ListItem';
+
 
 function Copyright(props) {
   return (
@@ -46,8 +62,39 @@ function Copyright(props) {
     </Typography>
   );
 }
-
+const set = (keyName, keyValue, ttl) => {
+  const data = {
+      value: keyValue,                  // store the value within this object
+      ttl: Date.now() + (ttl * 1000),   // store the TTL (time to live)
+  }
+  localStorage.setItem(keyName, JSON.stringify(data));
+};
+const get = (keyName) => {
+  const data = localStorage.getItem(keyName);
+  if (!data) {     // if no value exists associated with the key, return null
+      return null;
+  }
+  const item = JSON.parse(data);
+  if (Date.now() > item.ttl) {
+    localStorage.removeItem(keyName);
+    localStorage.removeItem('role');
+    localStorage.removeItem('user');
+      return null;
+  }
+  return item.value;
+};
 const drawerWidth = 240;
+
+const TransitionX = React.forwardRef(function TransitionX(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: 'center',
+  color: theme.palette.text.secondary,
+}));
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
@@ -97,9 +144,50 @@ const mdTheme = createTheme();
 
 function DashboardContent({setIsLoggedIn,navigate,user }) {
   const [open, setOpen] = React.useState(false);
+  const [openEdit, setOpenEdit] = React.useState(false);
+
   const toggleDrawer = () => {
     setOpen(!open);
   };
+  const handleClickOpenEdit = () => {
+    setOpenEdit(true);
+  };
+
+  const handleCloseEdit = () => {
+    setOpenEdit(false);
+  };
+
+  const handleSave = () => {
+    // axios.post(`http://localhost:5000/announcement/course/${course._id}`,{
+    //   title : title,
+    //   description : description,
+    //   files : [],
+    //   comments : []
+    // },{headers:{'Authorization':get('token')}})
+    // .then((resp)=>{   // if no error
+    //   console.log("HandleSave:\n");
+    //   console.log(resp);
+    //   setOpen(false);
+    //   setChanged(!changed);
+    // })
+    // .catch((err)=>{
+    //   console.log(err);
+    //   setError1(err.response.data.message.message);
+    // })
+  }
+  const handleDelete = (id) => {
+    // axios.delete(`http://localhost:5000/announcement/${id}`,{headers:{'Authorization':get('token')}})
+    // .then((resp)=>{   // if no error
+    //   console.log("HandleDelete:\n");
+    //   console.log(resp);
+    //   setOpen(false);
+    //   setChanged(!changed);
+    // })
+    // .catch((err)=>{
+    //   console.log(err);
+    //   setError(err.response.data.message);
+    // })
+  }
 
   return (
     <ThemeProvider theme={mdTheme}>
@@ -185,18 +273,33 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
               </ListItemIcon>
               <ListItemText primary="Profile" />
             </ListItemButton>
-            <ListItemButton onClick={() => {
-              navigate('/create', {
-                state: {
-                  user : user
-                }
-              });
-            }}>
-              <ListItemIcon>
-                <AddCircleOutlineIcon/>
-              </ListItemIcon>
-              <ListItemText primary="New Course" />
-            </ListItemButton>
+            {
+              get('role') == "TEACHER" ? 
+              <ListItemButton onClick={() => {
+                navigate('/create', {
+                  state: {
+                    user : user,
+                  }
+                });
+              }}>
+                <ListItemIcon>
+                  <AddCircleOutlineIcon/>
+                </ListItemIcon>
+                <ListItemText primary="New Course" />
+              </ListItemButton> : 
+              <ListItemButton onClick={() => {
+                navigate('/join', {
+                  state: {
+                    user : user,
+                  }
+                });
+              }}>
+                <ListItemIcon>
+                  <AddCircleOutlineIcon/>
+                </ListItemIcon>
+                <ListItemText primary="New Course" />
+              </ListItemButton>
+            }
             <ListItemButton onClick={() => {
               navigate('/progress', {
                 state: {
@@ -239,7 +342,7 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
             <Grid container spacing={3}>
               {/* Chart */}
               <Grid item xs={12}>
-                <Paper
+                {/* <Paper
                   sx={{
                     p: 2,
                     display: 'flex',
@@ -248,11 +351,120 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
                   }}
                 >
                   <Chart />
-                </Paper>
+                </Paper> */}
+
+                {/*  */}
+                <div className="Progress">
+                    <div>
+                    {/* <Button variant="outlined"  onClick={handleClickOpenEdit}>
+                      Edit Profile
+                    </Button> */}
+                    {/* {error ? <Alert severity="error">{error}</Alert> : ""} */}
+                    {/* <div style={{padding:"10px"}}></div>
+                    <Dialog
+                      fullScreen
+                      open={openEdit}
+                      onClose={handleCloseEdit}
+                      TransitionComponent={TransitionX}
+                    >
+                      <AppBar sx={{ position: 'relative' }}>
+                        <Toolbar>
+                          <IconButton
+                            edge="start"
+                            color="inherit"
+                            onClick={handleCloseEdit}
+                            aria-label="close"
+                          >
+                            <CloseIcon />
+                          </IconButton>
+                          <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+                           Edit Profile
+                          </Typography>
+                          <Button autoFocus color="inherit" onClick={handleSave}>
+                            save
+                          </Button>
+                        </Toolbar>
+                      </AppBar>
+                      <List>
+                        <ListItem>
+                        <TextField fullWidth id="standard-basic" label="username" variant="filled" />
+                          
+                        </ListItem>
+                        <Divider />
+                        <ListItem>
+                        <TextField fullWidth id="standard-basic" label="phone number" variant="filled" />
+                        </ListItem>
+                        <Divider />
+                        <ListItem>
+                        <TextField fullWidth id="standard-basic" label="password" variant="filled" />
+                        </ListItem>
+                         {error1 ? <Alert severity="error">{error1}</Alert> : ""} 
+
+                      </List>
+                    </Dialog> */}
+                    </div>
+                    <Box sx={{ width: '100%' }}>
+                      <Stack spacing={2}>
+                      {/* {rows.map(announcement =>  */}
+                        <Item>
+                          <ListItem alignItems="flex-start">
+                            <ListItemText
+                              primary={"Course name: "}
+                            />
+                            <div>
+                            <Button variant="outlined"  onClick={handleClickOpenEdit}>
+                              Check
+                            </Button>
+                            {/* {error ? <Alert severity="error">{error}</Alert> : ""} */}
+                             <div style={{padding:"10px"}}></div>
+                            <Dialog
+                              fullScreen
+                              open={openEdit}
+                              onClose={handleCloseEdit}
+                              TransitionComponent={TransitionX}
+                            >
+                              <AppBar sx={{ position: 'relative' }}>
+                                <Toolbar>
+                                  <IconButton
+                                    edge="start"
+                                    color="inherit"
+                                    onClick={handleCloseEdit}
+                                    aria-label="close"
+                                  >
+                                    <CloseIcon />
+                                  </IconButton>
+                                  <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+                                      Your Progress
+                                  </Typography>
+                                </Toolbar>
+                              </AppBar>
+              
+                              <Paper
+                                sx={{
+                                  p: 2,
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                  height: 240,
+                                }}
+                              >
+                                <Chart />
+                              </Paper>
+                            </Dialog> 
+                            </div>
+                          </ListItem>
+                          {/* {error1 ? <Alert severity="error">{error1}</Alert> : ""}   */}
+                        </Item>
+                      {/* )} */}
+                      </Stack>
+                    </Box>
+
+                </div>
+                {/*  */}
+
               </Grid>
             </Grid>
             {/* <Copyright sx={{ pt: 4 }} /> */}
-          </Container>
+          </Container> 
         </Box>
       </Box>
     </ThemeProvider>
@@ -262,9 +474,9 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
 export default function Progress() {
   const navigate = useNavigate();
   const {state} = useLocation();
-  const [isLoggedIn, setIsLoggedIn] = React.useState(localStorage.getItem('token') !== null);
+  const [isLoggedIn, setIsLoggedIn] = React.useState(get('token') !== null);
   React.useEffect(() => {
-    if(localStorage.getItem('token') === null ){
+    if(get('token') === null ){
       navigate('/');
     }
     if( state === null) {

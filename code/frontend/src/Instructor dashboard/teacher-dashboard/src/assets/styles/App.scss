@@ -1,0 +1,70 @@
+@import './shared';
+.App {
+  text-align: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+body {
+  background-color: #f8f8f8;
+}
+
+h1,
+h2,
+h3,
+p,
+a,
+ul,
+li,
+button,
+div {
+  font-family: $font-primary;
+  margin: 0;
+  padding: 0;
+}
+
+p,
+a,
+button,
+div {
+  color: $color-text-primary-light;
+}
+
+ul {
+  list-style-type: none;
+}
+
+h1,
+h2 {
+  color: $color-text-primary-dark;
+}
+
+h1 {
+  font-size: $font-size-large;
+}
+
+h2 {
+  font-size: $font-size-large;
+}
+
+p,
+a,
+div {
+  font-size: $font-size-small;
+}
+
+a {
+  text-decoration: none;
+}
+
+.color-light {
+  color: $color-text-light;
+}
+
+.font-size-medium {
+  font-size: $font-size-medium;
+}
+
+.spinner-centered {
+  margin: 0 auto;
+}

@@ -47,6 +47,28 @@ import { useLocation } from 'react-router-dom';
 import { Button } from '@mui/material';
 import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
 
+const set = (keyName, keyValue, ttl) => {
+  const data = {
+      value: keyValue,                  // store the value within this object
+      ttl: Date.now() + (ttl * 1000),   // store the TTL (time to live)
+  }
+  localStorage.setItem(keyName, JSON.stringify(data));
+};
+const get = (keyName) => {
+  const data = localStorage.getItem(keyName);
+  if (!data) {     // if no value exists associated with the key, return null
+      return null;
+  }
+  const item = JSON.parse(data);
+  if (Date.now() > item.ttl) {
+      localStorage.removeItem(keyName);
+      localStorage.removeItem('role');
+      localStorage.removeItem('user');
+      return null;
+  }
+  return item.value;
+};
+
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -117,7 +139,7 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
   const [error, setError] = useState(null);
   const [rows, setRows] = useState([]);
   useEffect(() => {
-    axios.get('http://localhost:5000/user/courses',{headers:{'Authorization':localStorage.getItem('token')}})
+    axios.get('http://localhost:5000/user/courses',{headers:{'Authorization': get('token')}})
       .then((resp)=>{   // if no error
         console.log(resp);
         setRows(resp.data.data);
@@ -212,18 +234,33 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
               </ListItemIcon>
               <ListItemText primary="Profile" />
             </ListItemButton>
-            <ListItemButton onClick={() => {
-              navigate('/create', {
-                state: {
-                  user : user,
-                }
-              });
-            }}>
-              <ListItemIcon>
-                <AddCircleOutlineIcon/>
-              </ListItemIcon>
-              <ListItemText primary="New Course" />
-            </ListItemButton>
+            {
+              get('role') == "TEACHER" ? 
+              <ListItemButton onClick={() => {
+                navigate('/create', {
+                  state: {
+                    user : user,
+                  }
+                });
+              }}>
+                <ListItemIcon>
+                  <AddCircleOutlineIcon/>
+                </ListItemIcon>
+                <ListItemText primary="New Course" />
+              </ListItemButton> : 
+              <ListItemButton onClick={() => {
+                navigate('/join', {
+                  state: {
+                    user : user,
+                  }
+                });
+              }}>
+                <ListItemIcon>
+                  <AddCircleOutlineIcon/>
+                </ListItemIcon>
+                <ListItemText primary="New Course" />
+              </ListItemButton>
+            }
             <ListItemButton onClick={() => {
               navigate('/progress', {
                 state: {
@@ -317,6 +354,7 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
                               navigate('/manage',{
                                 state: {
                                   course: row.course,
+                                  instructor: row.instructor, 
                                   user: user,
                                 }
                               })
@@ -343,9 +381,9 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
 export default function Dashboard() {
   const navigate = useNavigate();
   const {state} = useLocation();
-  const [isLoggedIn, setIsLoggedIn] = React.useState(localStorage.getItem('token') !== null);
+  const [isLoggedIn, setIsLoggedIn] = React.useState(get('token') !== null);
   React.useEffect(() => {
-    if(localStorage.getItem('token') === null ){
+    if(get('token') === null ){
       navigate('/');
     }
     if( state === null) {
