@@ -192,10 +192,6 @@ export default function EditAssignment() {
     <Box
     sx={{
       marginTop: 10,
-      display: 'flex',
-      flexDirection: 'column',
-      
-      alignItems: 'center',
       width: '100%',
         '& .actions': {
           color: 'text.secondary',
