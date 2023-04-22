@@ -10,6 +10,7 @@ import DashboardStudentRegister from './student_registration_component/Register'
 import ManageInstructor from './Course_manage_instructor_components/Manage';
 import Profile from './Profile';
 import Progress from './Progress';
+import JoinCourse from './student_registration_component/Register';
 
 const set = (keyName, keyValue, ttl) => {
   const data = {
@@ -59,6 +60,7 @@ export default function App() {
           <Route path="/" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/create" element={<CourseCreation />} />
+          <Route path="/join" element={<JoinCourse />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/register" element={<DashboardStudentRegister />} />
           <Route path="/manage" element={<ManageInstructor />} />

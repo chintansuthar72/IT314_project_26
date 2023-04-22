@@ -41,6 +41,7 @@ import Announcement from './Announcement';
 import Material from './Material';
 import Chat from './Chat';
 import Assignment from './Assignment';
+import InstructorFeedback from './InstructorFeedback.js';
 
 
 const drawerWidth = 240;
@@ -291,6 +292,7 @@ function DashboardContent({setIsLoggedIn,navigate,user,course, instructor}) {
             <Tab label="Material" {...a11yProps(1)} />
             <Tab label="Assignment" {...a11yProps(2)} />
             <Tab label="Chat" {...a11yProps(3)} />
+            <Tab label="Feedback" {...a11yProps(4)} />
           </Tabs>
         </Box>
         <TabPanel value={value} index={0}>
@@ -308,6 +310,10 @@ function DashboardContent({setIsLoggedIn,navigate,user,course, instructor}) {
         <TabPanel value={value} index={3}>
           {/* discussion forum link */}
           <Chat />
+        </TabPanel>
+        <TabPanel value={value} index={4}>
+          {/* Feedback */}
+          <InstructorFeedback />
         </TabPanel>
       </Box>
 

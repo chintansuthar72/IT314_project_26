@@ -234,18 +234,33 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
               </ListItemIcon>
               <ListItemText primary="Profile" />
             </ListItemButton>
-            <ListItemButton onClick={() => {
-              navigate('/create', {
-                state: {
-                  user : user,
-                }
-              });
-            }}>
-              <ListItemIcon>
-                <AddCircleOutlineIcon/>
-              </ListItemIcon>
-              <ListItemText primary="New Course" />
-            </ListItemButton>
+            {
+              get('role') == "TEACHER" ? 
+              <ListItemButton onClick={() => {
+                navigate('/create', {
+                  state: {
+                    user : user,
+                  }
+                });
+              }}>
+                <ListItemIcon>
+                  <AddCircleOutlineIcon/>
+                </ListItemIcon>
+                <ListItemText primary="New Course" />
+              </ListItemButton> : 
+              <ListItemButton onClick={() => {
+                navigate('/join', {
+                  state: {
+                    user : user,
+                  }
+                });
+              }}>
+                <ListItemIcon>
+                  <AddCircleOutlineIcon/>
+                </ListItemIcon>
+                <ListItemText primary="New Course" />
+              </ListItemButton>
+            }
             <ListItemButton onClick={() => {
               navigate('/progress', {
                 state: {

@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
-import { format } from 'date-fns'
+// import { format } from 'date-fns'
 import './feedback.css';  // import the CSS file
 
-format(new Date(), 'dd.MM.yyyy')
+// format(new Date(), 'dd.MM.yyyy')
 
-function Instructor() {
+function InstructorFeedback() {
   const [studentName, setStudentName] = useState('');
   const [studentID, setStudentID] = useState('');
   const [startLeaveDate, setStartLeaveDate] = useState('');
@@ -44,19 +44,19 @@ function Instructor() {
   const onSubmitHandler = (event) => {
     event.preventDefault();
     console.log(studentName);
-    setStudentName('');
+    // setStudentName('');
     console.log(studentID);
-    setStudentID('');
+    // setStudentID('');
     console.log(startLeaveDate);
-    setStartLeaveDate('');
+    // setStartLeaveDate('');
     console.log(endLeaveDate);
-    setEndLeaveDate('');
+    // setEndLeaveDate('');
     console.log(reason);
-    setReason('');
+    // setReason('');
     console.log(phoneNo);
-    setPhoneNo('');
+    // setPhoneNo('');
     console.log(email);
-    setEmail('');
+    // setEmail('');
   }
 
   return(
@@ -94,4 +94,4 @@ function Instructor() {
   )
 }
 
-export default Instructor;
+export default InstructorFeedback;
