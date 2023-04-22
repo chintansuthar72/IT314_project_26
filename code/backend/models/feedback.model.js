@@ -1,31 +1,22 @@
 const mongoose = require('mongoose');
 
 const feedbackSchema = new mongoose.Schema({
-    student_name: {
+    topic: {
         type: String,
         required: true,
+        trim: true,
     },
-    student_id: {
+    description: {
         type: String,
         required: true,
+        trim: true,
     },
-    submit_date: {
-        type: Date,
+    course: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Course',
         required: true,
     },
-    feedback: {
-        type: String,
-        required: true,
-    },
-    email_id: {
-        type: String,
-        required: true,
-    },
-    phone: {
-        type: String,
-        required: true,
-    },
-
+    
 
 }, {
     timestamps: true,
