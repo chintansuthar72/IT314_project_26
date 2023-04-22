@@ -6,6 +6,7 @@ const addAnnouncement = async (req, res) => {
     try {
         if(!['ADMIN','TEACHER'].includes(req.role))
             return response.unauthorizedResponse(res);
+        console.log(req.body);
         req.body.course = req.params.id;
         req.body.teacher = req.id;
         const course = await Course.findById(req.params.id);
@@ -69,7 +70,7 @@ const updateAnnouncementById = async (req, res) => {
 
 const getAllAnnouncementsByCourseId = async (req, res) => {
     try {
-        const announcements = await Announcement.find({course : req.params.id});
+        const announcements = await Announcement.find({course : req.params.id}).sort({ createdAt: -1 });
         return response.successResponse(res, announcements);
     } catch (err) {
         return response.serverErrorResponse(res, err);

@@ -10,6 +10,8 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 import LayersIcon from '@mui/icons-material/Layers';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 
+import ManageAccountsRoundedIcon from '@mui/icons-material/ManageAccountsRounded';
+
 export const mainListItems = (
   <React.Fragment>
     <ListItemButton>
@@ -20,13 +22,13 @@ export const mainListItems = (
     </ListItemButton>
     <ListItemButton>
       <ListItemIcon>
-        <ShoppingCartIcon />
+        <PeopleIcon />
       </ListItemIcon>
       <ListItemText primary="My Profile" />
     </ListItemButton>
     <ListItemButton>
       <ListItemIcon>
-        <PeopleIcon />
+        <ManageAccountsRoundedIcon />
       </ListItemIcon>
       <ListItemText primary="edit Profile" />
     </ListItemButton>

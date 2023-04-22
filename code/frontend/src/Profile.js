@@ -13,6 +13,8 @@ import Badge from '@mui/material/Badge';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
+import Slide from '@mui/material/Slide';
+
 import Link from '@mui/material/Link';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -32,7 +34,21 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate,useLocation } from 'react-router-dom';
 import Deposits from './Student_DashBoard_components/Deposits';
+// import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+// import ListItemText from '@mui/material/ListItemText';
+// import Divider from '@mui/material/Divider';
+import { Button, TextField  } from '@mui/material';
 
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import CloseIcon from '@mui/icons-material/Close';
+
+import Dialog from '@mui/material/Dialog';
+import { Transition } from 'react-transition-group';
+import Stack from '@mui/material/Stack';
+
+import { useEffect, useState } from 'react';
 
 function Copyright(props) {
   return (
@@ -46,8 +62,38 @@ function Copyright(props) {
     </Typography>
   );
 }
-
+const set = (keyName, keyValue, ttl) => {
+  const data = {
+      value: keyValue,                  // store the value within this object
+      ttl: Date.now() + (ttl * 1000),   // store the TTL (time to live)
+  }
+  localStorage.setItem(keyName, JSON.stringify(data));
+};
+const get = (keyName) => {
+  const data = localStorage.getItem(keyName);
+  if (!data) {     // if no value exists associated with the key, return null
+      return null;
+  }
+  const item = JSON.parse(data);
+  if (Date.now() > item.ttl) {
+    localStorage.removeItem(keyName);
+    localStorage.removeItem('role');
+    localStorage.removeItem('user');
+      return null;
+  }
+  return item.value;
+};
 const drawerWidth = 240;
+const TransitionX = React.forwardRef(function TransitionX(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: 'center',
+  color: theme.palette.text.secondary,
+}));
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
@@ -97,9 +143,50 @@ const mdTheme = createTheme();
 
 function DashboardContent({setIsLoggedIn,navigate,user }) {
   const [open, setOpen] = React.useState(false);
+  const [openEdit, setOpenEdit] = React.useState(false);
+
   const toggleDrawer = () => {
     setOpen(!open);
   };
+  const handleClickOpenEdit = () => {
+    setOpenEdit(true);
+  };
+
+  const handleCloseEdit = () => {
+    setOpenEdit(false);
+  };
+
+  const handleSave = () => {
+    // axios.post(`http://localhost:5000/announcement/course/${course._id}`,{
+    //   title : title,
+    //   description : description,
+    //   files : [],
+    //   comments : []
+    // },{headers:{'Authorization':get('token')}})
+    // .then((resp)=>{   // if no error
+    //   console.log("HandleSave:\n");
+    //   console.log(resp);
+    //   setOpen(false);
+    //   setChanged(!changed);
+    // })
+    // .catch((err)=>{
+    //   console.log(err);
+    //   setError1(err.response.data.message.message);
+    // })
+  }
+  const handleDelete = (id) => {
+    // axios.delete(`http://localhost:5000/announcement/${id}`,{headers:{'Authorization':get('token')}})
+    // .then((resp)=>{   // if no error
+    //   console.log("HandleDelete:\n");
+    //   console.log(resp);
+    //   setOpen(false);
+    //   setChanged(!changed);
+    // })
+    // .catch((err)=>{
+    //   console.log(err);
+    //   setError(err.response.data.message);
+    // })
+  }
 
   return (
     <ThemeProvider theme={mdTheme}>
@@ -130,7 +217,7 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
               noWrap
               sx={{ flexGrow: 1 }}
             >
-              Profile
+              My Profile
             </Typography>
             {/* <IconButton color="inherit">
               <Badge badgeContent={4} color="secondary">
@@ -185,18 +272,33 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
               </ListItemIcon>
               <ListItemText primary="Profile" />
             </ListItemButton>
-            <ListItemButton onClick={() => {
-              navigate('/create', {
-                state: {
-                  user : user
-                }
-              });
-            }}>
-              <ListItemIcon>
-                <AddCircleOutlineIcon/>
-              </ListItemIcon>
-              <ListItemText primary="New Course" />
-            </ListItemButton>
+            {
+              get('role') == "TEACHER" ? 
+              <ListItemButton onClick={() => {
+                navigate('/create', {
+                  state: {
+                    user : user,
+                  }
+                });
+              }}>
+                <ListItemIcon>
+                  <AddCircleOutlineIcon/>
+                </ListItemIcon>
+                <ListItemText primary="New Course" />
+              </ListItemButton> : 
+              <ListItemButton onClick={() => {
+                navigate('/join', {
+                  state: {
+                    user : user,
+                  }
+                });
+              }}>
+                <ListItemIcon>
+                  <AddCircleOutlineIcon/>
+                </ListItemIcon>
+                <ListItemText primary="New Course" />
+              </ListItemButton>
+            }
             <ListItemButton onClick={() => {
               navigate('/progress', {
                 state: {
@@ -238,7 +340,7 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
               <Grid item xs={12}>
-                <Paper
+                {/* <Paper
                   sx={{
                     p: 2,
                     display: 'flex',
@@ -247,10 +349,90 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
                   }}
                 >
                   <Deposits user={user}/>
-                </Paper>
+                </Paper> */}
+
+                {/*  */}
+                <div className="Profile">
+                    <div>
+                    <Button variant="outlined"  onClick={handleClickOpenEdit}>
+                      Edit Profile
+                    </Button>
+                    {/* {error ? <Alert severity="error">{error}</Alert> : ""} */}
+                    <div style={{padding:"10px"}}></div>
+                    <Dialog
+                      fullScreen
+                      open={openEdit}
+                      onClose={handleCloseEdit}
+                      TransitionComponent={TransitionX}
+                    >
+                      <AppBar sx={{ position: 'relative' }}>
+                        <Toolbar>
+                          <IconButton
+                            edge="start"
+                            color="inherit"
+                            onClick={handleCloseEdit}
+                            aria-label="close"
+                          >
+                            <CloseIcon />
+                          </IconButton>
+                          <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+                           Edit Profile
+                          </Typography>
+                          <Button autoFocus color="inherit" onClick={handleSave}>
+                            save
+                          </Button>
+                        </Toolbar>
+                      </AppBar>
+                      <List>
+                        <ListItem>
+                        <TextField fullWidth id="standard-basic" label="username" variant="filled" />
+                          {/* <TextField fullWidth  id="standard-basic" label="Title" variant="filled" onChange={(e) => setTitle(e.target.value)}/> */}
+                        </ListItem>
+                        <Divider />
+                        <ListItem>
+                        <TextField fullWidth id="standard-basic" label="phone number" variant="filled" />
+                          {/* <TextField fullWidth  id="standard-basic" label="Description" variant="filled" multiline rows={5} onChange={(e)=>setDescription(e.target.value)}/> */}
+                        </ListItem>
+                        <Divider />
+                        <ListItem>
+                        <TextField fullWidth id="standard-basic" label="password" variant="filled" />
+                          {/* <TextField fullWidth  id="standard-basic" label="Title" variant="filled" onChange={(e) => setTitle(e.target.value)}/> */}
+                        </ListItem>
+                        {/* {error1 ? <Alert severity="error">{error1}</Alert> : ""} */}
+
+                      </List>
+                    </Dialog>
+                    </div>
+                    <Box sx={{ width: '100%' }}>
+                      <Stack spacing={2}>
+                      {/* {rows.map(announcement =>  */}
+                        <Item>
+                          <ListItem alignItems="flex-start">
+                            <ListItemText
+                              primary={"username: "}
+                            />
+                          </ListItem>
+                          <ListItem alignItems="flex-start">
+                            <ListItemText
+                              primary={"phone number"}
+                            />
+                          </ListItem>
+                          <ListItem alignItems="flex-start">
+                            <ListItemText
+                              primary={"email"}
+                            />
+                          </ListItem>
+                        </Item>
+                      {/* )} */}
+                      </Stack>
+                    </Box>
+
+                </div>
+                {/*  */}
+
               </Grid>
             </Grid>
-            {/* <Copyright sx={{ pt: 4 }} /> */}
+            {/* <Copyright sx={{ pt: 4  */}
           </Container>
         </Box>
       </Box>
@@ -261,9 +443,9 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
 export default function Profile() {
   const navigate = useNavigate();
   const {state} = useLocation();
-  const [isLoggedIn, setIsLoggedIn] = React.useState(localStorage.getItem('token') !== null);
+  const [isLoggedIn, setIsLoggedIn] = React.useState(get('token') !== null);
   React.useEffect(() => {
-    if(localStorage.getItem('token') === null ){
+    if(get('token') === null ){
       navigate('/');
     }
     if( state === null) {

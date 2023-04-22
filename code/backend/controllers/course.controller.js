@@ -79,3 +79,21 @@ exports.deleteCourseById = async (req, res) => {
         return response.serverErrorResponse(res, err);
     }
 }
+
+exports.deleteUserFromCourse = async (req,res) => {
+    try {
+        if (!['ADMIN', 'TEACHER'].includes(req.role))
+            return response.unauthorizedResponse(res);
+        const course = await Course.findById(req.params.id);
+        if (!course)
+            return response.notFoundResponse(res, 'Course not found');
+        if (course.teacher != req.id)
+            return response.unauthorizedResponse(res);
+        const updatedCourse = await Course.findByIdAndUpdate(req.params.id, {
+            $pull: { students: req.body.userId }
+        });
+        return response.successResponse(res, updatedCourse);
+    } catch (err) {
+        return response.serverErrorResponse(res, err);
+    }
+}

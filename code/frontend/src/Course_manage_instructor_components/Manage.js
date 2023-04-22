@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-
+import { useLocation } from 'react-router-dom';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
@@ -37,11 +37,35 @@ import { useNavigate } from 'react-router-dom';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 
-import { mainListItems, secondaryListItems } from './listItems';
-import About from './About';
+import Announcement from './Announcement';
+import Material from './Material';
+import Chat from './Chat';
+import Assignment from './Assignment';
+import InstructorFeedback from './InstructorFeedback.js';
+
 
 const drawerWidth = 240;
-
+const set = (keyName, keyValue, ttl) => {
+  const data = {
+      value: keyValue,                  // store the value within this object
+      ttl: Date.now() + (ttl * 1000),   // store the TTL (time to live)
+  }
+  localStorage.setItem(keyName, JSON.stringify(data));
+};
+const get = (keyName) => {
+  const data = localStorage.getItem(keyName);
+  if (!data) {     // if no value exists associated with the key, return null
+      return null;
+  }
+  const item = JSON.parse(data);
+  if (Date.now() > item.ttl) {
+      localStorage.removeItem(keyName);
+      localStorage.removeItem('role');
+      localStorage.removeItem('user');
+      return null;
+  }
+  return item.value;
+};
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
 })(({ theme, open }) => ({
@@ -113,14 +137,8 @@ function TabPanel(props) {
   );
 }
 
-
-
-
-
-
-
-function DashboardContent({setIsLoggedIn,navigate}) {
-  const [open, setOpen] = React.useState(true);
+function DashboardContent({setIsLoggedIn,navigate,user,course, instructor}) {
+  const [open, setOpen] = React.useState(false);
   const toggleDrawer = () => {
     setOpen(!open);
   };
@@ -146,7 +164,7 @@ function DashboardContent({setIsLoggedIn,navigate}) {
               edge="start"
               color="inherit"
               aria-label="open drawer"
-              // onClick={toggleDrawer}
+              onClick={toggleDrawer}
               sx={{
                 marginRight: '36px',
                 ...(open && { display: 'none' }),
@@ -161,13 +179,13 @@ function DashboardContent({setIsLoggedIn,navigate}) {
               noWrap
               sx={{ flexGrow: 1 }}
             >
-              Course_Name
+              {course.name}
             </Typography>
-            <IconButton color="inherit">
+            {/* <IconButton color="inherit">
               <Badge badgeContent={4} color="secondary">
                 <NotificationsIcon />
               </Badge>
-            </IconButton>
+            </IconButton> */}
           </Toolbar>
         </AppBar>
         <Drawer variant="permanent" open={open}>
@@ -185,7 +203,13 @@ function DashboardContent({setIsLoggedIn,navigate}) {
           </Toolbar>
           <Divider />
           <List component="nav">
-          <ListItemButton>
+            <ListItemButton onClick={() => {
+              navigate('/dashboard', {
+                state: {
+                  user : user
+                }
+              });
+            }}>
               <ListItemIcon>
                 <DashboardIcon />
               </ListItemIcon>
@@ -197,21 +221,37 @@ function DashboardContent({setIsLoggedIn,navigate}) {
               </ListItemIcon>
               <ListItemText primary="My Profile" />
             </ListItemButton> */}
-            <ListItemButton>
+            <ListItemButton onClick={() => {
+              navigate('/profile', {
+                state: {
+                  user : user,
+                }
+              });
+            }}>
               <ListItemIcon>
                 <PeopleIcon />
               </ListItemIcon>
               <ListItemText primary="Profile" />
             </ListItemButton>
             <ListItemButton onClick={() => {
-              navigate('/create');
+              navigate('/create', {
+                state: {
+                  user : user,
+                }
+              });
             }}>
               <ListItemIcon>
                 <AddCircleOutlineIcon/>
               </ListItemIcon>
               <ListItemText primary="New Course" />
             </ListItemButton>
-            <ListItemButton>
+            <ListItemButton onClick={() => {
+              navigate('/progress', {
+                state: {
+                  user : user,
+                }
+              });
+            }}>
               <ListItemIcon>
                 <BarChartIcon />
               </ListItemIcon>
@@ -220,6 +260,7 @@ function DashboardContent({setIsLoggedIn,navigate}) {
             <ListItemButton onClick={() => {
               localStorage.removeItem('token');
               localStorage.removeItem('user');
+              localStorage.removeItem('role');
               setIsLoggedIn(false);
             }}>
               <ListItemIcon>
@@ -249,21 +290,30 @@ function DashboardContent({setIsLoggedIn,navigate}) {
           <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
             <Tab label="Announcement" {...a11yProps(0)} />
             <Tab label="Material" {...a11yProps(1)} />
-            <Tab label="Submit" {...a11yProps(2)} />
-            <Tab label="Join Discussion Forum" {...a11yProps(3)} />
+            <Tab label="Assignment" {...a11yProps(2)} />
+            <Tab label="Chat" {...a11yProps(3)} />
+            <Tab label="Feedback" {...a11yProps(4)} />
           </Tabs>
         </Box>
         <TabPanel value={value} index={0}>
-          <About Item={1}/>
+          {/* <About Item={1} announcements={course.announcements}/> */}
+          <Announcement course={course}/>
         </TabPanel>
         <TabPanel value={value} index={1}>
-          <About Item={2}/>
+          {/* <About Item={2}/> */}
+          <Material course={course}/>
         </TabPanel>
         <TabPanel value={value} index={2}>
-          <About Item={3}/>
+          {/* <About Item={3}/> */}
+          <Assignment course={course}/>
         </TabPanel>
         <TabPanel value={value} index={3}>
           {/* discussion forum link */}
+          <Chat />
+        </TabPanel>
+        <TabPanel value={value} index={4}>
+          {/* Feedback */}
+          <InstructorFeedback />
         </TabPanel>
       </Box>
 
@@ -276,15 +326,16 @@ function DashboardContent({setIsLoggedIn,navigate}) {
 
 export default function ManageInstructor() {
   const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('token') !== null);
-  useEffect(() => {
-    if(localStorage.getItem('token') == null){
+  const {state} = useLocation();
+  const [isLoggedIn, setIsLoggedIn] = React.useState(get('token') !== null);
+  React.useEffect(() => {
+    if(get('token') === null ){
+      navigate('/');
+    }
+    if( state === null) {
+      localStorage.removeItem('token');
       navigate('/');
     }
   },[isLoggedIn]);
-  return (
-    <>
-      <DashboardContent setIsLoggedIn={setIsLoggedIn} navigate={navigate}/>
-    </>
-  )
+  return <DashboardContent  setIsLoggedIn={setIsLoggedIn} navigate={navigate} user={state.user} course={state.course} instructor={state.instructor}/>;
 }

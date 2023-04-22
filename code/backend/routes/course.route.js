@@ -17,4 +17,7 @@ router.put('/:id', [verifyToken], courseController.updateCourseById);
 // DELETE course by id
 router.delete('/:id', [verifyToken], courseController.deleteCourseById);
 
+// Delete user from course
+router.delete('/:id/user/:userId', [verifyToken], courseController.deleteUserFromCourse);
+
 module.exports = router;
