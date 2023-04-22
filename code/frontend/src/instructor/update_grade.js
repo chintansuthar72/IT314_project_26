@@ -153,10 +153,19 @@ export default function UpdateGrade() {
     {
         field: 'grade',
         headerName: 'Grade',
-        type : 'number',
-        width: 80,
-        editable: true,  
-    },
+        type:'number',
+        width: 100,
+        editable: true,
+        valueGetter: (params) => {
+          const { row } = params;
+          const grade = row.grade !== undefined ? parseInt(row.grade, 10) : null;
+          const maxscore = row.maxscore !== undefined ? parseInt(row.maxscore, 10) : null;
+          if (grade === null || maxscore === null || isNaN(grade) || isNaN(maxscore)) {
+            return '';
+          }
+          return Math.min(Math.max(0, grade), maxscore);
+        },
+      },
     {
         field: 'feedback',
         headerName: 'Feedback',
