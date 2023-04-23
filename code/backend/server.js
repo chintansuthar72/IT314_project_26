@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 
 const dotenv = require("dotenv");
-const { userRoute, announcementRoute, messageRoute, commentRoute, assignmentRoute, submissionRoute, gradeRoute, courseRoute } = require("./routes/index.route");
+const { userRoute, announcementRoute, messageRoute, commentRoute, assignmentRoute, submissionRoute, gradeRoute, courseRoute, feedbackRoute } = require("./routes/index.route");
 dotenv.config();
 
 const app = express();
@@ -35,6 +35,7 @@ app.use('/assignment',assignmentRoute);
 app.use('/submission',submissionRoute);
 app.use('/grade',gradeRoute);
 app.use('/course',courseRoute);
+app.use('/feedback',feedbackRoute);
 
 app.listen(PORT, () => {
     console.log("Server is running on Port: " + PORT);
