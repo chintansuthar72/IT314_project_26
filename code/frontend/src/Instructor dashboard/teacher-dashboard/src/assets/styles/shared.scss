@@ -1,0 +1,36 @@
+//--------------- COLORS -----------------
+$color-text-primary-dark: #33333d;
+$color-text-primary-light: #4d4d4d;
+$color-text-light: #414141;
+$color-text-contrast: white;
+$color-primary: #4800a0;
+$color-secondary: blue;
+$color-link: #2196f3;
+$color-exercises: #ffa58f;
+$color-reading: #99b2dd;
+$border-color: #c6c7cd;
+
+$accent-surface-primary-light: #eff3f6;
+$accent-surface-secondary-light: #f4f4f4;
+$accent-surface-secondary-medium: #ebebeb;
+$color-danger: #fb6d77;
+$color-danger-hover: #fa3d4a;
+
+//--------------- SIZES ------------------
+$font-size-large: 34px;
+$font-size-medium: 20px;
+$font-size-small: 16px;
+
+$content-width-max: 900px;
+$spacing-unit: 5px;
+
+$spinner-size-large: 60;
+
+//--------------- FONTS ------------
+$font-primary: 'Roboto', sans-serif;
+$font-weight-bold: 700;
+
+:export {
+  colorPrimary: $color-primary;
+  spinnerSizeLarge: $spinner-size-large;
+}

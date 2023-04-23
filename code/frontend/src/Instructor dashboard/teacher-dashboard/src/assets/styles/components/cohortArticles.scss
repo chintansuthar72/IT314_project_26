@@ -1,0 +1,29 @@
+@import '../shared.scss';
+
+.article-list-container {
+  margin-bottom: 40px;
+}
+
+.article-list {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.article {
+  margin-right: 5px;
+  margin-bottom: 10px;
+}
+
+.user-upload {
+  margin-bottom: 20px;
+}
+
+.drop-articles {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  height: 200px;
+  border: 3px dashed $border-color;
+}

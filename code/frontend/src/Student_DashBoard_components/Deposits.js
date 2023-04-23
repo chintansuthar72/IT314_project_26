@@ -7,16 +7,16 @@ function preventDefault(event) {
   event.preventDefault();
 }
 
-export default function Deposits() {
+export default function Deposits({user}) {
   return (
     <React.Fragment>
       <Title>Details</Title>
       <div className="container">
         <Typography component="p" variant="h4">
-          Priyanshu09
+          {user.user.username}
         </Typography>
         <Typography color="text.secondary" sx={{ flex: 1 }}>
-          #123456789
+          {user.user.phone}
         </Typography>
       </div>
       {/* <h3>Name</h3>

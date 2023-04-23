@@ -1,16 +1,18 @@
 const response = require('../utils/responses.util');
 const Course = require('../models/course.model');
+const File = require('../models/file.model');
 
 // POST new course
 exports.addCourse = async (req, res) => {
     try {
         if (!['ADMIN', 'TEACHER'].includes(req.role))
-            return response.unauthorizedResponse(res);
+            return response.unauthorizedResponse(res, 'You are not authorized to create a course');
         req.body.teacher = req.id;
         req.body.students = [];
         req.body.assignments = [];
         req.body.announcements = [];
         req.body.files = [];
+        req.body.messages = [];
         const course = await Course.create(req.body);
         return response.successfullyCreatedResponse(res, course);
     } catch (err) {
@@ -75,6 +77,82 @@ exports.deleteCourseById = async (req, res) => {
         const deletedCourse = await Course.findByIdAndDelete(req.params.id);
         return response.successResponse(res,deletedCourse);
     } catch (err) {
+        return response.serverErrorResponse(res, err);
+    }
+}
+
+exports.deleteUserFromCourse = async (req,res) => {
+    try {
+        if (!['ADMIN', 'TEACHER'].includes(req.role))
+            return response.unauthorizedResponse(res);
+        const course = await Course.findById(req.params.id);
+        if (!course)
+            return response.notFoundResponse(res, 'Course not found');
+        if (course.teacher != req.id)
+            return response.unauthorizedResponse(res);
+        const updatedCourse = await Course.findByIdAndUpdate(req.params.id, {
+            $pull: { students: req.body.userId }
+        });
+        return response.successResponse(res, updatedCourse);
+    } catch (err) {
+        return response.serverErrorResponse(res, err);
+    }
+}
+
+exports.uploadMaterial = async (req,res) => {
+    try {
+        if(!['ADMIN','TEACHER'].includes(req.role))
+            return response.unauthorizedResponse(res);
+        const course = await Course.findById(req.params.id);
+        if(!course)
+            return response.notFoundResponse(res, 'Course not found');
+        if(course.teacher != req.id) 
+            return response.unauthorizedResponse(res);
+        const file = await File.create({
+            filename : req.body.filename,
+            data : req.body.data,
+        })
+        course.files.push(file._id);
+        const updatedCourse = await course.save();
+        return response.successResponse(res, updatedCourse);
+    } catch (err) {
+        return response.serverErrorResponse(res, err);
+    }
+}
+
+exports.getMaterials = async (req, res) => {
+    try {
+        const course = await Course.findById(req.params.id);
+        if(!course)
+            return response.notFoundResponse(res, 'Course not found');
+        const files = [] 
+        for(let i = course.files.length-1; i >= 0; --i) {
+            const data = await File.findById(course.files[i]._id);
+            files.push(data);
+        }
+        return response.successResponse(res,files);
+    } catch(err) {
+        return response.serverErrorResponse(res, err);
+    }
+}
+
+exports.deleteMaterial = async (req, res) => {
+    try {
+        if(!['ADMIN','TEACHER'].includes(req.role))
+            return response.unauthorizedResponse(res);
+        const course = await Course.findById(req.query.course_id);
+        if(!course)
+            return response.notFoundResponse(res, 'Course not found');
+        const files = [] 
+        for(let i = 0; i < course.files.length; ++i) {
+            if(course.files[i]._id != req.params.id) {
+                files.push(course.files[i]);
+            }
+        }
+        course.files = files;
+        await course.save();
+        return response.successResponse(res,course);
+    } catch(err) {
         return response.serverErrorResponse(res, err);
     }
 }

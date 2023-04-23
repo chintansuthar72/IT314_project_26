@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { useState, useEffect } from 'react';
+
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
@@ -29,9 +31,43 @@ import PeopleIcon from '@mui/icons-material/People';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import LayersIcon from '@mui/icons-material/Layers';
 import AssignmentIcon from '@mui/icons-material/Assignment';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import LogoutIcon from '@mui/icons-material/Logout';
 import Deposits from './Deposits';
 import Orders from './Orders';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Title from './Title';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { Button } from '@mui/material';
+import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
+
+const set = (keyName, keyValue, ttl) => {
+  const data = {
+      value: keyValue,                  // store the value within this object
+      ttl: Date.now() + (ttl * 1000),   // store the TTL (time to live)
+  }
+  localStorage.setItem(keyName, JSON.stringify(data));
+};
+const get = (keyName) => {
+  const data = localStorage.getItem(keyName);
+  if (!data) {     // if no value exists associated with the key, return null
+      return null;
+  }
+  const item = JSON.parse(data);
+  if (Date.now() > item.ttl) {
+      localStorage.removeItem(keyName);
+      localStorage.removeItem('role');
+      localStorage.removeItem('user');
+      return null;
+  }
+  return item.value;
+};
 
 function Copyright(props) {
   return (
@@ -94,11 +130,31 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 const mdTheme = createTheme();
 
-function DashboardContent({setIsLoggedIn }) {
-  const [open, setOpen] = React.useState(true);
+function DashboardContent({setIsLoggedIn,navigate,user }) {
+// function DashboardContent() {
+// const user = "student";
+// const navigate = true;
+// const setIsLoggedIn = (val) =>{
+//   console.log("hello");
+// }
+  const [open, setOpen] = React.useState(false);
   const toggleDrawer = () => {
     setOpen(!open);
   };
+
+  const [error, setError] = useState(null);
+  const [rows, setRows] = useState([]);
+  useEffect(() => {
+    axios.get('http://localhost:5000/user/courses',{headers:{'Authorization': get('token')}})
+      .then((resp)=>{   // if no error
+        console.log(resp);
+        setRows(resp.data.data);
+      })
+      .catch((err)=>{
+        console.log(err);
+        setError(err.response.data.error);
+      })
+  },[]);
 
   return (
     <ThemeProvider theme={mdTheme}>
@@ -154,25 +210,70 @@ function DashboardContent({setIsLoggedIn }) {
           <Divider />
           <List component="nav">
             {/* {mainListItems}*/}
-            <ListItemButton>
+            <ListItemButton onClick={() => {
+              navigate('/dashboard', {
+                state: {
+                  user : user
+                }
+              });
+            }}>
               <ListItemIcon>
                 <DashboardIcon />
               </ListItemIcon>
               <ListItemText primary="Dashboard" />
             </ListItemButton>
-            <ListItemButton>
+            {/* <ListItemButton>
               <ListItemIcon>
                 <ShoppingCartIcon />
               </ListItemIcon>
               <ListItemText primary="My Profile" />
-            </ListItemButton>
-            <ListItemButton>
+            </ListItemButton> */}
+            <ListItemButton onClick={() => {
+              navigate('/profile', {
+                state: {
+                  user : user,
+                }
+              });
+            }}>
               <ListItemIcon>
                 <PeopleIcon />
               </ListItemIcon>
-              <ListItemText primary="edit Profile" />
+              <ListItemText primary="Profile" />
             </ListItemButton>
-            <ListItemButton>
+            {
+              get('role') == "TEACHER" ? 
+              <ListItemButton onClick={() => {
+                navigate('/create', {
+                  state: {
+                    user : user,
+                  }
+                });
+              }}>
+                <ListItemIcon>
+                  <AddCircleOutlineIcon/>
+                </ListItemIcon>
+                <ListItemText primary="New Course" />
+              </ListItemButton> : 
+              <ListItemButton onClick={() => {
+                navigate('/join', {
+                  state: {
+                    user : user,
+                  }
+                });
+              }}>
+                <ListItemIcon>
+                  <AddCircleOutlineIcon/>
+                </ListItemIcon>
+                <ListItemText primary="New Course" />
+              </ListItemButton>
+            }
+            <ListItemButton onClick={() => {
+              navigate('/progress', {
+                state: {
+                  user : user,
+                }
+              });
+            }}>
               <ListItemIcon>
                 <BarChartIcon />
               </ListItemIcon>
@@ -181,10 +282,11 @@ function DashboardContent({setIsLoggedIn }) {
             <ListItemButton onClick={() => {
               localStorage.removeItem('token');
               localStorage.removeItem('user');
+              localStorage.removeItem('role');
               setIsLoggedIn(false);
             }}>
               <ListItemIcon>
-                <LayersIcon />
+                <LogoutIcon />
               </ListItemIcon>
               <ListItemText primary="Log out" />
             </ListItemButton>
@@ -206,7 +308,7 @@ function DashboardContent({setIsLoggedIn }) {
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
               {/* Chart */}
-              <Grid item xs={12} md={8} lg={9}>
+              {/* <Grid item xs={12} md={8} lg={9}>
                 <Paper
                   sx={{
                     p: 2,
@@ -217,9 +319,9 @@ function DashboardContent({setIsLoggedIn }) {
                 >
                   <Chart />
                 </Paper>
-              </Grid>
+              </Grid> */}
               {/* Recent Deposits */}
-              <Grid item xs={12} md={4} lg={3}>
+              {/* <Grid item xs={12} md={4} lg={3}>
                 <Paper
                   sx={{
                     p: 2,
@@ -230,11 +332,47 @@ function DashboardContent({setIsLoggedIn }) {
                 >
                   <Deposits />
                 </Paper>
-              </Grid>
+              </Grid> */}
               {/* Recent Orders */}
               <Grid item xs={12}>
                 <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                  <Orders />
+                  {/* <Orders /> */}
+                  {error && <div>{error}</div>}
+                  <>
+                    <Title>Classes</Title>
+                    <Table size="medium">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Course Code</TableCell>
+                          <TableCell>Name</TableCell>
+                          <TableCell>Instructor</TableCell>
+                          {/* <TableCell>Class link</TableCell>
+                          <TableCell align="right">number of students</TableCell> */}
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {rows.map((row) => (
+                          <TableRow key={row.course._id}>
+                            <TableCell>{row.course.courseCode}</TableCell>
+                            <TableCell>{row.course.name}</TableCell>
+                            <TableCell>{row.instructor}</TableCell>
+                            <TableCell align='right'><Button onClick={() => {
+                              navigate('/manage',{
+                                state: {
+                                  course: row.course,
+                                  instructor: row.instructor, 
+                                  user: user,
+                                }
+                              })
+                            }}>Open</Button></TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                    {/* <Link color="primary" href="#" onClick={preventDefault} sx={{ mt: 3 }}>
+                      See more orders
+                    </Link> */}
+                  </>
                 </Paper>
               </Grid>
             </Grid>
@@ -248,11 +386,18 @@ function DashboardContent({setIsLoggedIn }) {
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = React.useState(localStorage.getItem('token') !== null);
+  const {state} = useLocation();
+  const [isLoggedIn, setIsLoggedIn] = React.useState(get('token') !== null);
   React.useEffect(() => {
-    if(localStorage.getItem('token') == null){
+    if(get('token') === null ){
+      navigate('/');
+    }
+    if( state === null) {
+      localStorage.removeItem('token');
       navigate('/');
     }
   },[isLoggedIn]);
-  return <DashboardContent  setIsLoggedIn={setIsLoggedIn} />;
+  return <DashboardContent  setIsLoggedIn={setIsLoggedIn} navigate={navigate} user={state.user}/>;
+  // return <DashboardContent  setIsLoggedIn={setIsLoggedIn} navigate={navigate} user={"milind"}/>;
+
 }

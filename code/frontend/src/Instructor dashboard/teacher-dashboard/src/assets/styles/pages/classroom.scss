@@ -1,0 +1,26 @@
+@import '../shared';
+
+.page-classroom {
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.page-classroom__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 30px;
+}
+
+.page-classroom__title {
+  text-align: left;
+
+  &--name {
+    margin-bottom: 5px;
+  }
+
+  &--language {
+    font-size: 16px;
+    font-weight: normal;
+  }
+}

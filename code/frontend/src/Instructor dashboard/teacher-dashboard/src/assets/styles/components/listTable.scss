@@ -1,0 +1,65 @@
+@import '../shared';
+.ztd-student-table--header,
+.ztd-student-table--link {
+  display: flex;
+  text-align: left;
+  & > * {
+    display: inline;
+    &:nth-child(1) {
+      width: 30%;
+    }
+    &:nth-child(2) {
+      width: 25%;
+    }
+    &:nth-child(3) {
+      width: 45%;
+    }
+  }
+  &:nth-child(2) {
+    background: red;
+  }
+}
+
+.ztd-student-table--header {
+  background-color: $accent-surface-primary-light;
+}
+
+.ztd-student-table--item {
+  &:nth-child(even) {
+    background: $accent-surface-secondary-light;
+  }
+  &:hover {
+    background: $accent-surface-secondary-medium;
+  }
+}
+
+.ztd-student-table--link {
+  display: flex;
+  & > * {
+    display: inline;
+    &:nth-child(1) {
+      color: $color-text-primary-light;
+      font-weight: $font-weight-bold;
+    }
+  }
+}
+
+.ztd-student-table--cell {
+  position: relative;
+  padding: calc(4 * #{$spacing-unit}) 0;
+  &:nth-child(1) {
+    padding: calc(4 * #{$spacing-unit}) 0 calc(4 * #{$spacing-unit})
+      calc(4 * #{$spacing-unit});
+  }
+}
+
+.ztd-student-table--is-sortable {
+  &:after {
+    position: absolute;
+    right: 0;
+  }
+  height: 100%;
+  &:hover {
+    cursor: pointer;
+  }
+}

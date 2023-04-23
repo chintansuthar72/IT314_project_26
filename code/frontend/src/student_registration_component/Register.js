@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useEffect } from 'react';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
@@ -22,6 +23,85 @@ import Navbar1 from './Navbar1';
 // import Chart from './Chart';
 // import Deposits from './Deposits';
 // import Orders from './Orders';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Button from '@mui/material/Button';
+
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import ListSubheader from '@mui/material/ListSubheader';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import PeopleIcon from '@mui/icons-material/People';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import LayersIcon from '@mui/icons-material/Layers';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import LogoutIcon from '@mui/icons-material/Logout';
+import { colors } from '@mui/material';
+// import { Card, Input } from 'semantic-ui-react';
+
+const set = (keyName, keyValue, ttl) => {
+  const data = {
+      value: keyValue,                  // store the value within this object
+      ttl: Date.now() + (ttl * 1000),   // store the TTL (time to live)
+  }
+  localStorage.setItem(keyName, JSON.stringify(data));
+};
+const get = (keyName) => {
+  const data = localStorage.getItem(keyName);
+  if (!data) {     // if no value exists associated with the key, return null
+      return null;
+  }
+  const item = JSON.parse(data);
+  if (Date.now() > item.ttl) {
+      localStorage.removeItem(keyName);
+      localStorage.removeItem('role');
+      localStorage.removeItem('user');
+      return null;
+  }
+  return item.value;
+};
+
+
+
+
+function createData(id, date, name, courseCode,Button) {
+     return { id, date, name, courseCode,Button};
+   }
+ const rows = [
+  {
+    course : {_id: '643c21d04e2263e1432d773f', name: 'Web Development', courseCode: 'IT313', description: 'MERN Stack', teacher: '642c90413d11be150f573435', 
+    },
+    instructor: "milind"}
+    ,
+    {
+      course : {_id: '643c21d04e2263e1432d773f', name: 'Android', courseCode: 'IT314', description: 'MEAN', teacher: '642c90413d11be150f573435', 
+      },
+      instructor: "striker"}
+      ,
+      {
+        course : {_id: '643c21d04e2263e1432d773f', name: 'Python', courseCode: 'IT315', description: 'MERN Stack', teacher: '642c90413d11be150f573435', 
+        },
+        instructor: "RaOne"}
+        , {
+          course : {_id: '643c21d04e2263e1432d773f', name: 'Machine learning', courseCode: 'IT316', description: 'MERN Stack', teacher: '642c90413d11be150f573435', 
+          },
+          instructor: "ChintanSuthar"}
+ ]
+
+   
+   function preventDefault(event) {
+     event.preventDefault();
+   }
 
 function Copyright(props) {
   return (
@@ -84,12 +164,61 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 const mdTheme = createTheme();
 
-function DashboardContent() {
-  const [open, setOpen] = React.useState(true);
+function DashboardContent({setIsLoggedIn,navigate,user }) {
+  const [open, setOpen] = React.useState(false);
+  const [row,setRows] = React.useState([]);
+  const [error,setError] = React.useState([]);
+  const [searchInput, setSearchInput] = React.useState('');
+  const [filteredResults, setFilteredResults] = React.useState([]);
+  const [newRow,setNewRow] = React.useState([]);
+  const [ogRow,setOgRow] = React.useState([]);
   const toggleDrawer = () => {
     setOpen(!open);
   };
 
+  // const [error, setError] = useState(null);
+  // const [rows, setRows] = useState([]);
+  useEffect(() => {
+    if(row.length <= 0){
+
+      axios.get('http://localhost:5000/user/courses',{headers:{'Authorization': get('token')}})
+      .then((resp)=>{   // if no error
+        console.log(resp);
+        //UNCOMMENT  when BACKEND JOIN
+        // setRows(resp.data.data);
+        // setNewRow(resp.data.data.course);
+        // setOgRow(resp.data.data);
+        
+        // COMMENT  when BACKEND JOIN 
+        setRows(rows);
+        setNewRow(rows);
+        setOgRow(rows);
+      })
+      .catch((err)=>{
+        console.log(err);
+        setError(err.response.data.error);
+      })
+    }
+  },[ogRow]);
+  const searchItems = (searchValue) => {
+    const len = searchValue.length;
+    setSearchInput(searchValue)
+    if (len != 0) {
+      // const newRow = row.course;
+      const filteredData = row.filter((item) => {
+        // console.log(Object.values(item.course).join('').toLowerCase())
+          return (Object.values(item).join('').toLowerCase().includes(searchInput.toLowerCase()) ||
+          Object.values(item.course).join('').toLowerCase().includes(searchInput.toLowerCase()))
+      })
+      
+      setFilteredResults(filteredData)
+      setOgRow(filteredResults);
+  }
+  else{
+        setFilteredResults(rows)
+      setOgRow(rows);
+  }
+}
   return (
      <>
      <Navbar1/>
@@ -142,9 +271,86 @@ function DashboardContent() {
           </Toolbar>
           <Divider />
           <List component="nav">
-            {mainListItems}
-            <Divider sx={{ my: 1 }} />
-            {secondaryListItems}
+          <ListItemButton onClick={() => {
+              navigate('/dashboard', {
+                state: {
+                  user : user
+                }
+              });
+            }}>
+              <ListItemIcon>
+                <DashboardIcon />
+              </ListItemIcon>
+              <ListItemText primary="Dashboard" />
+            </ListItemButton>
+            {/* <ListItemButton>
+              <ListItemIcon>
+                <ShoppingCartIcon />
+              </ListItemIcon>
+              <ListItemText primary="My Profile" />
+            </ListItemButton> */}
+            <ListItemButton onClick={() => {
+              navigate('/profile', {
+                state: {
+                  user : user,
+                }
+              });
+            }}>
+              <ListItemIcon>
+                <PeopleIcon />
+              </ListItemIcon>
+              <ListItemText primary="Profile" />
+            </ListItemButton>
+            {
+              get('role') == "TEACHER" ? 
+              <ListItemButton onClick={() => {
+                navigate('/create', {
+                  state: {
+                    user : user,
+                  }
+                });
+              }}>
+                <ListItemIcon>
+                  <AddCircleOutlineIcon/>
+                </ListItemIcon>
+                <ListItemText primary="New Course" />
+              </ListItemButton> : 
+              <ListItemButton onClick={() => {
+                navigate('/join', {
+                  state: {
+                    user : user,
+                  }
+                });
+              }}>
+                <ListItemIcon>
+                  <AddCircleOutlineIcon/>
+                </ListItemIcon>
+                <ListItemText primary="New Course" />
+              </ListItemButton>
+            }
+            <ListItemButton onClick={() => {
+              navigate('/progress', {
+                state: {
+                  user : user,
+                }
+              });
+            }}>
+              <ListItemIcon>
+                <BarChartIcon />
+              </ListItemIcon>
+              <ListItemText primary="Your Progress" />
+            </ListItemButton>
+            <ListItemButton onClick={() => {
+              localStorage.removeItem('token');
+              localStorage.removeItem('user');
+              localStorage.removeItem('role');
+              setIsLoggedIn(false);
+            }}>
+              <ListItemIcon>
+                <LogoutIcon />
+              </ListItemIcon>
+              <ListItemText primary="Log out" />
+            </ListItemButton>
           </List>
         </Drawer>
         {/* <Box
@@ -198,12 +404,74 @@ function DashboardContent() {
            
           </Container>
         </Box> */}
-      </Box>
+     
+    
+    <React.Fragment>
+    
+      {/* <Title>Classes</Title> */}
+      <Table size="small">
+        <TableHead>
+          <TableRow>
+            <TableCell>Course Code</TableCell>
+            <TableCell>Course Name</TableCell>
+            <TableCell>Instructor Name</TableCell>
+            <TableCell>Description</TableCell>
+            <TableCell>Enroll</TableCell>
+    
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {ogRow.map((val,idx) => {
+          
+return (
+
+  <TableRow key={val.course._id}>
+              {/* {console.log(val.course.name,val.course.courseCode,val.course.description )} */}
+              <TableCell>{val.course.courseCode}</TableCell>
+              <TableCell>{val.course.name}</TableCell>
+              <TableCell>{val.instructor}</TableCell>
+              <TableCell>{val.course.description }</TableCell>
+              <TableCell>{ <Button variant="contained">Enroll</Button>}</TableCell>
+            </TableRow>
+                )
+         
+})}
+
+        </TableBody>
+      </Table>
+      {/* <Link color="primary" href="#" onClick={preventDefault} sx={{ mt: 3 }}>
+        See more orders
+      </Link> */}
+    
+    </React.Fragment>
+    </Box>
+    <input  placeholder='Search...'
+                onChange={(e) => searchItems(e.target.value)}
+            />
     </ThemeProvider>
+
     </>
   );
 }
 
-export default function Dashboard() {
-  return <DashboardContent />;
+export default function JoinCourse() {
+  const navigate = useNavigate();
+  const {state} = useLocation();
+  const [isLoggedIn, setIsLoggedIn] = React.useState(get('token') !== null);
+  React.useEffect(() => {
+    if(get('token') === null ){
+      navigate('/');
+    }
+    if( state === null) {
+      localStorage.removeItem('token');
+      navigate('/');
+    }
+  },[isLoggedIn]);
+  return <DashboardContent setIsLoggedIn={setIsLoggedIn} navigate={navigate} user={state.user} />;
 }
+
+
+
+
+
+

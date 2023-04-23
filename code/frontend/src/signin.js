@@ -11,7 +11,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { ButtonBase, ButtonGroup } from '@mui/material';
+import { ButtonBase } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 function Copyright(props) {
@@ -26,7 +26,25 @@ function Copyright(props) {
     </Typography>
   );
 }
-
+const set = (keyName, keyValue, ttl) => {
+  const data = {
+      value: keyValue,                  // store the value within this object
+      ttl: Date.now() + (ttl * 1000),   // store the TTL (time to live)
+  }
+  localStorage.setItem(keyName, JSON.stringify(data));
+};
+const get = (keyName) => {
+  const data = localStorage.getItem(keyName);
+  if (!data) {     // if no value exists associated with the key, return null
+      return null;
+  }
+  const item = JSON.parse(data);
+  if (Date.now() > item.ttl) {
+      localStorage.removeItem(keyName);
+      return null;
+  }
+  return item.value;
+};
 
 const theme = createTheme();
 
@@ -36,11 +54,10 @@ export default function SignIn() {
   const [isLoggedIn, setIsLoggedIn] = React.useState(localStorage.getItem('token') !== null);
 
   React.useEffect(() => {
-    if(localStorage.getItem('token') !== null){
-      navigate('/dashboard');
+    if(get('token') !== null){
+      // navigate('/dashboard');
     }
   }, [isLoggedIn]);
-
 
   const [error, setError] = React.useState('');
   const handleSubmit = (event) => {
@@ -58,9 +75,15 @@ export default function SignIn() {
     .then((resp)=>{   // if no error
       console.log(resp);
       // add token from response header to local storage
-      localStorage.setItem('token',resp.data.data.token);
-      localStorage.setItem('user',JSON.stringify(resp.data.data.user.username));
-      setIsLoggedIn(true);
+      set('token',resp.data.data.token,100000);
+      set('role',resp.data.data.user.role,100000);
+      set('user',resp.data.data.user.username,100000);
+      // setIsLoggedIn(true);
+      navigate('/dashboard', {
+        state: {
+          user : resp.data.data,
+        }
+      });
     })
     .catch((err)=>{
       setError(err.response.data.error);
