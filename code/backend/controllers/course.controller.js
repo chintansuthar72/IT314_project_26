@@ -1,6 +1,7 @@
 const response = require('../utils/responses.util');
 const Course = require('../models/course.model');
 const File = require('../models/file.model');
+const User = require('../models/user.model');
 
 // POST new course
 exports.addCourse = async (req, res) => {
@@ -14,6 +15,9 @@ exports.addCourse = async (req, res) => {
         req.body.files = [];
         req.body.messages = [];
         const course = await Course.create(req.body);
+        const user = await User.findById(req.id);
+        user.courses.push(course._id);
+        await user.save();
         return response.successfullyCreatedResponse(res, course);
     } catch (err) {
         return response.serverErrorResponse(res, err);

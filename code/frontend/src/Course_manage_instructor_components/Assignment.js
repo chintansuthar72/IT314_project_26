@@ -30,6 +30,7 @@ import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import ContentPasteOutlinedIcon from '@mui/icons-material/ContentPasteOutlined';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Grid';
+import EditAssignment from '../instructor/edit_assignment';
 
 const theme = createTheme();
 
@@ -74,6 +75,7 @@ const Assignment = ({ course }) => {
   
 
     const [open, setOpen] = React.useState(false);
+    const [openAssignment, setOpenAssignment] = React.useState(false);
     const [error1, setError1] = useState(null);
     const [title,setTitle] = useState('');
     const [description,setDescription] = useState('');
@@ -100,10 +102,20 @@ const Assignment = ({ course }) => {
     const handleClickOpen = () => {
       setOpen(true);
     };
+    const handleClickOpenAssignment = () => {
+      setOpenAssignment(true);
+    };
 
     const handleClose = () => {
       setOpen(false);
     };
+    const handleCloseAssignment = () => {
+      setOpenAssignment(false);
+    };
+
+  const handleSaveAssignment = () => {
+
+  }
 
   const handleSave = () => {
     console.log({
@@ -285,16 +297,14 @@ const Assignment = ({ course }) => {
                     >
                       UPLOAD ASSIGNMENT
                     </Button>
-                    
                   </Box>
                 </Box>
               </Container>
             </ThemeProvider>
-
-            {/* add assignment end */}
           </Dialog>
         </div>
-        <Box sx={{ width: '100%' }}>
+        <EditAssignment course={course} created_assignment={handleSave}/>
+        {/* <Box sx={{ width: '100%' }}>
           <Stack spacing={2}>
           {rows.map(announcement => 
             <Item>
@@ -314,6 +324,131 @@ const Assignment = ({ course }) => {
                     </React.Fragment>
                   }
                 />
+                <Button variant="outlined"  onClick={handleClickOpenAssignment}>
+                  Open
+                </Button>
+                <Dialog
+                  fullScreen
+                  open={openAssignment}
+                  onClose={handleCloseAssignment}
+                  TransitionComponent={Transition}
+                >
+                  <AppBar sx={{ position: 'relative' }}>
+                    <Toolbar>
+                      <IconButton
+                        edge="start"
+                        color="inherit"
+                        onClick={handleCloseAssignment}
+                        aria-label="close"
+                      >
+                        <CloseIcon />
+                      </IconButton>
+                      <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+                        {announcement.name}
+                      </Typography>
+                      <Button autoFocus color="inherit" onClick={handleSaveAssignment}>
+                        save
+                      </Button>
+                    </Toolbar>
+                  </AppBar>
+                    {error1 ? <Alert severity="error">{error1}</Alert> : ""}
+                  <ThemeProvider theme={theme}>
+                    <Container component="main" maxWidth="xs">
+                      <Box
+                        sx={{
+                          marginTop: 8,
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+                          <AssignmentOutlinedIcon />
+                        </Avatar>
+                        <Typography component="h1" variant="h5">
+                          Create Assignment
+                        </Typography>
+                        <Box noValidate sx={{ mt: 1 }}>
+                          <TextField
+                            margin="normal"
+                            required
+                            fullWidth
+                            id="title"
+                            label="Title"
+                            name="title"
+                            autoComplete="title"
+                            autoFocus
+                            onChange={(e) => setTitle(e.target.value)}
+                          />
+                          <TextField
+                            margin="normal"
+                            fullWidth
+                            name="description"
+                            label="Description"
+                            type="description"
+                            id="description"
+                            onChange={(e) => setDescription(e.target.value)}
+                          />
+                          <TextField
+                            margin="normal"
+                            required
+                            fullWidth
+                            name="dueDate"
+                            label="Due Date"
+                            type="datetime-local"
+                            id="dueDate"
+                            onChange={(e) => setDueDate(e.target.value)}
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                          />
+                          <Box sx={{ flexGrow: 1 }}>
+                            <Grid container spacing={2} columns={16}>
+                              <Grid item xs={8}>
+                                <Button fullWidth
+                                  variant="outlined"
+                                  sx={{ mt: 2, mb: 2 }} 
+                                  href="https://docs.google.com/forms/"
+                                  target="_blank"
+                                  rel="noreferrer"
+                                >
+                                      Open Google Form
+                                </Button>
+                              </Grid>
+                              <Grid item xs={8}>
+                              <TextField
+                                margin="normal"
+                                fullWidth
+                                required
+                                className="item"
+                                name="assignment-link"
+                                label="Paste Assignment Link Here"
+                                type="assignment-link"
+                                id="assignment-link"
+                                onChange={(e) => setFormLink(e.target.value)}
+                                InputProps={{
+                                    startAdornment: (
+                                        <ContentPasteOutlinedIcon />
+                                    ),
+                                  }}
+                                />
+                              </Grid>
+                            </Grid>
+                          </Box>
+                          <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            onClick={handleSave}
+                            sx={{ mt: 3, mb: 2 }}
+                          >
+                            UPLOAD ASSIGNMENT
+                          </Button>
+                        </Box>
+                      </Box>
+                    </Container>
+                  </ThemeProvider>
+                </Dialog>
                 <IconButton edge="end" aria-label="delete">
                   <EditIcon />
                 </IconButton>
@@ -325,7 +460,7 @@ const Assignment = ({ course }) => {
             </Item>
           )}
           </Stack>
-        </Box>
+        </Box> */}
       </>
     </div>
   );

@@ -30,6 +30,7 @@ exports.addAssignment = async (req, res) => {
                 grade: 0,
                 graded: false,
                 comments: [],
+                feedback : ""
             });
             assignment.submissions.push(submission._id);
         }
@@ -72,10 +73,12 @@ exports.updateAssignmentById = async (req, res) => {
         const assignment = await Assignment.findById(req.params.id);
         if(!assignment)
             return response.notFoundResponse(res, 'Assignment not found');
-        const updatedAssignment = await Assignment.findByIdAndUpdate(req.id, {
+        console.log()
+        const updatedAssignment = await Assignment.findByIdAndUpdate(req.params.id, {
             name: req.body.name,
             description: req.body.description,
-            due_date: req.body.due_date
+            due_date: req.body.due_date,
+            link : req.body.link
         });
         return response.successResponse(res, updatedAssignment);
     }
