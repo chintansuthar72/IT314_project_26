@@ -77,9 +77,11 @@ const Assignment = ({ course }) => {
     const [error1, setError1] = useState(null);
     const [title,setTitle] = useState('');
     const [description,setDescription] = useState('');
+    const [dueDate,setDueDate] = useState('');
+    const [formLink,setFormLink] = useState('');
 
     useEffect(() => {
-      axios.get(`http://localhost:5000/announcement/course/${course._id}`,{headers:{'Authorization': get('token')}})
+      axios.get(`http://localhost:5000/assignment/course/${course._id}`,{headers:{'Authorization': get('token')}})
       .then((resp)=>{   // if no error
         console.log("UseEffect :\n");
         console.log(resp);
@@ -104,11 +106,17 @@ const Assignment = ({ course }) => {
     };
 
   const handleSave = () => {
-    axios.post(`http://localhost:5000/announcement/course/${course._id}`,{
-      title : title,
+    console.log({
+      name : title,
       description : description,
-      files : [],
-      comments : []
+      due_date : dueDate,
+      link : formLink
+    })
+    axios.post(`http://localhost:5000/assignment/course/${course._id}`,{
+      name : title,
+      description : description,
+      due_date : dueDate,
+      link : formLink
     },{headers:{'Authorization':get('token')}})
     .then((resp)=>{   // if no error
       console.log("HandleSave:\n");
@@ -123,7 +131,7 @@ const Assignment = ({ course }) => {
   }
   
   const handleDelete = (id) => {
-    axios.delete(`http://localhost:5000/announcement/${id}`,{headers:{'Authorization':get('token')}})
+    axios.delete(`http://localhost:5000/assignment/${id}`,{headers:{'Authorization':get('token')}})
     .then((resp)=>{   // if no error
       console.log("HandleDelete:\n");
       console.log(resp);
@@ -178,10 +186,9 @@ const Assignment = ({ course }) => {
               <ListItem>
                 <TextField fullWidth  id="standard-basic" label="Description" variant="filled" multiline rows={5} onChange={(e)=>setDescription(e.target.value)}/>
               </ListItem>
-              {error1 ? <Alert severity="error">{error1}</Alert> : ""}
 
             </List> */}
-
+              {error1 ? <Alert severity="error">{error1}</Alert> : ""}
             {/* add assignment start */}
             <ThemeProvider theme={theme}>
               <Container component="main" maxWidth="xs">
@@ -200,7 +207,7 @@ const Assignment = ({ course }) => {
                   <Typography component="h1" variant="h5">
                     Create Assignment
                   </Typography>
-                  <Box component="form"  noValidate sx={{ mt: 1 }}>
+                  <Box noValidate sx={{ mt: 1 }}>
                     <TextField
                       margin="normal"
                       required
@@ -210,6 +217,7 @@ const Assignment = ({ course }) => {
                       name="title"
                       autoComplete="title"
                       autoFocus
+                      onChange={(e) => setTitle(e.target.value)}
                     />
                     <TextField
                       margin="normal"
@@ -218,6 +226,7 @@ const Assignment = ({ course }) => {
                       label="Description"
                       type="description"
                       id="description"
+                      onChange={(e) => setDescription(e.target.value)}
                     />
                     <TextField
                       margin="normal"
@@ -227,6 +236,7 @@ const Assignment = ({ course }) => {
                       label="Due Date"
                       type="datetime-local"
                       id="dueDate"
+                      onChange={(e) => setDueDate(e.target.value)}
                       InputLabelProps={{
                         shrink: true,
                       }}
@@ -254,6 +264,7 @@ const Assignment = ({ course }) => {
                           label="Paste Assignment Link Here"
                           type="assignment-link"
                           id="assignment-link"
+                          onChange={(e) => setFormLink(e.target.value)}
                           InputProps={{
                               startAdornment: (
                               //   <InputAdornment position="start">
@@ -269,6 +280,7 @@ const Assignment = ({ course }) => {
                       type="submit"
                       fullWidth
                       variant="contained"
+                      onClick={handleSave}
                       sx={{ mt: 3, mb: 2 }}
                     >
                       UPLOAD ASSIGNMENT
@@ -288,7 +300,7 @@ const Assignment = ({ course }) => {
             <Item>
               <ListItem alignItems="flex-start">
                 <ListItemText
-                  primary={announcement.title}
+                  primary={announcement.name}
                   secondary={
                     <React.Fragment>
                       <Typography

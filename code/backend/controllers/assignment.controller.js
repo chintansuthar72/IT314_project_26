@@ -11,12 +11,16 @@ exports.addAssignment = async (req, res) => {
         req.body.course = req.params.id;
         req.body.submissions = [];
         req.body.comments = [];
-        const assignment = await Assignment.create(req.body);
+        const assignment = await Assignment.create(req.body);        
 
         // Add submission for all students in course
         const course = await Course.findById(req.params.id);
         if (!course)
             return response.notFoundResponse(res, 'Course not found');
+
+        // add assignment in course
+        course.assignments.push(assignment._id);
+        await course.save();
 
         for (let i = 0; i < course.students.length; i++) {
             const submission = await Submission.create({
@@ -95,3 +99,11 @@ exports.deleteAssignmentById = async (req, res) => {
     }
 }
 
+exports.getAssignmentsByCourseId = async (req,res) => {
+    try {
+        const assignments = await Assignment.find({course : req.params.id});
+        return response.successResponse(res,assignments);
+    } catch (err) {
+        return response.serverErrorResponse(res, err);
+    }
+}
