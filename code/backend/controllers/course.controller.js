@@ -126,7 +126,7 @@ exports.getMaterials = async (req, res) => {
         if(!course)
             return response.notFoundResponse(res, 'Course not found');
         const files = [] 
-        for(let i = 0; i < course.files.length; ++i) {
+        for(let i = course.files.length-1; i >= 0; --i) {
             const data = await File.findById(course.files[i]._id);
             files.push(data);
         }

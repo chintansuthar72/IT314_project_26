@@ -80,6 +80,9 @@ const fileSchema = new mongoose.Schema({
         type : String,
         required : true
     },
+    description : {
+        type : String,
+    },
     data : {
         type : String,
         required : true
