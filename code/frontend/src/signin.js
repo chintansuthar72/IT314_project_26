@@ -55,7 +55,7 @@ export default function SignIn() {
 
   React.useEffect(() => {
     if(get('token') !== null){
-      navigate('/dashboard');
+      // navigate('/dashboard');
     }
   }, [isLoggedIn]);
 
