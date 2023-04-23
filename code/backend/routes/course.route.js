@@ -20,4 +20,13 @@ router.delete('/:id', [verifyToken], courseController.deleteCourseById);
 // Delete user from course
 router.delete('/:id/user/:userId', [verifyToken], courseController.deleteUserFromCourse);
 
+// Upload material 
+router.post('/material/:id',[verifyToken],courseController.uploadMaterial);
+
+// Get all material for course
+router.get('/material/:id', [verifyToken], courseController.getMaterials);
+
+// remove material
+router.delete('/material/:id',[verifyToken], courseController.deleteMaterial)
+
 module.exports = router;

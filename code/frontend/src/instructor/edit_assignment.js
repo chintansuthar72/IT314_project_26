@@ -77,7 +77,7 @@ EditToolbar.propTypes = {
   setRows: PropTypes.func.isRequired,
 };
 
-export default function EditAssignment() {
+export default function EditAssignment({course}) {
   const [rows, setRows] = React.useState(initialRows);
   const [rowModesModel, setRowModesModel] = React.useState({});
 
@@ -217,12 +217,12 @@ export default function EditAssignment() {
     }}
     >
       
-    <Avatar sx={{ m: 1, bgcolor: 'secondary.main' , margin : "auto"}} >
+    {/* <Avatar sx={{ m: 1, bgcolor: 'secondary.main' , margin : "auto"}} >
           <EditOutlinedIcon />
     </Avatar>
     <Typography component="h1" variant="h5">
       Edit Assignment
-    </Typography>
+    </Typography> */}
       <DataGridPro
         rows={rows}
         columns={columns}

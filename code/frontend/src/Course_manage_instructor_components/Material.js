@@ -21,6 +21,8 @@ import {Alert} from '@mui/material';
 import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import FileBase64 from 'react-file-base64';
+
 
 const set = (keyName, keyValue, ttl) => {
   const data = {
@@ -64,15 +66,14 @@ const Material = ({announcements, course, instructor }) => {
     const [open, setOpen] = React.useState(false);
     const [error1, setError1] = useState(null);
     const [title,setTitle] = useState('');
-    const [description,setDescription] = useState('');
+    const [item,setItem] = useState('');
 
     useEffect(() => {
-      axios.get(`http://localhost:5000/announcement/course/${course._id}`,{headers:{'Authorization': get('token')}})
+      axios.get(`http://localhost:5000/course/material/${course._id}`,{headers:{'Authorization': get('token')}})
       .then((resp)=>{   // if no error
         console.log("UseEffect :\n");
         console.log(resp);
         setTimeout(()=>{
-          
         },10)
         setRows(resp.data.data);
         console.log(rows);
@@ -92,11 +93,14 @@ const Material = ({announcements, course, instructor }) => {
     };
 
   const handleSave = () => {
-    axios.post(`http://localhost:5000/announcement/course/${course._id}`,{
-      title : title,
-      description : description,
-      files : [],
-      comments : []
+    
+    console.log({
+      filename : title,
+      data : item
+    });
+    axios.post(`http://localhost:5000/course/material/${course._id}`,{
+      filename : title,
+      data : item,
     },{headers:{'Authorization':get('token')}})
     .then((resp)=>{   // if no error
       console.log("HandleSave:\n");
@@ -106,12 +110,12 @@ const Material = ({announcements, course, instructor }) => {
     })
     .catch((err)=>{
       console.log(err);
-      setError1(err.response.data.message.message);
+      setError1(err.response.data);
     })
   }
   
   const handleDelete = (id) => {
-    axios.delete(`http://localhost:5000/announcement/${id}`,{headers:{'Authorization':get('token')}})
+    axios.delete(`http://localhost:5000/course/material/${id}?course_id=${course._id}`,{headers:{'Authorization':get('token')}})
     .then((resp)=>{   // if no error
       console.log("HandleDelete:\n");
       console.log(resp);
@@ -160,11 +164,16 @@ const Material = ({announcements, course, instructor }) => {
             </AppBar>
             <List>
               <ListItem>
-                <TextField fullWidth  id="standard-basic" label="Title" variant="filled" onChange={(e) => setTitle(e.target.value)}/>
+                <TextField fullWidth  id="standard-basic" label="file name" variant="filled" onChange={(e) => setTitle(e.target.value)}/>
               </ListItem>
               <Divider />
               <ListItem>
-                <TextField fullWidth  id="standard-basic" label="Description" variant="filled" multiline rows={5} onChange={(e)=>setDescription(e.target.value)}/>
+                <FileBase64
+                  type="file"
+                  multiple={false}
+                  onDone={({ base64 }) => setItem( base64 )}
+                  />
+                {/* <TextField fullWidth  id="standard-basic" label="Description" variant="filled" multiline rows={5} onChange={(e)=>setDescription(e.target.value)}/> */}
               </ListItem>
               {error1 ? <Alert severity="error">{error1}</Alert> : ""}
 
@@ -177,7 +186,7 @@ const Material = ({announcements, course, instructor }) => {
             <Item>
               <ListItem alignItems="flex-start">
                 <ListItemText
-                  primary={announcement.title}
+                  primary={announcement.filename}
                   secondary={
                     <React.Fragment>
                       <Typography
@@ -186,7 +195,7 @@ const Material = ({announcements, course, instructor }) => {
                         variant="body2"
                         color="text.primary"
                       >
-                        {announcement.description}
+                        {/* {announcement.description} */}
                       </Typography>
                     </React.Fragment>
                   }

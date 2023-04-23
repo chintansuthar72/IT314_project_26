@@ -1,5 +1,6 @@
 const response = require('../utils/responses.util');
 const Course = require('../models/course.model');
+const File = require('../models/file.model');
 
 // POST new course
 exports.addCourse = async (req, res) => {
@@ -94,6 +95,64 @@ exports.deleteUserFromCourse = async (req,res) => {
         });
         return response.successResponse(res, updatedCourse);
     } catch (err) {
+        return response.serverErrorResponse(res, err);
+    }
+}
+
+exports.uploadMaterial = async (req,res) => {
+    try {
+        if(!['ADMIN','TEACHER'].includes(req.role))
+            return response.unauthorizedResponse(res);
+        const course = await Course.findById(req.params.id);
+        if(!course)
+            return response.notFoundResponse(res, 'Course not found');
+        if(course.teacher != req.id) 
+            return response.unauthorizedResponse(res);
+        const file = await File.create({
+            filename : req.body.filename,
+            data : req.body.data,
+        })
+        course.files.push(file._id);
+        const updatedCourse = await course.save();
+        return response.successResponse(res, updatedCourse);
+    } catch (err) {
+        return response.serverErrorResponse(res, err);
+    }
+}
+
+exports.getMaterials = async (req, res) => {
+    try {
+        const course = await Course.findById(req.params.id);
+        if(!course)
+            return response.notFoundResponse(res, 'Course not found');
+        const files = [] 
+        for(let i = 0; i < course.files.length; ++i) {
+            const data = await File.findById(course.files[i]._id);
+            files.push(data);
+        }
+        return response.successResponse(res,files);
+    } catch(err) {
+        return response.serverErrorResponse(res, err);
+    }
+}
+
+exports.deleteMaterial = async (req, res) => {
+    try {
+        if(!['ADMIN','TEACHER'].includes(req.role))
+            return response.unauthorizedResponse(res);
+        const course = await Course.findById(req.query.course_id);
+        if(!course)
+            return response.notFoundResponse(res, 'Course not found');
+        const files = [] 
+        for(let i = 0; i < course.files.length; ++i) {
+            if(course.files[i]._id != req.params.id) {
+                files.push(course.files[i]);
+            }
+        }
+        course.files = files;
+        await course.save();
+        return response.successResponse(res,course);
+    } catch(err) {
         return response.serverErrorResponse(res, err);
     }
 }
