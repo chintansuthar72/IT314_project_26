@@ -131,6 +131,12 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 const mdTheme = createTheme();
 
 function DashboardContent({setIsLoggedIn,navigate,user }) {
+// function DashboardContent() {
+// const user = "student";
+// const navigate = true;
+// const setIsLoggedIn = (val) =>{
+//   console.log("hello");
+// }
   const [open, setOpen] = React.useState(false);
   const toggleDrawer = () => {
     setOpen(!open);
@@ -392,4 +398,6 @@ export default function Dashboard() {
     }
   },[isLoggedIn]);
   return <DashboardContent  setIsLoggedIn={setIsLoggedIn} navigate={navigate} user={state.user}/>;
+  // return <DashboardContent  setIsLoggedIn={setIsLoggedIn} navigate={navigate} user={"milind"}/>;
+
 }
