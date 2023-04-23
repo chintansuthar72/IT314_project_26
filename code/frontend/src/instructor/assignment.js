@@ -66,6 +66,18 @@ export class CreateAssignment extends Component {
               type="description"
               id="description"
             />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="dueDate"
+              label="Due Date"
+              type="datetime-local"
+              id="dueDate"
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
             <Box sx={{ flexGrow: 1 }}>
               <Grid container spacing={2} columns={16}>
                 <Grid item xs={8}>
