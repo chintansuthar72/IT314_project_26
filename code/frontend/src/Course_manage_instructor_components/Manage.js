@@ -42,7 +42,7 @@ import Material from './Material';
 import Chat from './Chat';
 import Assignment from './Assignment';
 import InstructorFeedback from './InstructorFeedback.js';
-
+// import EditAssignment from '../instructor/edit_assignment';
 
 const drawerWidth = 240;
 const set = (keyName, keyValue, ttl) => {
@@ -305,7 +305,8 @@ function DashboardContent({setIsLoggedIn,navigate,user,course, instructor}) {
         </TabPanel>
         <TabPanel value={value} index={2}>
           {/* <About Item={3}/> */}
-          <Assignment course={course}/>
+          <Assignment course={course}/> 
+          {/* <EditAssignment course={course}/> */}
         </TabPanel>
         <TabPanel value={value} index={3}>
           {/* discussion forum link */}

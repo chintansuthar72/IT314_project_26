@@ -11,6 +11,7 @@ import ManageInstructor from './Course_manage_instructor_components/Manage';
 import Profile from './Profile';
 import Progress from './Progress';
 import JoinCourse from './student_registration_component/Register';
+import EditAssignment from './instructor/edit_assignment';
 
 const set = (keyName, keyValue, ttl) => {
   const data = {
@@ -66,7 +67,7 @@ export default function App() {
           <Route path="/manage" element={<ManageInstructor />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/progress" element={<Progress />} />
-          {/* <Route path="/forum" element={<Chat />} /> */}
+          {/* <Route path="/edit_assignment" element={<EditAssignment />} /> */}
         </Routes>
       </BrowserRouter>
     </div>

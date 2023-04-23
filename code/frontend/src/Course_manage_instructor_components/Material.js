@@ -21,6 +21,13 @@ import {Alert} from '@mui/material';
 import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import FileBase64 from 'react-file-base64';
+import ImportContactsOutlinedIcon from '@mui/icons-material/ImportContactsOutlined';
+import Container from '@mui/material/Container';
+// import CssBaseline from '@mui/material/CssBaseline';
+import Avatar from '@mui/material/Avatar';
+
+
 
 const set = (keyName, keyValue, ttl) => {
   const data = {
@@ -64,15 +71,15 @@ const Material = ({announcements, course, instructor }) => {
     const [open, setOpen] = React.useState(false);
     const [error1, setError1] = useState(null);
     const [title,setTitle] = useState('');
-    const [description,setDescription] = useState('');
+    const [item,setItem] = useState('');
+    const [description, setDescription] = useState('');
 
     useEffect(() => {
-      axios.get(`http://localhost:5000/announcement/course/${course._id}`,{headers:{'Authorization': get('token')}})
+      axios.get(`http://localhost:5000/course/material/${course._id}`,{headers:{'Authorization': get('token')}})
       .then((resp)=>{   // if no error
         console.log("UseEffect :\n");
         console.log(resp);
         setTimeout(()=>{
-          
         },10)
         setRows(resp.data.data);
         console.log(rows);
@@ -92,11 +99,15 @@ const Material = ({announcements, course, instructor }) => {
     };
 
   const handleSave = () => {
-    axios.post(`http://localhost:5000/announcement/course/${course._id}`,{
-      title : title,
+    
+    console.log({
+      filename : title,
       description : description,
-      files : [],
-      comments : []
+      data : item
+    });
+    axios.post(`http://localhost:5000/course/material/${course._id}`,{
+      filename : title,
+      data : item,
     },{headers:{'Authorization':get('token')}})
     .then((resp)=>{   // if no error
       console.log("HandleSave:\n");
@@ -106,12 +117,12 @@ const Material = ({announcements, course, instructor }) => {
     })
     .catch((err)=>{
       console.log(err);
-      setError1(err.response.data.message.message);
+      setError1(err.response.data);
     })
   }
   
   const handleDelete = (id) => {
-    axios.delete(`http://localhost:5000/announcement/${id}`,{headers:{'Authorization':get('token')}})
+    axios.delete(`http://localhost:5000/course/material/${id}?course_id=${course._id}`,{headers:{'Authorization':get('token')}})
     .then((resp)=>{   // if no error
       console.log("HandleDelete:\n");
       console.log(resp);
@@ -121,6 +132,33 @@ const Material = ({announcements, course, instructor }) => {
     .catch((err)=>{
       console.log(err);
       setError(err.response.data.message);
+    })
+  }
+
+  const uploadFile = ({ target: { files } }) =>{
+    console.log( files[0] )
+    let data = new FormData();
+    data.append( 'file', files[0] )
+
+    const options = {
+      onUploadProgress: (progressEvent) => {
+        const {loaded, total} = progressEvent;
+        let percent = Math.floor( (loaded * 100) / total )
+        console.log( `${loaded}kb of ${total}kb | ${percent}%` );
+
+        if( percent < 100 ){
+          this.setState({ uploadPercentage: percent })
+        }
+      }
+    }
+
+    axios.post("", data, options).then(res => { 
+        console.log(res)
+        this.setState({ avatar: res.data.url, uploadPercentage: 100 }, ()=>{
+          setTimeout(() => {
+            this.setState({ uploadPercentage: 0 })
+          }, 1000);
+        })
     })
   }
 
@@ -159,15 +197,100 @@ const Material = ({announcements, course, instructor }) => {
               </Toolbar>
             </AppBar>
             <List>
-              <ListItem>
-                <TextField fullWidth  id="standard-basic" label="Title" variant="filled" onChange={(e) => setTitle(e.target.value)}/>
+              {/* <ListItem>
+                <TextField fullWidth  id="standard-basic" label="file name" variant="filled" onChange={(e) => setTitle(e.target.value)}/>
               </ListItem>
               <Divider />
               <ListItem>
-                <TextField fullWidth  id="standard-basic" label="Description" variant="filled" multiline rows={5} onChange={(e)=>setDescription(e.target.value)}/>
-              </ListItem>
+                <FileBase64
+                  type="file"
+                  multiple={false}
+                  onDone={({ base64 }) => setItem( base64 )}
+                  /> */}
+                {/* <TextField fullWidth  id="standard-basic" label="Description" variant="filled" multiline rows={5} onChange={(e)=>setDescription(e.target.value)}/> */}
+              {/* </ListItem> */}
               {error1 ? <Alert severity="error">{error1}</Alert> : ""}
-
+              <Container component="main" maxWidth="xs">
+                {/* <CssBaseline /> */}
+                <Box
+                  sx={{
+                    marginTop: 8,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+                    <ImportContactsOutlinedIcon />
+                  </Avatar>
+                  <Typography component="h1" variant="h5">
+                    Add Material
+                  </Typography>
+                  <Box  noValidate sx={{ mt: 1 }}>
+                    <TextField
+                      margin="normal"
+                      required
+                      fullWidth
+                      id="title"
+                      label="Title"
+                      name="title"
+                      autoComplete="title"
+                      autoFocus
+                      onChange={(e) => setTitle(e.target.value)}
+                    />
+                    <TextField
+                      margin="normal"
+                      fullWidth
+                      name="description"
+                      label="Description"
+                      type="description"
+                      id="description"
+                      onChange={(e) => setDescription(e.target.value)}
+                    />
+                    <FileBase64
+                      type="file"
+                      multiple={false}
+                      onDone={({ base64 }) => setItem( base64 )}
+                    />
+                    {/* <div className="add - material" > */}
+                      
+                      {/* <div className="content"> */}
+                        {/* <div className="author"> */}
+                          {/* <a href="#localhost"> */}
+                            {/* <Button variant="outlined" noValidate sx={{ mt: 1 }}
+                            margin="normal"
+                            fullWidth
+                            autoFocus> */}
+                              {/* <input type="file" className = "item" onChange={uploadFile} /> */}
+                              {/* <FileBase64
+                                type="file"
+                                multiple={false}
+                                onDone={({ base64 }) => setItem( base64 )}
+                              /> */}
+                              {/* <h4 className="title">
+                                {this.props.name}
+                                <small>{this.props.userName}</small>
+                              </h4> */}
+                            {/* </Button>
+                          </a>
+                        </div> */}
+                        {/* <p className="description text-center">{this.props.description}</p> */}
+                      {/* </div> */}
+                      {/* <div className="text-center">{this.props.socials}</div> */}
+                    {/* </div> */}
+                    <Button
+                      type="submit"
+                      fullWidth
+                      onClick={handleSave}
+                      variant="contained"
+                      sx={{ mt: 3, mb: 2 }}
+                    >
+                      UPLOAD FILE
+                    </Button>
+                    
+                  </Box>
+                </Box>
+              </Container>
             </List>
           </Dialog>
         </div>
@@ -177,7 +300,7 @@ const Material = ({announcements, course, instructor }) => {
             <Item>
               <ListItem alignItems="flex-start">
                 <ListItemText
-                  primary={announcement.title}
+                  primary={announcement.filename}
                   secondary={
                     <React.Fragment>
                       <Typography
@@ -186,7 +309,7 @@ const Material = ({announcements, course, instructor }) => {
                         variant="body2"
                         color="text.primary"
                       >
-                        {announcement.description}
+                        {/* {announcement.description} */}
                       </Typography>
                     </React.Fragment>
                   }
