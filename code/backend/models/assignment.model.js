@@ -30,6 +30,10 @@ const assignmentSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Comment',
     }],
+    link : {
+        type : String,
+        required : true
+    }
     // files: [{
     //     type: mongoose.Schema.Types.ObjectId,
     //     ref: 'File',
