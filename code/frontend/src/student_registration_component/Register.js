@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useEffect } from 'react';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
@@ -45,6 +46,8 @@ import LayersIcon from '@mui/icons-material/Layers';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { colors } from '@mui/material';
+// import { Card, Input } from 'semantic-ui-react';
 
 const set = (keyName, keyValue, ttl) => {
   const data = {
@@ -71,56 +74,30 @@ const get = (keyName) => {
 
 
 
-function createData(id, date, name, shipTo,Button) {
-     return { id, date, name, shipTo,Button};
+function createData(id, date, name, courseCode,Button) {
+     return { id, date, name, courseCode,Button};
    }
-   
-   const rows = [
-     createData(
-       0,
-       'it314',
-       'Course_Name',
-       'UG'
-   
-     ),
-     createData(
-       1,
-       'hm',
-       'eco',
-       'pg'
-   
-     ),
-     createData(
-          2,
-           'ct',
-            'Mtech',
-             'pg'
-       ),
-     createData(
-       3,
-       'sc',
-       'Mtech',
-       'sir'
-     ),
-     createData(
-       4,
-       'el',
-       'Btech-Mtech',
-       'sir'
-     ),
-     createData(
-      4,
-      'el',
-      'Btech-Mtech',
-      'sir'
-    ),
-    createData(
-      4,
-      'el',
-      'Btech-Mtech',
-      'sir'
-    ),
-   ];
+ const rows = [
+  {
+    course : {_id: '643c21d04e2263e1432d773f', name: 'Web Development', courseCode: 'IT313', description: 'MERN Stack', teacher: '642c90413d11be150f573435', 
+    },
+    instructor: "milind"}
+    ,
+    {
+      course : {_id: '643c21d04e2263e1432d773f', name: 'Android', courseCode: 'IT314', description: 'MEAN', teacher: '642c90413d11be150f573435', 
+      },
+      instructor: "striker"}
+      ,
+      {
+        course : {_id: '643c21d04e2263e1432d773f', name: 'Python', courseCode: 'IT315', description: 'MERN Stack', teacher: '642c90413d11be150f573435', 
+        },
+        instructor: "RaOne"}
+        , {
+          course : {_id: '643c21d04e2263e1432d773f', name: 'Machine learning', courseCode: 'IT316', description: 'MERN Stack', teacher: '642c90413d11be150f573435', 
+          },
+          instructor: "ChintanSuthar"}
+ ]
+
    
    function preventDefault(event) {
      event.preventDefault();
@@ -189,24 +166,59 @@ const mdTheme = createTheme();
 
 function DashboardContent({setIsLoggedIn,navigate,user }) {
   const [open, setOpen] = React.useState(false);
+  const [row,setRows] = React.useState([]);
+  const [error,setError] = React.useState([]);
+  const [searchInput, setSearchInput] = React.useState('');
+  const [filteredResults, setFilteredResults] = React.useState([]);
+  const [newRow,setNewRow] = React.useState([]);
+  const [ogRow,setOgRow] = React.useState([]);
   const toggleDrawer = () => {
     setOpen(!open);
   };
 
   // const [error, setError] = useState(null);
   // const [rows, setRows] = useState([]);
-  // useEffect(() => {
-  //   axios.get('http://localhost:5000/user/courses',{headers:{'Authorization': get('token')}})
-  //     .then((resp)=>{   // if no error
-  //       console.log(resp);
-  //       setRows(resp.data.data);
-  //     })
-  //     .catch((err)=>{
-  //       console.log(err);
-  //       setError(err.response.data.error);
-  //     })
-  // },[]);
+  useEffect(() => {
+    if(row.length <= 0){
 
+      axios.get('http://localhost:5000/user/courses',{headers:{'Authorization': get('token')}})
+      .then((resp)=>{   // if no error
+        console.log(resp);
+        //UNCOMMENT  when BACKEND JOIN
+        // setRows(resp.data.data);
+        // setNewRow(resp.data.data.course);
+        // setOgRow(resp.data.data);
+        
+        // COMMENT  when BACKEND JOIN 
+        setRows(rows);
+        setNewRow(rows);
+        setOgRow(rows);
+      })
+      .catch((err)=>{
+        console.log(err);
+        setError(err.response.data.error);
+      })
+    }
+  },[ogRow]);
+  const searchItems = (searchValue) => {
+    const len = searchValue.length;
+    setSearchInput(searchValue)
+    if (len != 0) {
+      // const newRow = row.course;
+      const filteredData = row.filter((item) => {
+        // console.log(Object.values(item.course).join('').toLowerCase())
+          return (Object.values(item).join('').toLowerCase().includes(searchInput.toLowerCase()) ||
+          Object.values(item.course).join('').toLowerCase().includes(searchInput.toLowerCase()))
+      })
+      
+      setFilteredResults(filteredData)
+      setOgRow(filteredResults);
+  }
+  else{
+        setFilteredResults(rows)
+      setOgRow(rows);
+  }
+}
   return (
      <>
      <Navbar1/>
@@ -395,35 +407,49 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
      
     
     <React.Fragment>
+    
       {/* <Title>Classes</Title> */}
       <Table size="small">
         <TableHead>
           <TableRow>
             <TableCell>Course Code</TableCell>
             <TableCell>Course Name</TableCell>
-            <TableCell>UG/PG</TableCell>
+            <TableCell>Instructor Name</TableCell>
+            <TableCell>Description</TableCell>
             <TableCell>Enroll</TableCell>
     
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.id}>
-              <TableCell>{row.date}</TableCell>
-              <TableCell>{row.name}</TableCell>
-              <TableCell>{row.shipTo}</TableCell>
+          {ogRow.map((val,idx) => {
+          
+return (
+
+  <TableRow key={val.course._id}>
+              {/* {console.log(val.course.name,val.course.courseCode,val.course.description )} */}
+              <TableCell>{val.course.courseCode}</TableCell>
+              <TableCell>{val.course.name}</TableCell>
+              <TableCell>{val.instructor}</TableCell>
+              <TableCell>{val.course.description }</TableCell>
               <TableCell>{ <Button variant="contained">Enroll</Button>}</TableCell>
-             
             </TableRow>
-          ))}
+                )
+         
+})}
+
         </TableBody>
       </Table>
       {/* <Link color="primary" href="#" onClick={preventDefault} sx={{ mt: 3 }}>
         See more orders
       </Link> */}
+    
     </React.Fragment>
     </Box>
+    <input  placeholder='Search...'
+                onChange={(e) => searchItems(e.target.value)}
+            />
     </ThemeProvider>
+
     </>
   );
 }
