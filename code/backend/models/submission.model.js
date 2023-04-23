@@ -11,6 +11,9 @@ const submissionSchema = new mongoose.Schema({
         ref: 'User',
         required: true,
     },
+    feedback : {
+        type : String
+    },
     comments: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Comment',

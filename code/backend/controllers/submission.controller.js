@@ -86,6 +86,7 @@ exports.updateGradeById = async (req, res) => {
         const updatedSubmission = await Submission.findByIdAndUpdate(req.params.id, {
             grade: req.body.grade,
             graded: true,
+            feedback: req.body.feedback
         });
         return response.successResponse(res, updatedSubmission);
     } catch (err) {

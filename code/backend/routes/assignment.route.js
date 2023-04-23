@@ -17,4 +17,7 @@ router.put('/:id', [verifyToken], assignmentController.updateAssignmentById);
 // DELETE assignment by id
 router.delete('/:id', [verifyToken], assignmentController.deleteAssignmentById);
 
+// Get all assignments by course id
+router.get('/course/:id', [verifyToken], assignmentController.getAssignmentsByCourseId);
+
 module.exports = router;
