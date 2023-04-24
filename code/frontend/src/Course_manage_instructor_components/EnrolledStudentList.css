@@ -1,22 +1,4 @@
-.container {
-    max-width: 960px;
-    margin: 0 auto;
-    padding: 0 20px;
-  }
-  
-  h2 {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
-  }
-  
-  p {
-    font-size: 18px;
-    color: #888;
-    margin-top: 20px;
-  }
-  
-  table {
+table {
     margin-top: 20px;
     font-size: 18px;
     border-collapse: collapse;
@@ -56,4 +38,17 @@
     td {
       padding: 5px;
     }
+  }
+  
+  button {
+    padding: 5px 10px;
+    background-color: #f44336;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #d32f2f;
   }
