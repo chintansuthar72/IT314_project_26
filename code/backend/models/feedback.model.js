@@ -16,7 +16,7 @@ const feedbackSchema = new mongoose.Schema({
         ref: 'Course',
         required: true,
     },
-    
+
 
 }, {
     timestamps: true,
@@ -25,6 +25,3 @@ const feedbackSchema = new mongoose.Schema({
 const Feedback = mongoose.model('Feedback', feedbackSchema);
 
 module.exports = Feedback;
-
-
-

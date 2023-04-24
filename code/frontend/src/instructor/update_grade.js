@@ -9,6 +9,8 @@ import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
 import CssBaseline from '@mui/material/CssBaseline';
+import {Alert} from '@mui/material';
+
 import Avatar from '@mui/material/Avatar';
 import GradingOutlinedIcon from '@mui/icons-material/GradingOutlined';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -25,9 +27,31 @@ import {
   randomId,
 } from '@mui/x-data-grid-generator';
 import Container from '@mui/material/Container';
+import axios from 'axios'
+import { useEffect } from 'react';
 
 const theme = createTheme();
 
+const set = (keyName, keyValue, ttl) => {
+  const data = {
+      value: keyValue,                  // store the value within this object
+      ttl: Date.now() + (ttl * 1000),   // store the TTL (time to live)
+  }
+  localStorage.setItem(keyName, JSON.stringify(data));
+};
+
+  const get = (keyName) => {
+  const data = localStorage.getItem(keyName);
+  if (!data) {     // if no value exists associated with the key, return null
+      return null;
+  }
+  const item = JSON.parse(data);
+  if (Date.now() > item.ttl) {
+      localStorage.removeItem(keyName);
+      return null;
+  }
+  return item.value;
+};
 
 //dummy data
 const initialRows = [
@@ -82,9 +106,10 @@ EditToolbar.propTypes = {
   setRows: PropTypes.func.isRequired,
 };
 
-export default function UpdateGrade() {
+export default function UpdateGrade({assignmentId}) {
   const [rows, setRows] = React.useState(initialRows);
   const [rowModesModel, setRowModesModel] = React.useState({});
+  const [error,setError] = React.useState('');
 
   const handleRowEditStart = (params, event) => {
     event.defaultMuiPrevented = true;
@@ -116,7 +141,22 @@ export default function UpdateGrade() {
 
   const processRowUpdate = (newRow) => {
     const updatedRow = { ...newRow, isNew: false };
-    setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
+    console.log(updatedRow)
+    axios.put(`http://localhost:5000/submission/grade/${updatedRow._id}`,{
+      grade : updatedRow.grade,
+      feedback : updatedRow.feedback,
+    },{headers:{'Authorization':get('token')}})
+    .then((resp)=>{   // if no error
+      console.log("HandleEdit:\n");
+      console.log(resp);
+      setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
+      // setOpen(false);
+      // setChanged(!changed);
+    })
+    .catch((err)=>{
+      console.log(err);
+      setError(err.response.data.message);
+    })
     return updatedRow;
   };
 
@@ -124,13 +164,25 @@ export default function UpdateGrade() {
     setRowModesModel(newRowModesModel);
   };
 
+  useEffect(() => {
+    axios.get(`http://localhost:5000/submission/assignment/${assignmentId}`,{headers:{'Authorization': get('token')}})
+    .then((resp)=>{   // if no error
+      console.log("UseEffect :\n");
+      console.log(resp);
+      let data = resp.data.data;
+      for(let i = 0; i < data.length; ++i){
+        data[i].id = randomId();
+      }
+      setRows(data);
+      console.log(rows);
+    })
+    .catch((err)=>{
+      console.log(err);
+      setError(err.response.data.error);
+    })
+  },[]);
+
   const columns = [
-    { 
-        field: 'id', 
-        headerName: 'ID', 
-        width: 180, 
-        editable: false
-      },
     { 
       field: 'name', 
       headerName: 'Name', 
@@ -138,9 +190,10 @@ export default function UpdateGrade() {
       editable: false 
     },
     {
-      field: 'lastupdate',
+      field: 'updatedAt',
       headerName: 'Last Modified',
       type: 'dateTime',
+      valueGetter: ({ value }) => value && new Date(value),
       width: 180,
       editable: false,
     },
@@ -220,12 +273,13 @@ export default function UpdateGrade() {
   return (
     <ThemeProvider theme={theme}>
       <Container component="main">
-      {/* <CssBaseline/> */}
+      <CssBaseline/>
+      {error ? <Alert severity="error">{error}</Alert> : ""}
 
     <Box
     sx={{
       marginTop: 10,
-      // display: 'flex',
+      display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
@@ -238,13 +292,6 @@ export default function UpdateGrade() {
         },
     }}
     >
-      
-    <Avatar sx={{ m: 2, bgcolor: 'secondary.main' , margin : "auto"}} >
-          <GradingOutlinedIcon />
-    </Avatar>
-    <Typography component="h1" variant="h5">
-      Update Grade
-    </Typography>
       <DataGridPro
         rows={rows}
         columns={columns}
