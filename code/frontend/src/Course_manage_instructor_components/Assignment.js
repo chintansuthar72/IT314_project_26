@@ -83,7 +83,7 @@ const Assignment = ({ course }) => {
     const [formLink,setFormLink] = useState('');
 
     useEffect(() => {
-      axios.get(`/assignment/course/${course._id}`,{headers:{'Authorization': get('token')}})
+      axios.get(`https://onlinecoursemanagementsystem.onrender.com/assignment/course/${course._id}`,{headers:{'Authorization': get('token')}})
       .then((resp)=>{   // if no error
         console.log("UseEffect :\n");
         console.log(resp);
@@ -124,7 +124,7 @@ const Assignment = ({ course }) => {
       due_date : dueDate,
       link : formLink
     })
-    axios.post(`/assignment/course/${course._id}`,{
+    axios.post(`https://onlinecoursemanagementsystem.onrender.com/assignment/course/${course._id}`,{
       name : title,
       description : description,
       due_date : dueDate,
@@ -143,7 +143,7 @@ const Assignment = ({ course }) => {
   }
   
   const handleDelete = (id) => {
-    axios.delete(`/assignment/${id}`,{headers:{'Authorization':get('token')}})
+    axios.delete(`https://onlinecoursemanagementsystem.onrender.com/assignment/${id}`,{headers:{'Authorization':get('token')}})
     .then((resp)=>{   // if no error
       console.log("HandleDelete:\n");
       console.log(resp);
