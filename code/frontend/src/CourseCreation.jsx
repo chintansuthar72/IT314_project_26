@@ -247,7 +247,7 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
       courseCode: courseCode,
       description: description,
     };
-    axios.post('/course',signupData, {headers:{'Authorization':get('token')}})
+    axios.post('https://onlinecoursemanagementsystem.onrender.com/course',signupData, {headers:{'Authorization':get('token')}})
     .then((resp)=>{   // if no error
       console.log(resp);
       // setError('Signed up successfully!'); // subject to change

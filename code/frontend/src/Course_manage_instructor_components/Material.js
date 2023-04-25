@@ -75,7 +75,7 @@ const Material = ({announcements, course, instructor }) => {
     const [description, setDescription] = useState('');
 
     useEffect(() => {
-      axios.get(`/course/material/${course._id}`,{headers:{'Authorization': get('token')}})
+      axios.get(`https://onlinecoursemanagementsystem.onrender.com/course/material/${course._id}`,{headers:{'Authorization': get('token')}})
       .then((resp)=>{   // if no error
         console.log("UseEffect :\n");
         console.log(resp);
@@ -105,7 +105,7 @@ const Material = ({announcements, course, instructor }) => {
       description : description,
       data : item
     });
-    axios.post(`/course/material/${course._id}`,{
+    axios.post(`https://onlinecoursemanagementsystem.onrender.com/course/material/${course._id}`,{
       filename : title,
       data : item,
     },{headers:{'Authorization':get('token')}})
@@ -122,7 +122,7 @@ const Material = ({announcements, course, instructor }) => {
   }
   
   const handleDelete = (id) => {
-    axios.delete(`/course/material/${id}?course_id=${course._id}`,{headers:{'Authorization':get('token')}})
+    axios.delete(`https://onlinecoursemanagementsystem.onrender.com/course/material/${id}?course_id=${course._id}`,{headers:{'Authorization':get('token')}})
     .then((resp)=>{   // if no error
       console.log("HandleDelete:\n");
       console.log(resp);
