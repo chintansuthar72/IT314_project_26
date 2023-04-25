@@ -181,7 +181,7 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
   useEffect(() => {
     if(row.length <= 0){
 
-      axios.get('http://localhost:5000/user/courses',{headers:{'Authorization': get('token')}})
+      axios.get('/user/courses',{headers:{'Authorization': get('token')}})
       .then((resp)=>{   // if no error
         console.log(resp);
         //UNCOMMENT  when BACKEND JOIN

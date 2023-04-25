@@ -124,7 +124,7 @@ export default function EditAssignment({course, created_assignment}) {
 
   const handleDeleteClick = (id) => () => {
     let delete_row = (rows.filter((row) => row.id === id))[0];
-    axios.delete(`http://localhost:5000/assignment/${delete_row._id}`,{headers:{'Authorization':get('token')}})
+    axios.delete(`/assignment/${delete_row._id}`,{headers:{'Authorization':get('token')}})
     .then((resp)=>{   // if no error
       console.log("HandleDelete:\n");
       console.log(resp);
@@ -154,7 +154,7 @@ export default function EditAssignment({course, created_assignment}) {
   const processRowUpdate = (newRow) => {
     const updatedRow = { ...newRow, isNew: false };
     console.log(updatedRow)
-    axios.put(`http://localhost:5000/assignment/${updatedRow._id}`,{
+    axios.put(`/assignment/${updatedRow._id}`,{
       name : updatedRow.name,
       description : updatedRow.description,
       link : updatedRow.link,
@@ -273,7 +273,7 @@ export default function EditAssignment({course, created_assignment}) {
 
   // Added
   useEffect(() => {
-    axios.get(`http://localhost:5000/assignment/course/${course._id}`,{headers:{'Authorization': get('token')}})
+    axios.get(`/assignment/course/${course._id}`,{headers:{'Authorization': get('token')}})
     .then((resp)=>{   // if no error
       console.log("UseEffect :\n");
       console.log(resp);
