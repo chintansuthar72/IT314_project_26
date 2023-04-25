@@ -67,7 +67,7 @@ const Announcement = ({course }) => {
     const [description,setDescription] = useState('');
 
     useEffect(() => {
-      axios.get(`http://localhost:5000/announcement/course/${course._id}`,{headers:{'Authorization': get('token')}})
+      axios.get(`/announcement/course/${course._id}`,{headers:{'Authorization': get('token')}})
       .then((resp)=>{   // if no error
         console.log("UseEffect :\n");
         console.log(resp);
@@ -92,7 +92,7 @@ const Announcement = ({course }) => {
     };
 
   const handleSave = () => {
-    axios.post(`http://localhost:5000/announcement/course/${course._id}`,{
+    axios.post(`/announcement/course/${course._id}`,{
       title : title,
       description : description,
       files : [],
@@ -111,7 +111,7 @@ const Announcement = ({course }) => {
   }
   
   const handleDelete = (id) => {
-    axios.delete(`http://localhost:5000/announcement/${id}`,{headers:{'Authorization':get('token')}})
+    axios.delete(`/announcement/${id}`,{headers:{'Authorization':get('token')}})
     .then((resp)=>{   // if no error
       console.log("HandleDelete:\n");
       console.log(resp);
