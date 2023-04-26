@@ -36,7 +36,11 @@ const getMessageById = async (req, res) => {
 
 const deleteMessageById = async (req, res) => {
     try {
-        const message = await Message.findByIdAndDelete(req.params.id);
+        const message = await Message.findById(req.params.id);
+        if(message.sender != req.id) {
+            return response.unauthorizedResponse(res, "You are not authorized to delete this message");
+        }
+        await Message.findByIdAndDelete(req.params.id);
         return response.successResponse(res, message);
     } catch (err) {
         return response.serverErrorResponse(res, err);
