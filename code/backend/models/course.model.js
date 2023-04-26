@@ -17,7 +17,7 @@ const courseSchema = new mongoose.Schema({
     },
     description: {
         type: String,
-        required: true,
+        // required: true,
         trim: true,
     },
     teacher: {
