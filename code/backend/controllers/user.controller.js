@@ -98,7 +98,13 @@ const getAllCoursesOfUser = async (req, res) => {
         let coursesArray = [];
         for(let i=0; i<courses.length; i++){
             const temp = await Course.findById(courses[i]);
+            if(!temp) {
+                continue;
+            }
             const teacher = await User.findById(temp.teacher);
+            if(!teacher) {
+                continue;
+            }
             let data = {
                 instructor: teacher.username,
                 course : temp
