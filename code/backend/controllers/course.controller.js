@@ -28,7 +28,16 @@ exports.addCourse = async (req, res) => {
 exports.getAllCourses = async (req, res) => {
     try {
         const courses = await Course.find();
-        return response.successResponse(res, courses);
+        const coursesArray = [];
+        for(let i=0; i<courses.length; i++){
+            const teacher = await User.findById(courses[i].teacher);
+            let data = {
+                instructor: teacher.username,
+                course : courses[i]
+            }
+            coursesArray.push(data);
+        }
+        return response.successResponse(res, coursesArray);
     } catch (err) {
         return response.serverErrorResponse(res, err);
     }
