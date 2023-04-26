@@ -43,10 +43,10 @@ const set = (keyName, keyValue, ttl) => {
       return null;
   }
   const item = JSON.parse(data);
-  if (Date.now() > item.ttl) {
-      localStorage.removeItem(keyName);
-      return null;
-  }
+  // if (Date.now() > item.ttl) {
+  //     localStorage.removeItem(keyName);
+  //     return null;
+  // }
   return item.value;
 };
 
@@ -167,10 +167,16 @@ const Material = ({announcements, course, instructor }) => {
       <>
         {/* <AddAnnouncement course={course} setchanged={setChanged} changed={changed}/> */}
         <div>
-          <Button variant="outlined"  onClick={handleClickOpen}>
-            Add Material
-          </Button>
-          {error ? <Alert severity="error">{error}</Alert> : ""}
+        {       
+            get('role') == 'TEACHER' ? 
+            <div>
+            <Button variant="outlined"  onClick={handleClickOpen}>
+              Add Material
+            </Button>
+            {error ? <Alert severity="error">{error}</Alert> : ""}
+            </div>
+            : <></>
+        }
           <div style={{padding:"10px"}}></div>
           <Dialog
             fullScreen
@@ -314,13 +320,21 @@ const Material = ({announcements, course, instructor }) => {
                     </React.Fragment>
                   }
                 />
-                <IconButton edge="end" aria-label="delete">
-                  <EditIcon />
-                </IconButton>
+                {       
+                    get('role') == 'TEACHER' ? 
+                    <IconButton edge="end" aria-label="delete">
+                      <EditIcon />
+                    </IconButton>
+                : <></>
+                }                
                 <Divider orientation="vertical" style={{paddingLeft:"10px",paddingRight:"10px"}}/>
-                <IconButton edge="end" aria-label="delete">
-                  <DeleteIcon onClick={() => handleDelete(announcement._id)}/>
-                </IconButton>
+                {       
+                    get('role') == 'TEACHER' ? 
+                    <IconButton edge="end" aria-label="delete">
+                      <DeleteIcon onClick={() => handleDelete(announcement._id)}/>
+                    </IconButton>
+                    : <></>
+                }
               </ListItem>
             </Item>
           )}
