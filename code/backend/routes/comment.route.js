@@ -13,10 +13,10 @@ router.get('/:id', [verifyToken], commentController.getCommentById);
 router.post('/announcement/:id', [verifyToken], commentController.postCommentInAnnouncement);
 
 // POST new comment in assignment
-router.post('/assignment/:id', [verifyToken], commentController.postCommentInAssignment);
+// router.post('/assignment/:id', [verifyToken], commentController.postCommentInAssignment);
 
 // POST new comment in submission
-router.post('/submission/:id', [verifyToken], commentController.postCommentInSubmission);
+// router.post('/submission/:id', [verifyToken], commentController.postCommentInSubmission);
 
 // PUT comment by id
 router.put('/:id', [verifyToken], commentController.updateCommentById);

@@ -62,7 +62,7 @@ const updateCommentById = async (req, res) => {
     try {
         const comment = await Comment.findById(req.params.id);
         if(comment.commentator != req.id) return response.unauthorizedResponse(res, "You are not authorized to update this comment.");
-        const updatedComment = Comment.findByIdAndUpdate(req.params.id, {
+        const updatedComment = await Comment.findByIdAndUpdate(req.params.id, {
             description: req.body.description,
         });
         return response.successResponse(res, updatedComment);
@@ -73,8 +73,10 @@ const updateCommentById = async (req, res) => {
 
 const deleteCommentById = async (req, res) => {
     try {
-        const comment = await Comment.findByIdAndDelete(req.params.id);
-        return response.successResponse(res, comment);
+        const comment = await Comment.findById(req.params.id);
+        if(comment.commentator != req.id || !['TEACHER','ADMIN'].includes(req.role)) return response.unauthorizedResponse(res, "You are not authorized to update this comment.");
+        const deletedComment = await Comment.findByIdAndDelete(req.params.id);
+        return response.successResponse(res, deletedComment);
     } catch (err) {
         return response.serverErrorResponse(res, err);
     }

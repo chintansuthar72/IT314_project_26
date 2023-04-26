@@ -19,7 +19,7 @@ function Copyright(props) {
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
       <Link color="inherit" href="https://ocoursems.netlify.app" target='_blank'>
-        Online Course Managment System
+        Online Course Management System
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}

@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 
 const commentSchema = new mongoose.Schema({
-    submission: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Submission',
-    },
+    // submission: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'Submission',
+    // },
     commentator: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -19,10 +19,10 @@ const commentSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Announcement',
     },
-    assignment: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Assignment',
-    }
+    // assignment: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'Assignment',
+    // }
     // files: [{
     //     type: mongoose.Schema.Types.ObjectId,
     //     ref: 'File',
