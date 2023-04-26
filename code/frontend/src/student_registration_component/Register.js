@@ -20,6 +20,8 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { mainListItems, secondaryListItems } from './listItems';
 import Navbar1 from './Navbar1';
+import Title from './Title';
+
 // import Chart from './Chart';
 // import Deposits from './Deposits';
 // import Orders from './Orders';
@@ -48,6 +50,52 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { colors } from '@mui/material';
 // import { Card, Input } from 'semantic-ui-react';
+import SearchIcon from '@mui/icons-material/Search';
+import InputBase from '@mui/material/InputBase';
+import { alpha } from '@mui/material/styles';
+
+
+const Search = styled('div')(({ theme }) => ({
+  position: 'relative',
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.common.white, 0.25),
+  },
+  marginLeft: 0,
+  width: '100%',
+  [theme.breakpoints.up('sm')]: {
+    marginLeft: theme.spacing(1),
+    width: 'auto',
+  },
+}));
+
+const SearchIconWrapper = styled('div')(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: '100%',
+  position: 'absolute',
+  pointerEvents: 'none',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: 'inherit',
+  '& .MuiInputBase-input': {
+    padding: theme.spacing(1, 1, 1, 0),
+    // vertical padding + font size from searchIcon
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    transition: theme.transitions.create('width'),
+    width: '100%',
+    [theme.breakpoints.up('sm')]: {
+      width: '12ch',
+      '&:focus': {
+        width: '20ch',
+      },
+    },
+  },
+}));
 
 const set = (keyName, keyValue, ttl) => {
   const data = {
@@ -70,38 +118,10 @@ const get = (keyName) => {
   }
   return item.value;
 };
-
-
-
-
-function createData(id, date, name, courseCode,Button) {
-     return { id, date, name, courseCode,Button};
-   }
- const rows = [
-  {
-    course : {_id: '643c21d04e2263e1432d773f', name: 'Web Development', courseCode: 'IT313', description: 'MERN Stack', teacher: '642c90413d11be150f573435', 
-    },
-    instructor: "milind"}
-    ,
-    {
-      course : {_id: '643c21d04e2263e1432d773f', name: 'Android', courseCode: 'IT314', description: 'MEAN', teacher: '642c90413d11be150f573435', 
-      },
-      instructor: "striker"}
-      ,
-      {
-        course : {_id: '643c21d04e2263e1432d773f', name: 'Python', courseCode: 'IT315', description: 'MERN Stack', teacher: '642c90413d11be150f573435', 
-        },
-        instructor: "RaOne"}
-        , {
-          course : {_id: '643c21d04e2263e1432d773f', name: 'Machine learning', courseCode: 'IT316', description: 'MERN Stack', teacher: '642c90413d11be150f573435', 
-          },
-          instructor: "ChintanSuthar"}
- ]
-
    
-   function preventDefault(event) {
-     event.preventDefault();
-   }
+function preventDefault(event) {
+  event.preventDefault();
+}
 
 function Copyright(props) {
   return (
@@ -166,68 +186,64 @@ const mdTheme = createTheme();
 
 function DashboardContent({setIsLoggedIn,navigate,user }) {
   const [open, setOpen] = React.useState(false);
-  const [row,setRows] = React.useState([]);
-  const [error,setError] = React.useState([]);
+  const [rows,setRows] = React.useState([]);
   const [searchInput, setSearchInput] = React.useState('');
   const [filteredResults, setFilteredResults] = React.useState([]);
-  const [newRow,setNewRow] = React.useState([]);
-  const [ogRow,setOgRow] = React.useState([]);
+  const [isLoading,setIsLoading] = React.useState(true);
+  const [error,setError] = React.useState('');
   const toggleDrawer = () => {
     setOpen(!open);
   };
 
-  // const [error, setError] = useState(null);
-  // const [rows, setRows] = useState([]);
   useEffect(() => {
-    if(row.length <= 0){
+    axios.get('https://onlinecoursemanagementsystem.onrender.com/course',{headers:{'Authorization': get('token')}})
+    .then((resp)=>{   // if no error
+      console.log(resp);
+      setRows(resp.data.data);
+      setFilteredResults(resp.data.data);
+    })
+    .catch((err)=>{
+      console.log(err);
+      setError(err.response.data.error);
+    })
+    setIsLoading(false);
+  },[]);
 
-      axios.get('https://onlinecoursemanagementsystem.onrender.com/user/courses',{headers:{'Authorization': get('token')}})
-      .then((resp)=>{   // if no error
-        console.log(resp);
-        //UNCOMMENT  when BACKEND JOIN
-        // setRows(resp.data.data);
-        // setNewRow(resp.data.data.course);
-        // setOgRow(resp.data.data);
-        
-        // COMMENT  when BACKEND JOIN 
-        setRows(rows);
-        setNewRow(rows);
-        setOgRow(rows);
-      })
-      .catch((err)=>{
-        console.log(err);
-        setError(err.response.data.error);
-      })
-    }
-  },[ogRow]);
-  const searchItems = (searchValue) => {
-    const len = searchValue.length;
-    setSearchInput(searchValue)
+  useEffect(() => {
+    const len = searchInput.length;
     if (len != 0) {
-      // const newRow = row.course;
-      const filteredData = row.filter((item) => {
-        // console.log(Object.values(item.course).join('').toLowerCase())
-          return (Object.values(item).join('').toLowerCase().includes(searchInput.toLowerCase()) ||
-          Object.values(item.course).join('').toLowerCase().includes(searchInput.toLowerCase()))
-      })
-      
-      setFilteredResults(filteredData)
-      setOgRow(filteredResults);
+      const filteredData = rows.filter((item) => {
+          const wholeString = item.instructor + " " + item.course.courseCode + " " + item.course.name + " " + item.course.description;
+          return wholeString.toLowerCase().includes(searchInput.toLowerCase());
+      });
+      setFilteredResults(filteredData);
+    } else {
+      setFilteredResults(rows);
+    }
+  }, [searchInput]);
+
+  const handleEnroll = (id) => {
+    axios.get(`https://onlinecoursemanagementsystem.onrender.com/user/course/${id}`,{headers:{'Authorization': get('token')}})
+    .then((resp)=>{   // if no error
+      console.log(resp);
+      navigate('/dashboard',{
+        state: {
+          user: user,
+        }
+      });
+    })
+    .catch((err)=>{
+      console.log(err);
+      setError(err.response.data.error);
+    })
   }
-  else{
-        setFilteredResults(rows)
-      setOgRow(rows);
-  }
-}
+
   return (
      <>
-     <Navbar1/>
-     
-     
-    <ThemeProvider theme={mdTheme}>
+     <ThemeProvider theme={mdTheme}>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
-        {/* <AppBar position="absolute" open={open}>
+        <AppBar position="absolute" open={open}>
           <Toolbar
             sx={{
               pr: '24px', // keep right padding when drawer closed
@@ -252,10 +268,25 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
               noWrap
               sx={{ flexGrow: 1 }}
             >
-              Dashboard
+              Join course
             </Typography>
+            {/* <IconButton color="inherit">
+              <Badge badgeContent={4} color="secondary">
+                <NotificationsIcon />
+              </Badge>
+            </IconButton> */}
+            <Search>
+              <SearchIconWrapper>
+                <SearchIcon />
+              </SearchIconWrapper>
+              <StyledInputBase
+                placeholder="Search…"
+                inputProps={{ 'aria-label': 'search' }}
+                onChange={(e) => setSearchInput(e.target.value)}
+              />
+            </Search>
           </Toolbar>
-        </AppBar> */}
+        </AppBar>
         <Drawer variant="permanent" open={open}>
           <Toolbar
             sx={{
@@ -271,7 +302,8 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
           </Toolbar>
           <Divider />
           <List component="nav">
-          <ListItemButton onClick={() => {
+            {/* {mainListItems}*/}
+            <ListItemButton onClick={() => {
               navigate('/dashboard', {
                 state: {
                   user : user
@@ -353,7 +385,7 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
             </ListItemButton>
           </List>
         </Drawer>
-        {/* <Box
+        <Box
           component="main"
           sx={{
             backgroundColor: (theme) =>
@@ -368,88 +400,48 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
-          
-              <Grid item xs={12} md={8} lg={9}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 240,
-                  }}
-                >
-                
-                </Paper>
-              </Grid>
-          
-              <Grid item xs={12} md={4} lg={3}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 240,
-                  }}
-                >
-                 
-                </Paper>
-              </Grid>
-           
               <Grid item xs={12}>
                 <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                 
+                  {error && <div>{error}</div>}
+                  <>
+                    <Table size="small">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Course Code</TableCell>
+                          <TableCell>Course Name</TableCell>
+                          <TableCell>Instructor Name</TableCell>
+                          <TableCell>Description</TableCell>
+                          <TableCell>Enroll</TableCell>
+                  
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {filteredResults.map((val,idx) => {
+                          return (
+                            <TableRow key={val.course._id}>
+                              {/* {console.log(val.course.name,val.course.courseCode,val.course.description )} */}
+                              <TableCell>{val.course.courseCode}</TableCell>
+                              <TableCell>{val.course.name}</TableCell>
+                              <TableCell>{val.instructor}</TableCell>
+                              <TableCell>{val.course.description }</TableCell>
+                              <TableCell>{ <Button variant="contained" onClick={() => handleEnroll(val.course._id)}>Enroll</Button>}</TableCell>
+                            </TableRow>
+                                )
+                          })}
+                      </TableBody>
+                    </Table>
+                    {/* <Link color="primary" href="#" onClick={preventDefault} sx={{ mt: 3 }}>
+                      See more orders
+                    </Link> */}
+                  </>
                 </Paper>
               </Grid>
             </Grid>
-           
+            {/* <Copyright sx={{ pt: 4 }} /> */}
           </Container>
-        </Box> */}
-     
-    
-    <React.Fragment>
-    
-      {/* <Title>Classes</Title> */}
-      <Table size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell>Course Code</TableCell>
-            <TableCell>Course Name</TableCell>
-            <TableCell>Instructor Name</TableCell>
-            <TableCell>Description</TableCell>
-            <TableCell>Enroll</TableCell>
-    
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {ogRow.map((val,idx) => {
-          
-return (
-
-  <TableRow key={val.course._id}>
-              {/* {console.log(val.course.name,val.course.courseCode,val.course.description )} */}
-              <TableCell>{val.course.courseCode}</TableCell>
-              <TableCell>{val.course.name}</TableCell>
-              <TableCell>{val.instructor}</TableCell>
-              <TableCell>{val.course.description }</TableCell>
-              <TableCell>{ <Button variant="contained">Enroll</Button>}</TableCell>
-            </TableRow>
-                )
-         
-})}
-
-        </TableBody>
-      </Table>
-      {/* <Link color="primary" href="#" onClick={preventDefault} sx={{ mt: 3 }}>
-        See more orders
-      </Link> */}
-    
-    </React.Fragment>
-    </Box>
-    <input  placeholder='Search...'
-                onChange={(e) => searchItems(e.target.value)}
-            />
+        </Box>
+      </Box>
     </ThemeProvider>
-
     </>
   );
 }
