@@ -35,11 +35,13 @@ const set = (keyName, keyValue, ttl) => {
   if (!data) {     // if no value exists associated with the key, return null
       return null;
   }
+  
+  
   const item = JSON.parse(data);
-  if (Date.now() > item.ttl) {
-      localStorage.removeItem(keyName);
-      return null;
-  }
+  // if (Date.now() > item.ttl) {
+  //     localStorage.removeItem(keyName);
+  //     return null;
+  // }
   return item.value;
 };
 
@@ -111,6 +113,7 @@ const Announcement = ({course }) => {
   }
   
   const handleDelete = (id) => {
+    
     axios.delete(`https://onlinecoursemanagementsystem.onrender.com/announcement/${id}`,{headers:{'Authorization':get('token')}})
     .then((resp)=>{   // if no error
       console.log("HandleDelete:\n");
@@ -129,9 +132,14 @@ const Announcement = ({course }) => {
       <>
         {/* <AddAnnouncement course={course} setchanged={setChanged} changed={changed}/> */}
         <div>
+        {       
+          get('role') == 'TEACHER' ? 
           <Button variant="outlined"  onClick={handleClickOpen}>
             Add announcement
           </Button>
+          : <></>
+        }
+         
           {error ? <Alert severity="error">{error}</Alert> : ""}
           <div style={{padding:"10px"}}></div>
           <Dialog
@@ -191,13 +199,21 @@ const Announcement = ({course }) => {
                     </React.Fragment>
                   }
                 />
-                <IconButton edge="end" aria-label="delete">
-                  <EditIcon />
-                </IconButton>
+                {       
+                    get('role') == 'TEACHER' ? 
+                    <IconButton edge="end" aria-label="delete">
+                      <EditIcon />
+                  </IconButton>
+                  : <></>
+                }
+
                 <Divider orientation="vertical" style={{paddingLeft:"10px",paddingRight:"10px"}}/>
-                <IconButton edge="end" aria-label="delete">
+                {
+                  get('role') == 'TEACHER' ? 
+                  <IconButton edge="end" aria-label="delete">
                   <DeleteIcon onClick={() => handleDelete(announcement._id)}/>
-                </IconButton>
+                </IconButton> : <></>
+                }
               </ListItem>
             </Item>
           )}
