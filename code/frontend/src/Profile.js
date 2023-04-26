@@ -40,6 +40,9 @@ import ListItem from '@mui/material/ListItem';
 // import Divider from '@mui/material/Divider';
 import { Button, TextField  } from '@mui/material';
 
+import axios from 'axios';
+import Alert from '@mui/material/Alert';
+
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
@@ -145,6 +148,12 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
   const [open, setOpen] = React.useState(false);
   const [openEdit, setOpenEdit] = React.useState(false);
 
+  const [username, setUsername] = useState(user.user.username);
+  const [email, setEmail] = useState(user.user.email);
+  const [phone, setPhone] = useState(user.user.phone);
+
+  const [error, setError] = useState(null);
+
   const toggleDrawer = () => {
     setOpen(!open);
   };
@@ -157,36 +166,39 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
   };
 
   const handleSave = () => {
-    // axios.post(`http://localhost:5000/announcement/course/${course._id}`,{
-    //   title : title,
-    //   description : description,
-    //   files : [],
-    //   comments : []
-    // },{headers:{'Authorization':get('token')}})
-    // .then((resp)=>{   // if no error
-    //   console.log("HandleSave:\n");
-    //   console.log(resp);
-    //   setOpen(false);
-    //   setChanged(!changed);
-    // })
-    // .catch((err)=>{
-    //   console.log(err);
-    //   setError1(err.response.data.message.message);
-    // })
+    axios.put(`https://onlinecoursemanagementsystem.onrender.com/user/${user.user._id}`,{
+      username : username,
+      email : email,
+      phone : phone
+    },{headers:{'Authorization':get('token')}})
+    .then((resp)=>{   // if no error
+      console.log("HandleSave:\n");
+      console.log(resp);
+      setOpenEdit(false);
+      setError(null);
+    })
+    .catch((err)=>{
+      console.log(err);
+      setError(err.response.data.message.codeName);
+      // setError("Error");
+    })
   }
-  const handleDelete = (id) => {
-    // axios.delete(`http://localhost:5000/announcement/${id}`,{headers:{'Authorization':get('token')}})
-    // .then((resp)=>{   // if no error
-    //   console.log("HandleDelete:\n");
-    //   console.log(resp);
-    //   setOpen(false);
-    //   setChanged(!changed);
-    // })
-    // .catch((err)=>{
-    //   console.log(err);
-    //   setError(err.response.data.message);
-    // })
-  }
+  
+
+  useEffect(() => {
+    axios.get(`https://onlinecoursemanagementsystem.onrender.com/user/${user.user._id}`,{headers:{'Authorization':get('token')}})
+    .then((resp)=>{   // if no error
+      console.log(resp);
+      setUsername(resp.data.data.username);
+      setEmail(resp.data.data.email);
+      setPhone(resp.data.data.phone);
+    })
+    .catch((err)=>{
+      console.log(err);
+      // setError(err.response.data.message.message);
+    })
+  }, [openEdit])
+
 
   return (
     <ThemeProvider theme={mdTheme}>
@@ -357,7 +369,6 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
                     <Button variant="outlined"  onClick={handleClickOpenEdit}>
                       Edit Profile
                     </Button>
-                    {/* {error ? <Alert severity="error">{error}</Alert> : ""} */}
                     <div style={{padding:"10px"}}></div>
                     <Dialog
                       fullScreen
@@ -384,18 +395,19 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
                         </Toolbar>
                       </AppBar>
                       <List>
+                      {error ? <Alert severity="error">{error}</Alert> : ""}
                         <ListItem>
-                        <TextField fullWidth id="standard-basic" label="username" variant="filled" />
+                        <TextField fullWidth id="standard-basic" label="Username" variant="filled" defaultValue={username} onChange={(e) => setUsername(e.target.value)}/>
                           {/* <TextField fullWidth  id="standard-basic" label="Title" variant="filled" onChange={(e) => setTitle(e.target.value)}/> */}
                         </ListItem>
                         <Divider />
                         <ListItem>
-                        <TextField fullWidth id="standard-basic" label="phone number" variant="filled" />
+                        <TextField fullWidth id="standard-basic" label="Email" variant="filled" defaultValue={email} onChange={(e) => setEmail(e.target.value)}/>
                           {/* <TextField fullWidth  id="standard-basic" label="Description" variant="filled" multiline rows={5} onChange={(e)=>setDescription(e.target.value)}/> */}
                         </ListItem>
                         <Divider />
                         <ListItem>
-                        <TextField fullWidth id="standard-basic" label="password" variant="filled" />
+                        <TextField fullWidth id="standard-basic" label="Phone number" variant="filled" defaultValue={phone} onChange={(e) => setPhone(e.target.value)}/>
                           {/* <TextField fullWidth  id="standard-basic" label="Title" variant="filled" onChange={(e) => setTitle(e.target.value)}/> */}
                         </ListItem>
                         {/* {error1 ? <Alert severity="error">{error1}</Alert> : ""} */}
@@ -409,17 +421,18 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
                         <Item>
                           <ListItem alignItems="flex-start">
                             <ListItemText
-                              primary={"username: "}
+                              primary={`username: ${username}`}
+
                             />
                           </ListItem>
                           <ListItem alignItems="flex-start">
                             <ListItemText
-                              primary={"phone number"}
+                              primary={`phone number : ${phone}`}
                             />
                           </ListItem>
                           <ListItem alignItems="flex-start">
                             <ListItemText
-                              primary={"email"}
+                              primary={`email : ${email}`}
                             />
                           </ListItem>
                         </Item>
@@ -453,5 +466,6 @@ export default function Profile() {
       navigate('/');
     }
   },[isLoggedIn]);
+  console.log(state);
   return <DashboardContent  setIsLoggedIn={setIsLoggedIn} navigate={navigate} user={state.user} />;
 }
