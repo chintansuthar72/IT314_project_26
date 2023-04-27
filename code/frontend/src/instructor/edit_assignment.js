@@ -65,10 +65,10 @@ const set = (keyName, keyValue, ttl) => {
       return null;
   }
   const item = JSON.parse(data);
-  if (Date.now() > item.ttl) {
-      localStorage.removeItem(keyName);
-      return null;
-  }
+  // if (Date.now() > item.ttl) {
+  //     localStorage.removeItem(keyName);
+  //     return null;
+  // }
   return item.value;
 };
 
@@ -220,9 +220,10 @@ export default function EditAssignment({course, created_assignment}) {
       editable: true,
     },
     {
+      
       field: 'actions',
       type: 'actions',
-      headerName: 'Edit/Delete/Grade',
+      headerName: (get('role') != 'STUDENT'? 'Edit/Delete/Grade' : 'Grade'),
       width: 150,
       cellClassName: 'actions',
       getActions: ({ id }) => {
@@ -244,8 +245,7 @@ export default function EditAssignment({course, created_assignment}) {
             />,
           ];
         }
-
-        return [
+        const return_array = get('role') == 'TEACHER' ? [
           <GridActionsCellItem
             icon={<EditIcon />}
             label="Edit"
@@ -265,7 +265,8 @@ export default function EditAssignment({course, created_assignment}) {
             onClick={() => handleGradeClick(id)}
             color="inherit"
           />,
-        ];
+        ]: [];
+        return  return_array
       },
     },
   ];
