@@ -53,6 +53,11 @@ import Stack from '@mui/material/Stack';
 
 import { useEffect, useState } from 'react';
 
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -154,6 +159,20 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
 
   const [error, setError] = useState(null);
 
+  const [openChangePassword, setOpenChangePassword] = React.useState(false);
+  const [changePasswordError, setChangePasswordError] = useState(null);
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+
+  const handleClickOpenChangePassword = () => {
+    setOpenChangePassword(true);
+  };
+
+  const handleCloseChangePassword = () => {
+    setChangePasswordError('');
+    setOpenChangePassword(false);
+  };
+
   const toggleDrawer = () => {
     setOpen(!open);
   };
@@ -184,7 +203,6 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
     })
   }
   
-
   useEffect(() => {
     axios.get(`https://onlinecoursemanagementsystem.onrender.com/user/${user.user._id}`,{headers:{'Authorization':get('token')}})
     .then((resp)=>{   // if no error
@@ -199,6 +217,27 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
     })
   }, [openEdit])
 
+
+  const handleSubmitChangePassword = async (e) => {
+    e.preventDefault();
+    if(oldPassword === newPassword){
+      setChangePasswordError("New password cannot be same as old password");
+      return;
+    }
+    axios.put(`https://onlinecoursemanagementsystem.onrender.com/user/change/password`,{
+      oldPassword : oldPassword,
+      newPassword : newPassword
+    },{headers:{'Authorization':get('token')}})
+    .then((resp)=>{   // if no error
+      console.log("HandleSubmitChangePassword:\n")
+      console.log(resp);
+      handleCloseChangePassword();
+    })
+    .catch((err)=>{
+      console.log(err);
+      setChangePasswordError(err.response.data.error);
+    })
+  }
 
   return (
     <ThemeProvider theme={mdTheme}>
@@ -365,10 +404,43 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
 
                 {/*  */}
                 <div className="Profile">
-                    <div>
+                  <div>
                     <Button variant="outlined"  onClick={handleClickOpenEdit}>
                       Edit Profile
                     </Button>
+                    <Button variant="outlined" style={{marginLeft:'10px'}} onClick={handleClickOpenChangePassword}>
+                      Change password
+                    </Button>
+                    <Dialog open={openChangePassword} onClose={handleCloseChangePassword}>
+                      <DialogTitle>Change password</DialogTitle>
+                      <DialogContent>
+                        {changePasswordError ? <Alert severity="error">{changePasswordError}</Alert> : ""}
+                        <TextField
+                          autoFocus
+                          margin="dense"
+                          id="Old Password"
+                          label="Old Password"
+                          type="password"
+                          fullWidth
+                          variant="standard"
+                          onChange={(e) => setOldPassword(e.target.value)}
+                        />
+                        <TextField
+                          autoFocus
+                          margin="dense"
+                          id="New Password"
+                          label="New Password"
+                          type="password"
+                          fullWidth
+                          variant="standard"
+                          onChange={(e) => setNewPassword(e.target.value)}
+                        />
+                      </DialogContent>
+                      <DialogActions>
+                        <Button onClick={handleCloseChangePassword}>Cancel</Button>
+                        <Button onClick={handleSubmitChangePassword}>Save</Button>
+                      </DialogActions>
+                    </Dialog>
                     <div style={{padding:"10px"}}></div>
                     <Dialog
                       fullScreen
@@ -439,8 +511,7 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
                       {/* )} */}
                       </Stack>
                     </Box>
-
-                </div>
+                  </div>
                 {/*  */}
 
               </Grid>
