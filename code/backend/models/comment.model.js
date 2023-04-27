@@ -23,10 +23,10 @@ const commentSchema = new mongoose.Schema({
     //     type: mongoose.Schema.Types.ObjectId,
     //     ref: 'Assignment',
     // }
-    // files: [{
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'File',
-    // }],
+    file: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'File',
+    },
     // folders: [{
     //     type: mongoose.Schema.Types.ObjectId,
     //     ref: 'Folder',

@@ -26,4 +26,7 @@ router.delete('/:id', [ verifyToken ] , userController.deleteUserById);
 // Add course to user
 router.get('/course/:id', [ verifyToken ] , userController.addCourseToUser);
 
+// change password
+router.put('/changePassword/:id', [ verifyToken ] , userController.changePassword);
+
 module.exports = router;
