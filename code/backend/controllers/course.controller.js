@@ -100,24 +100,6 @@ exports.deleteCourseById = async (req, res) => {
     }
 }
 
-exports.deleteUserFromCourse = async (req,res) => {
-    try {
-        if (!['ADMIN', 'TEACHER'].includes(req.role))
-            return response.unauthorizedResponse(res);
-        const course = await Course.findById(req.params.id);
-        if (!course)
-            return response.notFoundResponse(res, 'Course not found');
-        if (course.teacher != req.id)
-            return response.unauthorizedResponse(res);
-        const updatedCourse = await Course.findByIdAndUpdate(req.params.id, {
-            $pull: { students: req.body.userId }
-        });
-        return response.successResponse(res, updatedCourse);
-    } catch (err) {
-        return response.serverErrorResponse(res, err);
-    }
-}
-
 exports.uploadMaterial = async (req,res) => {
     try {
         if(!['ADMIN','TEACHER'].includes(req.role))
@@ -130,6 +112,7 @@ exports.uploadMaterial = async (req,res) => {
         const file = await File.create({
             filename : req.body.filename,
             data : req.body.data,
+            description: req.body.description,
         })
         course.files.push(file._id);
         const updatedCourse = await course.save();
@@ -172,6 +155,44 @@ exports.deleteMaterial = async (req, res) => {
         await course.save();
         return response.successResponse(res,course);
     } catch(err) {
+        return response.serverErrorResponse(res, err);
+    }
+}
+
+exports.getUsers = async (req, res) => {
+    try {
+        const course = await Course.findById(req.params.id);
+        if(!course)
+            return response.notFoundResponse(res, 'Course not found');
+        const users = [];
+        for(let i=0; i<course.students.length; i++){
+            const user = await User.findById(course.students[i]);
+            users.push(user);
+        }
+        return response.successResponse(res, users);
+    } catch(err) {
+        return response.serverErrorResponse(res, err);
+    }
+}
+
+exports.deleteUserFromCourse = async (req, res) => {
+    try {
+        if(!['ADMIN','TEACHER'].includes(req.role))
+            return response.unauthorizedResponse(res);
+        const courseId = req.query.courseId;
+        const userId = req.params.id;
+        const course = await Course.findById(courseId);
+        if(!course)
+            return response.notFoundResponse(res, 'Course not found');
+        if(course.teacher != req.id)
+            return response.unauthorizedResponse(res, 'You are not authorized to delete user from this course');
+        const user = await User.findById(userId);
+        course.students = course.students.filter(student => student != userId);
+        await course.save();
+        user.courses = user.courses.filter(course => course != courseId);
+        await user.save();
+        return response.successResponse(res, course);
+    } catch (err) {
         return response.serverErrorResponse(res, err);
     }
 }

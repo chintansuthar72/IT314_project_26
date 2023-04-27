@@ -16,8 +16,6 @@ const feedbackSchema = new mongoose.Schema({
         ref: 'Course',
         required: true,
     },
-
-
 }, {
     timestamps: true,
 });

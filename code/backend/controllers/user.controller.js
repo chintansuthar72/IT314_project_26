@@ -119,13 +119,33 @@ const getAllCoursesOfUser = async (req, res) => {
 
 const addCourseToUser = async (req, res) => {
     try {
-        const userDetail = await User.findById(req.id);
-        const courses = userDetail.courses;
-        courses.push(req.params.id);
-        const updatedUser = await User.findByIdAndUpdate(req.id,{
-            courses: courses
+        const userId = req.id;
+        const courseId = req.params.id;
+        const course = await Course.findById(courseId);
+        if(!course) return response.badRequestResponse(res, 'Course does not exist');
+        const user = await User.findById(userId);
+        if(!user) return response.badRequestResponse(res, 'User does not exist');
+        const updatedCourse = await Course.findByIdAndUpdate(courseId, {
+            $push: {students: userId}
         });
-        return response.successResponse(res, updatedUser);
+        const updatedUser = await User.findByIdAndUpdate(userId, {
+            $push: {courses: courseId}
+        });
+        return response.successResponse(res, {updatedUser,updatedCourse});
+    } catch (err) {
+        return response.serverErrorResponse(res, err);
+    }
+}
+
+const changePassword = async (req, res) => {
+    try {
+        const user = await User.findById(req.id);
+        const validPassword = await bcrypt.compare(req.body.oldPassword, user.password);
+        if(!validPassword) return response.badRequestResponse(res, 'Invalid old password');
+        const hashedPassword = await bcrypt.hash(req.body.newPassword, 10);
+        user.password = hashedPassword;
+        await user.save();
+        return response.successResponse(res, user);
     } catch (err) {
         return response.serverErrorResponse(res, err);
     }
@@ -139,5 +159,6 @@ module.exports = {
     deleteUserById,
     updateUserById,
     getAllCoursesOfUser,
-    addCourseToUser
+    addCourseToUser,
+    changePassword
 }

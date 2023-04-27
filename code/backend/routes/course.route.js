@@ -17,9 +17,6 @@ router.put('/:id', [verifyToken], courseController.updateCourseById);
 // DELETE course by id
 router.delete('/:id', [verifyToken], courseController.deleteCourseById);
 
-// Delete user from course
-router.delete('/:id/user/:userId', [verifyToken], courseController.deleteUserFromCourse);
-
 // Upload material 
 router.post('/material/:id',[verifyToken],courseController.uploadMaterial);
 
@@ -28,5 +25,11 @@ router.get('/material/:id', [verifyToken], courseController.getMaterials);
 
 // remove material
 router.delete('/material/:id',[verifyToken], courseController.deleteMaterial)
+
+// Get all users for course
+router.get('/user/:id', [verifyToken], courseController.getUsers);
+
+// remove user from course
+router.delete('/user/:id',[verifyToken], courseController.deleteUserFromCourse)
 
 module.exports = router;

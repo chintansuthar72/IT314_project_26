@@ -8,6 +8,4 @@ router.post('/course/:id', [verifyToken], feedbackcontroller.addFeedback);
 // GET all feedbacks by course id
 router.get('/course/:id', [verifyToken], feedbackcontroller.getAllFeedbacksByCourseId);
 
-
-
 module.exports = router;
