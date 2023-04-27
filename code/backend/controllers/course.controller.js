@@ -28,8 +28,14 @@ exports.addCourse = async (req, res) => {
 exports.getAllCourses = async (req, res) => {
     try {
         const courses = await Course.find();
+        const user_id = req.id;
+        const userCourses = await User.findById(user_id);
+        const userCoursesArray = userCourses.courses;
         const coursesArray = [];
         for(let i=0; i<courses.length; i++){
+            if(userCoursesArray.includes(courses[i]._id)){
+                continue;
+            }
             const teacher = await User.findById(courses[i].teacher);
             let data = {
                 instructor: teacher.username,
