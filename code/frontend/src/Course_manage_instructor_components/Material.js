@@ -26,7 +26,8 @@ import ImportContactsOutlinedIcon from '@mui/icons-material/ImportContactsOutlin
 import Container from '@mui/material/Container';
 // import CssBaseline from '@mui/material/CssBaseline';
 import Avatar from '@mui/material/Avatar';
-
+import SendRoundedIcon from '@mui/icons-material/SendRounded';
+import CommentIcon from '@mui/icons-material/Comment';
 
 
 const set = (keyName, keyValue, ttl) => {
@@ -73,6 +74,11 @@ const Material = ({announcements, course, instructor }) => {
     const [title,setTitle] = useState('');
     const [item,setItem] = useState('');
     const [description, setDescription] = useState('');
+
+    const [openComment, setOpenComment] = React.useState(false);
+    const [announcementId,setAnnouncementId] = useState(null);
+    const [comments, setComments] = useState([]);
+    const [comment, setComment] = useState('');
 
     useEffect(() => {
       axios.get(`http://localhost:5000/course/material/${course._id}`,{headers:{'Authorization': get('token')}})
@@ -163,6 +169,51 @@ const Material = ({announcements, course, instructor }) => {
     })
   }
 
+  const handleClickOpenComment = async (id) => {
+    setAnnouncementId(id);
+    axios.get(`http://localhost:5000/comment/file/${id}`,{headers:{'Authorization':get('token')}})
+      .then((resp)=>{   // if no error
+        console.log("HandleClickOpenComment :\n");
+        console.log(resp);
+        setComments(resp.data.data.sort((a,b)=>{
+          if(Date.parse(a.createdAt) < Date.parse(b.createdAt)) return 1;
+          return -1;
+        }));
+        setOpenComment(true);
+      })
+      .catch((err)=>{
+        console.log(err);
+        setError(err.response.data.error);
+      })
+  };
+
+  const handleCloseComment = () => {
+    setComments([]);
+    setComment('');
+    setAnnouncementId(null);
+    setOpenComment(false);
+  };
+
+  const handleCommentSubmit = async () => {
+    console.log("handleCommentSubmit");
+    console.log(announcementId);
+    console.log(comment);
+    axios.post(`http://localhost:5000/comment/file/${announcementId}`,{
+      description : comment,
+    },{headers:{'Authorization':get('token')}})
+    .then(async (resp)=>{   // if no error
+      console.log("HandleCommentSubmit:\n");
+      console.log(resp);
+      setComment('');
+      handleCloseComment();
+      // await handleClickOpenComment(announcementId);
+    })
+    .catch((err)=>{
+      console.log(err);
+      setError(err.response.data.message);
+    })
+  }
+
   return (
     <div className="announcement">
       <>
@@ -179,6 +230,72 @@ const Material = ({announcements, course, instructor }) => {
             : <></>
         }
           <div style={{padding:"10px"}}></div>
+          <Dialog
+            fullScreen
+            open={openComment}
+            onClose={handleCloseComment}
+            TransitionComponent={Transition}
+          >
+            <AppBar sx={{ position: 'relative' }}>
+              <Toolbar>
+                <IconButton
+                  edge="start"
+                  color="inherit"
+                  onClick={handleCloseComment}
+                  aria-label="close"
+                >
+                  <CloseIcon />
+                </IconButton>
+                <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+                  Comments
+                </Typography>
+                {/* <Button autoFocus color="inherit" onClick={handleClose}>
+                  save
+                </Button> */}
+              </Toolbar>
+            </AppBar>
+              <List>
+              <Box
+                sx={{
+                  width: 1800,
+                  paddingLeft: 5,
+                  paddingTop: 3,
+                  maxWidth: '100%',
+                  display: 'flex',
+                  flexDirection: 'row',
+                }}
+              >
+                <TextField fullWidth label="Add comment" id="fullWidth" onChange={(e) => setComment(e.target.value)}/>
+                <Button style={{marginLeft:10}} onClick={handleCommentSubmit}> 
+                  <SendRoundedIcon fontSize='large' />
+                </Button>
+              </Box>
+              </List>
+              {/* <List> */}
+                {comments.map(comment => 
+                <Item>
+                  <ListItem alignItems="flex-start">
+                    <ListItemText
+                      primary={comment.commentatorName}
+                      secondary={
+                        <React.Fragment>
+                          <Typography
+                            sx={{ display: 'inline' }}
+                            component="span"
+                            variant="body2"
+                            color="text.primary"
+                          >
+                            {comment.description}
+                          </Typography>
+                        </React.Fragment>
+                      }
+                    />
+                  </ListItem>
+                  <Divider />
+                </Item>
+              )}
+              {/* </List> */}
+          </Dialog>
           <Dialog
             fullScreen
             open={open}
@@ -321,6 +438,10 @@ const Material = ({announcements, course, instructor }) => {
                     </React.Fragment>
                   }
                 />
+                <IconButton edge="end" aria-label="delete">
+                  <CommentIcon onClick={() => handleClickOpenComment(announcement._id)}/>
+                </IconButton>
+                <Divider orientation="vertical" style={{paddingLeft:"10px",paddingRight:"10px"}}/>
                 {       
                     get('role') == 'TEACHER' ? 
                     <IconButton edge="end" aria-label="delete">

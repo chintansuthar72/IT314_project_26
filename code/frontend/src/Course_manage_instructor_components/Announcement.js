@@ -22,7 +22,8 @@ import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import CommentIcon from '@mui/icons-material/Comment';
-import SendIcon from '@mui/icons-material/Send';
+import SendRoundedIcon from '@mui/icons-material/SendRounded';
+import Avatar from '@mui/material/Avatar';
 
 const set = (keyName, keyValue, ttl) => {
   const data = {
@@ -60,66 +61,70 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 const Announcement = ({course }) => {
-    const [error, setError] = useState(null);
-    const [rows, setRows] = useState([]);
-    const [changed,setChanged] = useState(false);
-  
+  const [error, setError] = useState(null);
+  const [rows, setRows] = useState([]);
+  const [changed,setChanged] = useState(false);
 
-    const [open, setOpen] = React.useState(false);
-    const [error1, setError1] = useState(null);
-    const [title,setTitle] = useState('');
-    const [description,setDescription] = useState('');
 
-    const [openComment, setOpenComment] = React.useState(false);
-    const [announcementId,setAnnouncementId] = useState(null);
-    const [comments, setComments] = useState([]);
+  const [open, setOpen] = React.useState(false);
+  const [error1, setError1] = useState(null);
+  const [title,setTitle] = useState('');
+  const [description,setDescription] = useState('');
 
-    useEffect(() => {
-      axios.get(`http://localhost:5000/announcement/course/${course._id}`,{headers:{'Authorization': get('token')}})
+  const [openComment, setOpenComment] = React.useState(false);
+  const [announcementId,setAnnouncementId] = useState(null);
+  const [comments, setComments] = useState([]);
+  const [comment, setComment] = useState('');
+
+  useEffect(() => {
+    axios.get(`http://localhost:5000/announcement/course/${course._id}`,{headers:{'Authorization': get('token')}})
+    .then((resp)=>{   // if no error
+      console.log("UseEffect :\n");
+      console.log(resp);
+      setTimeout(()=>{
+        
+      },10)
+      setRows(resp.data.data);
+      console.log(rows);
+    })
+    .catch((err)=>{
+      console.log(err);
+      setError(err.response.data.error);
+    })
+  },[changed]);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleClickOpenComment = async (id) => {
+    setAnnouncementId(id);
+    axios.get(`http://localhost:5000/comment/announcement/${id}`,{headers:{'Authorization':get('token')}})
       .then((resp)=>{   // if no error
-        console.log("UseEffect :\n");
+        console.log("HandleClickOpenComment :\n");
         console.log(resp);
-        setTimeout(()=>{
-          
-        },10)
-        setRows(resp.data.data);
-        console.log(rows);
+        setComments(resp.data.data.sort((a,b)=>{
+          if(Date.parse(a.createdAt) < Date.parse(b.createdAt)) return 1;
+          return -1;
+        }));
+        setOpenComment(true);
       })
       .catch((err)=>{
         console.log(err);
         setError(err.response.data.error);
       })
-    },[changed]);
+  };
 
-    const handleClickOpen = () => {
-      setOpen(true);
-    };
-
-    const handleClose = () => {
-      setOpen(false);
-    };
-
-    const handleClickOpenComment = async (id) => {
-      setAnnouncementId(id);
-      axios.get(`http://localhost:5000/comment/announcement/${id}`,{headers:{'Authorization':get('token')}})
-        .then((resp)=>{   // if no error
-          console.log("HandleClickOpenComment :\n");
-          console.log(resp);
-          setComments(resp.data.data);
-          setOpenComment(true);
-        })
-        .catch((err)=>{
-          console.log(err);
-          setError(err.response.data.error);
-        })
-
-    };
-
-    const handleCloseComment = () => {
-      setComments([]);
-      setAnnouncementId(null);
-      setOpenComment(false);
-    };
+  const handleCloseComment = () => {
+    setComments([]);
+    setComment('');
+    setAnnouncementId(null);
+    setOpenComment(false);
+  };
 
   const handleSave = () => {
     axios.post(`http://localhost:5000/announcement/course/${course._id}`,{
@@ -141,13 +146,32 @@ const Announcement = ({course }) => {
   }
   
   const handleDelete = (id) => {
-    
     axios.delete(`http://localhost:5000/announcement/${id}`,{headers:{'Authorization':get('token')}})
     .then((resp)=>{   // if no error
       console.log("HandleDelete:\n");
       console.log(resp);
       setOpen(false);
       setChanged(!changed);
+    })
+    .catch((err)=>{
+      console.log(err);
+      setError(err.response.data.message);
+    })
+  }
+
+  const handleCommentSubmit = async () => {
+    console.log("handleCommentSubmit");
+    console.log(announcementId);
+    console.log(comment);
+    axios.post(`http://localhost:5000/comment/announcement/${announcementId}`,{
+      description : comment,
+    },{headers:{'Authorization':get('token')}})
+    .then(async (resp)=>{   // if no error
+      console.log("HandleCommentSubmit:\n");
+      console.log(resp);
+      setComment('');
+      handleCloseComment();
+      // await handleClickOpenComment(announcementId);
     })
     .catch((err)=>{
       console.log(err);
@@ -197,7 +221,7 @@ const Announcement = ({course }) => {
               <List>
               <Box
                 sx={{
-                  width: 1200,
+                  width: 1800,
                   paddingLeft: 5,
                   paddingTop: 3,
                   maxWidth: '100%',
@@ -205,11 +229,13 @@ const Announcement = ({course }) => {
                   flexDirection: 'row',
                 }}
               >
-                <TextField fullWidth label="Add comment" id="fullWidth" />
-                <SendIcon />
+                <TextField fullWidth label="Add comment" id="fullWidth" onChange={(e) => setComment(e.target.value)}/>
+                <Button style={{marginLeft:10}} onClick={handleCommentSubmit}> 
+                  <SendRoundedIcon fontSize='large' />
+                </Button>
               </Box>
               </List>
-              <List>
+              {/* <List> */}
                 {comments.map(comment => 
                 <Item>
                   <ListItem alignItems="flex-start">
@@ -229,9 +255,10 @@ const Announcement = ({course }) => {
                       }
                     />
                   </ListItem>
+                  <Divider />
                 </Item>
               )}
-              </List>
+              {/* </List> */}
           </Dialog>
           <Dialog
             fullScreen
