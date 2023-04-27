@@ -74,6 +74,9 @@ const Material = ({announcements, course, instructor }) => {
     const [item,setItem] = useState('');
     const [description, setDescription] = useState('');
 
+    const [openEdit, setOpenEdit] = React.useState(false);
+    const [announcementEdit, setAnnouncementEdit] = useState({});
+
     useEffect(() => {
       axios.get(`http://localhost:5000/course/material/${course._id}`,{headers:{'Authorization': get('token')}})
       .then((resp)=>{   // if no error
@@ -136,6 +139,21 @@ const Material = ({announcements, course, instructor }) => {
     })
   }
 
+  const handleOpenEdit = (announcement) => {
+    console.log(announcement);
+    setAnnouncementEdit(announcement);
+    setOpenEdit(true);
+  };
+
+  const handleCloseEdit = () => {
+    setAnnouncementEdit({});
+    setTitle('');
+    setDescription('');
+    setOpenEdit(false);
+  };
+
+  const handleEditMaterialSave = async () => {
+  }
   const uploadFile = ({ target: { files } }) =>{
     console.log( files[0] )
     let data = new FormData();
@@ -163,6 +181,7 @@ const Material = ({announcements, course, instructor }) => {
     })
   }
 
+
   return (
     <div className="announcement">
       <>
@@ -179,6 +198,49 @@ const Material = ({announcements, course, instructor }) => {
             : <></>
         }
           <div style={{padding:"10px"}}></div>
+
+          
+{/* edit title description start */}
+
+      <Dialog
+            fullScreen
+            open={openEdit}
+            onClose={handleCloseEdit}
+            TransitionComponent={Transition}
+          >
+            <AppBar sx={{ position: 'relative' }}>
+              <Toolbar>
+                <IconButton
+                  edge="start"
+                  color="inherit"
+                  onClick={handleCloseEdit}
+                  aria-label="close"
+                >
+                  <CloseIcon />
+                </IconButton>
+                <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+                  Edit Material
+                </Typography>
+                {/* <Button autoFocus color="inherit" onClick={handleSaveEdit}> */}
+                <Button autoFocus color="inherit" onClick={handleEditMaterialSave}>
+                  save
+                </Button>
+              </Toolbar>
+            </AppBar>
+            <List>
+              <ListItem>
+                <TextField fullWidth  id="standard-basic" label="Title" variant="filled" defaultValue={announcementEdit.filename} onChange={(e) => setTitle(e.target.value)}/>
+              </ListItem>
+              <Divider />
+              <ListItem>
+                <TextField fullWidth  id="standard-basic" label="Description" variant="filled" multiline rows={5} defaultValue={announcementEdit.description} onChange={(e)=>setDescription(e.target.value)}/>
+              </ListItem>
+              {error1 ? <Alert severity="error">{error1}</Alert> : ""}
+
+            </List>
+          </Dialog>
+{/* edit title description end */}
+
           <Dialog
             fullScreen
             open={open}
@@ -323,6 +385,19 @@ const Material = ({announcements, course, instructor }) => {
                 />
                 {       
                     get('role') == 'TEACHER' ? 
+                    <div>
+                      <IconButton edge="end" aria-label="delete">
+                        <EditIcon onClick={() => handleOpenEdit(announcement)}/>
+                      </IconButton>
+                      <IconButton edge="end" aria-label="delete">
+                        <DeleteIcon onClick={() => handleDelete(announcement._id)}/>
+                      </IconButton>
+                    </div>
+                  : <></>
+                }
+
+                {/* {       
+                    get('role') == 'TEACHER' ? 
                     <IconButton edge="end" aria-label="delete">
                       <EditIcon />
                     </IconButton>
@@ -335,7 +410,7 @@ const Material = ({announcements, course, instructor }) => {
                       <DeleteIcon onClick={() => handleDelete(announcement._id)}/>
                     </IconButton>
                     : <></>
-                }
+                } */}
               </ListItem>
             </Item>
           )}

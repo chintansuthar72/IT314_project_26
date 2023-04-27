@@ -384,22 +384,28 @@ const Announcement = ({course }) => {
                 <IconButton edge="end" aria-label="delete">
                   <CommentIcon onClick={() => handleClickOpenComment(announcement._id)}/>
                 </IconButton>
-                <Divider orientation="vertical" style={{paddingLeft:"10px",paddingRight:"10px"}}/>
+                <Divider orientation="vertical" style={{paddingLeft:"5px",paddingRight:"1px"}}/>
                 {       
                     get('role') == 'TEACHER' ? 
-                    <IconButton edge="end" aria-label="delete">
-                      <EditIcon onClick={() => handleOpenEdit(announcement)}/>
-                  </IconButton>
+                    <div>
+                      <IconButton edge="end" aria-label="delete">
+                        <EditIcon onClick={() => handleOpenEdit(announcement)}/>
+                      </IconButton>
+                      <IconButton edge="end" aria-label="delete">
+                        <DeleteIcon onClick={() => handleDelete(announcement._id)}/>
+                      </IconButton>
+                    </div>
                   : <></>
                 }
 
-                <Divider orientation="vertical" style={{paddingLeft:"10px",paddingRight:"10px"}}/>
-                {
+
+                {/* <Divider orientation="vertical" style={{paddingLeft:"10px",paddingRight:"10px"}}/> */}
+                {/* {
                   get('role') == 'TEACHER' ? 
                   <IconButton edge="end" aria-label="delete">
                   <DeleteIcon onClick={() => handleDelete(announcement._id)}/>
                 </IconButton> : <></>
-                }
+                } */}
               </ListItem>
             </Item>
           )}
