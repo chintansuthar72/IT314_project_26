@@ -49,10 +49,10 @@ const set = (keyName, keyValue, ttl) => {
       return null;
   }
   const item = JSON.parse(data);
-  if (Date.now() > item.ttl) {
-      localStorage.removeItem(keyName);
-      return null;
-  }
+  // if (Date.now() > item.ttl) {
+  //     localStorage.removeItem(keyName);
+  //     return null;
+  // }
   return item.value;
 };
 
@@ -161,10 +161,17 @@ const Assignment = ({ course }) => {
       <>
         {/* <AddAnnouncement course={course} setchanged={setChanged} changed={changed}/> */}
         <div>
-          <Button variant="outlined"  onClick={handleClickOpen}>
-            Add Assignment
-          </Button>
-          {error ? <Alert severity="error">{error}</Alert> : ""}
+        {       
+            get('role') == 'TEACHER' ? 
+            <div>
+            <Button variant="outlined"  onClick={handleClickOpen}>
+              Add Assignment
+            </Button>
+            {error ? <Alert severity="error">{error}</Alert> : ""}
+            </div>
+            : <></>
+        }
+          
           <div style={{padding:"10px"}}></div>
           <Dialog
             fullScreen
