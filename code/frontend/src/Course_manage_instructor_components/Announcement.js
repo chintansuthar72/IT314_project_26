@@ -30,7 +30,7 @@ const set = (keyName, keyValue, ttl) => {
   localStorage.setItem(keyName, JSON.stringify(data));
 };
 
-  const get = (keyName) => {
+const get = (keyName) => {
   const data = localStorage.getItem(keyName);
   if (!data) {     // if no value exists associated with the key, return null
       return null;

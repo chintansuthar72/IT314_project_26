@@ -148,7 +148,10 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
     axios.get('https://onlinecoursemanagementsystem.onrender.com/user/courses',{headers:{'Authorization': get('token')}})
       .then((resp)=>{   // if no error
         console.log(resp);
-        setRows(resp.data.data);
+        setRows(resp.data.data.sort((a,b)=>{
+          if(Date.parse(a.course.updatedAt) < Date.parse(b.course.updatedAt)) return 1;
+          else return -1;
+        }));
       })
       .catch((err)=>{
         console.log(err);
