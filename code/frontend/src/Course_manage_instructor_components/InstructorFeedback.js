@@ -1,96 +1,212 @@
-import React, {useState} from 'react';
+import * as React from 'react';
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import axios from 'axios'
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import { useState } from 'react';
 // import { format } from 'date-fns'
+import RateReviewOutlinedIcon from '@mui/icons-material/RateReviewOutlined';
 import './feedback.css';  // import the CSS file
+import { styled } from '@mui/material/styles';
+import Card from '@mui/material/Card';
+import CardHeader from '@mui/material/CardHeader';
+import CardMedia from '@mui/material/CardMedia';
+import CardContent from '@mui/material/CardContent';
+import CardActions from '@mui/material/CardActions';
+import Collapse from '@mui/material/Collapse';
+import IconButton from '@mui/material/IconButton';
+import { red } from '@mui/material/colors';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import ShareIcon from '@mui/icons-material/Share';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import Paper from '@mui/material/Paper';
+import Grid from '@mui/material/Grid';
 
-// format(new Date(), 'dd.MM.yyyy')
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: 'center',
+  color: theme.palette.text.secondary,
+}));
+const get = (keyName) => {
+  const data = localStorage.getItem(keyName);
+  if (!data) {     // if no value exists associated with the key, return null
+      return null;
+  }
+  const item = JSON.parse(data);
+  // if (Date.now() > item.ttl) {
+  //     localStorage.removeItem(keyName);
+  //     return null;
+  // }
+  return item.value;
+};
 
-function InstructorFeedback() {
-  const [studentName, setStudentName] = useState('');
-  const [studentID, setStudentID] = useState('');
-  const [startLeaveDate, setStartLeaveDate] = useState('');
-  const [endLeaveDate, setEndLeaveDate] = useState('');
-  const [reason, setReason] = useState('');
-  const [phoneNo, setPhoneNo] = useState('');
-  const [email, setEmail] = useState('');
-  
-  const studentNameHandler = (event) => {
-    setStudentName(event.target.value);
+
+const ExpandMore = styled((props) => {
+  const { expand, ...other } = props;
+  return <IconButton {...other} />;
+})(({ theme, expand }) => ({
+  transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
+  marginLeft: 'auto',
+  transition: theme.transitions.create('transform', {
+    duration: theme.transitions.duration.shortest,
+  }),
+}));
+
+function RecipeReviewCard({feedback}) {
+  const [expanded, setExpanded] = React.useState(false);
+
+  const handleExpandClick = () => {
+    setExpanded(!expanded);
+  };
+
+  return (
+    <Card sx={{ maxWidth: 345 }}>
+      <CardHeader
+        title={feedback.topic}
+        subheader={Date(feedback.createdAt).split(' ').slice(1, 4).join(' ')}
+      />
+      {
+        !expanded ? 
+        <CardContent>
+          <Typography variant="body2" color="text.secondary" >
+            {
+              feedback.description.slice(0, 200)
+            }...
+          </Typography>
+        </CardContent> : ""
+      }
+      
+      <CardActions disableSpacing>
+        <ExpandMore
+          expand={expanded}
+          onClick={handleExpandClick}
+          aria-expanded={expanded}
+          aria-label="show more"
+        >
+          <ExpandMoreIcon />
+        </ExpandMore>
+      </CardActions>
+      <Collapse in={expanded} timeout="auto" unmountOnExit>
+        <CardContent>
+          <Typography paragraph>
+            {feedback.description}
+          </Typography>
+        </CardContent>
+      </Collapse>
+    </Card>
+  );
+}
+
+
+function InstructorFeedback({course}) {
+  const [topic, setTopic] = useState('');
+  const [description, setDescription] = useState('');
+  const [error, setError] = useState('');
+  const [feedbacks, setFeedbacks] = useState([]);
+
+  React.useEffect(() => {
+    if(get('role') === 'TEACHER') {
+      axios.get(`https://onlinecoursemanagementsystem.onrender.com/feedback/course/${course._id}`,{ headers: { 'Authorization': get('token') } })
+      .then(res => {
+          console.log(res.data.data);
+          setFeedbacks(res.data.data);
+        }
+      )
+      .catch(err => {
+          console.log(err.response.data);
+          setError(err.response.data.message);
+        }
+      )
+    }
+  }
+  ,[])
+
+  const handleSubmit = () => {
+    axios.post(`https://onlinecoursemanagementsystem.onrender.com/feedback/course/${course._id}`, {
+      topic: topic,
+      description: description,
+    }, { headers: { 'Authorization': get('token') } })
+    .then(res => {
+        setError('Feedback added successfully');
+      }
+    )
+    .catch(err => {
+        console.log(err.response.data);
+        setError(err.response.data);
+      }
+    )
+
   }
 
-  const studentIDHandler = (event) => {
-    setStudentID(event.target.value);
+  if(get('role') === 'TEACHER') {
+    return (
+      <Box sx={{ flexGrow: 1 }}>
+        <Grid container spacing={1}>
+          {feedbacks.map(feedback => (
+            <Grid item md={3}>
+              <RecipeReviewCard feedback={feedback}/>
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
+    );
   }
 
-  const startLeaveDateHandler = (event) => {
-    setStartLeaveDate(event.target.value);
-  }
-
-  const endLeaveDateHandler = (event) => {
-    setEndLeaveDate(event.target.value);
-  }
-
-  const reasonHandler = (event) => {
-    setReason(event.target.value);
-  }
-
-  const phoneNoHandler = (event) => {
-    setPhoneNo(event.target.value);
-  }
-
-  const emailHandler = (event) => {
-    setEmail(event.target.value);
-  }
-
-  const onSubmitHandler = (event) => {
-    event.preventDefault();
-    console.log(studentName);
-    // setStudentName('');
-    console.log(studentID);
-    // setStudentID('');
-    console.log(startLeaveDate);
-    // setStartLeaveDate('');
-    console.log(endLeaveDate);
-    // setEndLeaveDate('');
-    console.log(reason);
-    // setReason('');
-    console.log(phoneNo);
-    // setPhoneNo('');
-    console.log(email);
-    // setEmail('');
-  }
 
   return(
-    <form className="form" onSubmit={onSubmitHandler} style={{marginTop:'30px'}}>
-      <h1 style={{textAlign: 'center'}}>FEEDBACK FORM</h1><br/><br/><br/>
-      <div className="form-group" style={{display: 'flex'}}>
-        <label className="label">Student Name:</label>
-        <input className="input" id="student-name" type="text" value={studentName} onChange={studentNameHandler} required  />
-      </div>
-      <div className="form-group"  style={{display: 'flex'}}>
-        <label className="label">Student ID:</label>
-        <input className="input" id="student-id" type="text" value={studentID} onChange={studentIDHandler} required />
-      </div>
-      <div className="form-group"  style={{display: 'flex'}}>
-        <label className="label">Submit Date:</label>
-        <input className="input" id="date1" type="date" value={startLeaveDate} onChange={startLeaveDateHandler} required/>
-       
-      </div>
-      <div className="form-group"  style={{display: 'flex'}}>
-        <label className="label">Feedback:</label>
-        <textarea className="textarea" id="reason" value={reason} onChange={reasonHandler} required/>
-      </div>
-      <div className="form-group"  style={{display: 'flex'}}>
-        <label className="label">Email ID: </label>
-        <input className="input" id="email" type="email" value={email} onChange={emailHandler} required />
-      </div>
-      <div className="form-group"  style={{display: 'flex'}}>
-        <label className="label">Phone:</label>
-        <input className="input" id="phone" type="tel" value={phoneNo} onChange={phoneNoHandler} required />
-      </div>
-
-      <button  className="button" type="submit">Submit</button>
-    </form>
-
+    <Box
+      sx={{
+        marginTop: 8,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}
+    >
+      <Typography component="h3" variant="h5">
+          {error}
+      </Typography>
+      <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+        <RateReviewOutlinedIcon />
+      </Avatar>
+      <Typography component="h1" variant="h5">
+        Feedback form
+      </Typography>
+      <Box noValidate sx={{ mt: 1 }}>
+        <TextField
+          margin="normal"
+          required
+          fullWidth
+          id="topic"
+          label="Topic"
+          autoFocus
+          onChange={(e) => setTopic(e.target.value)}
+        />
+        <TextField
+          id="outlined-multiline-static"
+          margin="multiline"
+          multiline
+          rows={5}
+          required
+          fullWidth
+          name="description"
+          label="description"
+          onChange={(e) => setDescription(e.target.value)}
+        />
+        <Button
+          fullWidth
+          variant="contained"
+          sx={{ mt: 3, mb: 2 }}
+          onClick={handleSubmit}
+        >
+          Submit
+        </Button>
+      </Box>
+    </Box>
   )
 }
 

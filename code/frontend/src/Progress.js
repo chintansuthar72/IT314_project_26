@@ -158,7 +158,7 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
   };
 
   const handleSave = () => {
-    // axios.post(`http://localhost:5000/announcement/course/${course._id}`,{
+    // axios.post(`https://onlinecoursemanagementsystem.onrender.com/announcement/course/${course._id}`,{
     //   title : title,
     //   description : description,
     //   files : [],
@@ -176,7 +176,7 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
     // })
   }
   const handleDelete = (id) => {
-    // axios.delete(`http://localhost:5000/announcement/${id}`,{headers:{'Authorization':get('token')}})
+    // axios.delete(`https://onlinecoursemanagementsystem.onrender.com/announcement/${id}`,{headers:{'Authorization':get('token')}})
     // .then((resp)=>{   // if no error
     //   console.log("HandleDelete:\n");
     //   console.log(resp);
