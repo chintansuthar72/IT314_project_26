@@ -79,6 +79,8 @@ const Material = ({announcements, course, instructor }) => {
     const [announcementId,setAnnouncementId] = useState(null);
     const [comments, setComments] = useState([]);
     const [comment, setComment] = useState('');
+    const [openEdit, setOpenEdit] = React.useState(false);
+    const [announcementEdit, setAnnouncementEdit] = useState({});
 
     useEffect(() => {
       axios.get(`http://localhost:5000/course/material/${course._id}`,{headers:{'Authorization': get('token')}})
@@ -142,6 +144,21 @@ const Material = ({announcements, course, instructor }) => {
     })
   }
 
+  const handleOpenEdit = (announcement) => {
+    console.log(announcement);
+    setAnnouncementEdit(announcement);
+    setOpenEdit(true);
+  };
+
+  const handleCloseEdit = () => {
+    setAnnouncementEdit({});
+    setTitle('');
+    setDescription('');
+    setOpenEdit(false);
+  };
+
+  const handleEditMaterialSave = async () => {
+  }
   const uploadFile = ({ target: { files } }) =>{
     console.log( files[0] )
     let data = new FormData();
@@ -230,6 +247,49 @@ const Material = ({announcements, course, instructor }) => {
             : <></>
         }
           <div style={{padding:"10px"}}></div>
+
+          
+{/* edit title description start */}
+
+      <Dialog
+            fullScreen
+            open={openEdit}
+            onClose={handleCloseEdit}
+            TransitionComponent={Transition}
+          >
+            <AppBar sx={{ position: 'relative' }}>
+              <Toolbar>
+                <IconButton
+                  edge="start"
+                  color="inherit"
+                  onClick={handleCloseEdit}
+                  aria-label="close"
+                >
+                  <CloseIcon />
+                </IconButton>
+                <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+                  Edit Material
+                </Typography>
+                {/* <Button autoFocus color="inherit" onClick={handleSaveEdit}> */}
+                <Button autoFocus color="inherit" onClick={handleEditMaterialSave}>
+                  save
+                </Button>
+              </Toolbar>
+            </AppBar>
+            <List>
+              <ListItem>
+                <TextField fullWidth  id="standard-basic" label="Title" variant="filled" defaultValue={announcementEdit.filename} onChange={(e) => setTitle(e.target.value)}/>
+              </ListItem>
+              <Divider />
+              <ListItem>
+                <TextField fullWidth  id="standard-basic" label="Description" variant="filled" multiline rows={5} defaultValue={announcementEdit.description} onChange={(e)=>setDescription(e.target.value)}/>
+              </ListItem>
+              {error1 ? <Alert severity="error">{error1}</Alert> : ""}
+
+            </List>
+          </Dialog>
+{/* edit title description end */}
+
           <Dialog
             fullScreen
             open={openComment}
@@ -441,21 +501,19 @@ const Material = ({announcements, course, instructor }) => {
                 <IconButton edge="end" aria-label="delete">
                   <CommentIcon onClick={() => handleClickOpenComment(announcement._id)}/>
                 </IconButton>
-                <Divider orientation="vertical" style={{paddingLeft:"10px",paddingRight:"10px"}}/>
-                {       
-                    get('role') == 'TEACHER' ? 
-                    <IconButton edge="end" aria-label="delete">
-                      <EditIcon />
-                    </IconButton>
-                : <></>
-                }                
-                <Divider orientation="vertical" style={{paddingLeft:"10px",paddingRight:"10px"}}/>
-                {       
-                    get('role') == 'TEACHER' ? 
-                    <IconButton edge="end" aria-label="delete">
-                      <DeleteIcon onClick={() => handleDelete(announcement._id)}/>
-                    </IconButton>
-                    : <></>
+                <Divider orientation="vertical" style={{paddingLeft:"5px",paddingRight:"5px"}}/>
+                {
+                  get('role') == 'TEACHER' ? 
+                  <IconButton edge="end" aria-label="delete">
+                  <EditIcon onClick={() => handleOpenEdit(announcement)}/>
+                </IconButton> : <></>
+                }
+                <Divider orientation="vertical" style={{paddingLeft:"5px",paddingRight:"5px"}}/>
+                {
+                  get('role') == 'TEACHER' ? 
+                  <IconButton edge="end" aria-label="delete">
+                  <DeleteIcon onClick={() => handleDelete(announcement._id)}/>
+                </IconButton> : <></>
                 }
               </ListItem>
             </Item>

@@ -58,7 +58,7 @@ const updateAnnouncementById = async (req, res) => {
         const announcement = await Announcement.findById(req.params.id);
         if(announcement.teacher != req.id)
             return response.unauthorizedResponse(res);
-        const updatedAnnouncement = await Announcement.findByIdAndUpdate(req.id,{
+        const updatedAnnouncement = await Announcement.findByIdAndUpdate(req.params.id,{
             title: req.body.title,
             description: req.body.description,
         });

@@ -70,6 +70,9 @@ const Announcement = ({course }) => {
   const [error1, setError1] = useState(null);
   const [title,setTitle] = useState('');
   const [description,setDescription] = useState('');
+  
+  const [openEdit, setOpenEdit] = React.useState(false);
+  const [announcementEdit, setAnnouncementEdit] = useState({});
 
   const [openComment, setOpenComment] = React.useState(false);
   const [announcementId,setAnnouncementId] = useState(null);
@@ -124,6 +127,50 @@ const Announcement = ({course }) => {
     setComment('');
     setAnnouncementId(null);
     setOpenComment(false);
+  };
+  const handleOpenEdit = (announcement) => {
+    console.log(announcement);
+    setAnnouncementEdit(announcement);
+    setOpenEdit(true);
+  };
+
+  const handleCloseEdit = () => {
+    setAnnouncementEdit({});
+    setTitle('');
+    setDescription('');
+    setOpenEdit(false);
+  };
+
+  const handleEditAnnouncementSave = async () => {
+    axios.put(`http://localhost:5000/announcement/${announcementEdit._id}`,{
+      title : title,
+      description : description,
+    },{headers:{'Authorization':get('token')}})
+    .then((resp)=>{   // if no error
+      console.log("HandleSaveEditAnnouncement:\n");
+      console.log(resp);
+      handleCloseEdit();
+      setChanged(!changed);
+    })
+    .catch((err)=>{
+      console.log(err);
+      setError1(err.response.data.message.message);
+    })
+  }
+
+  const handleClickOpenEdit = async (id) => {
+    setAnnouncementId(id);
+    axios.get(`http://localhost:5000/comment/announcement/${id}`,{headers:{'Authorization':get('token')}})
+      .then((resp)=>{   // if no error
+        console.log("HandleClickOpenComment :\n");
+        console.log(resp);
+        setComments(resp.data.data);
+        setOpenComment(true);
+      })
+      .catch((err)=>{
+        console.log(err);
+        setError(err.response.data.error);
+      })
   };
 
   const handleSave = () => {
@@ -199,7 +246,7 @@ const Announcement = ({course }) => {
             open={openComment}
             onClose={handleCloseComment}
             TransitionComponent={Transition}
-          >
+           >
             <AppBar sx={{ position: 'relative' }}>
               <Toolbar>
                 <IconButton
@@ -260,6 +307,48 @@ const Announcement = ({course }) => {
               )}
               {/* </List> */}
           </Dialog>
+
+{/* edit title description start */}
+
+      <Dialog
+            fullScreen
+            open={openEdit}
+            onClose={handleCloseEdit}
+            TransitionComponent={Transition}
+          >
+            <AppBar sx={{ position: 'relative' }}>
+              <Toolbar>
+                <IconButton
+                  edge="start"
+                  color="inherit"
+                  onClick={handleCloseEdit}
+                  aria-label="close"
+                >
+                  <CloseIcon />
+                </IconButton>
+                <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+                  Edit announcement
+                </Typography>
+                {/* <Button autoFocus color="inherit" onClick={handleSaveEdit}> */}
+                <Button autoFocus color="inherit" onClick={handleEditAnnouncementSave}>
+                  save
+                </Button>
+              </Toolbar>
+            </AppBar>
+            <List>
+              <ListItem>
+                <TextField fullWidth  id="standard-basic" label="Title" variant="filled" defaultValue={announcementEdit.title} onChange={(e) => setTitle(e.target.value)}/>
+              </ListItem>
+              <Divider />
+              <ListItem>
+                <TextField fullWidth  id="standard-basic" label="Description" variant="filled" multiline rows={5} defaultValue={announcementEdit.description} onChange={(e)=>setDescription(e.target.value)}/>
+              </ListItem>
+              {error1 ? <Alert severity="error">{error1}</Alert> : ""}
+
+            </List>
+          </Dialog>
+{/* edit title description end */}
+
           <Dialog
             fullScreen
             open={open}
@@ -320,16 +409,14 @@ const Announcement = ({course }) => {
                 <IconButton edge="end" aria-label="delete">
                   <CommentIcon onClick={() => handleClickOpenComment(announcement._id)}/>
                 </IconButton>
-                <Divider orientation="vertical" style={{paddingLeft:"10px",paddingRight:"10px"}}/>
-                {       
-                    get('role') == 'TEACHER' ? 
-                    <IconButton edge="end" aria-label="delete">
-                      <EditIcon />
-                  </IconButton>
-                  : <></>
+                <Divider orientation="vertical" style={{paddingLeft:"5px",paddingRight:"5px"}}/>
+                {
+                  get('role') == 'TEACHER' ? 
+                  <IconButton edge="end" aria-label="delete">
+                  <EditIcon onClick={() => handleOpenEdit(announcement)}/>
+                </IconButton> : <></>
                 }
-
-                <Divider orientation="vertical" style={{paddingLeft:"10px",paddingRight:"10px"}}/>
+                <Divider orientation="vertical" style={{paddingLeft:"5px",paddingRight:"5px"}}/>
                 {
                   get('role') == 'TEACHER' ? 
                   <IconButton edge="end" aria-label="delete">
