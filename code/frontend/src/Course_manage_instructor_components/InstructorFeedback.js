@@ -194,7 +194,7 @@ function InstructorFeedback({course}) {
           required
           fullWidth
           name="description"
-          label="description"
+          label="Description"
           onChange={(e) => setDescription(e.target.value)}
         />
         <Button
