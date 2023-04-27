@@ -145,7 +145,7 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
   const [error, setError] = useState(null);
   const [rows, setRows] = useState([]);
   useEffect(() => {
-    axios.get('http://localhost:5000/user/courses',{headers:{'Authorization': get('token')}})
+    axios.get('https://onlinecoursemanagementsystem.onrender.com/user/courses',{headers:{'Authorization': get('token')}})
       .then((resp)=>{   // if no error
         console.log(resp);
         setRows(resp.data.data.sort((a,b)=>{
