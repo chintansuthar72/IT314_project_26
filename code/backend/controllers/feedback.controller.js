@@ -8,23 +8,20 @@ exports.addFeedback = async (req, res) => {
         if (!['STUDENT'].includes(req.role))
             return response.unauthorizedResponse(res);
         
-         const course = await Course.findById(req.params.id);
+        const course = await Course.findById(req.params.id);
         if (!course)
             return response.notFoundResponse(res, 'Course not found');
 
-            const feedback = await Feedback.create
-            ({
-                topic: req.body.topic,
-                description: req.body.description,
-                course: req.params.id,
+        const feedback = await Feedback.create
+        ({
+            topic: req.body.topic,
+            description: req.body.description,
+            course: req.params.id,
+        });
 
-                
-            });
-
-            feedback.save();            
-            return response.successfullyCreatedResponse(res, feedback);
-        }
-      
+        feedback.save();            
+        return response.successfullyCreatedResponse(res, feedback);
+    }
     catch (err) {
         return response.serverErrorResponse(res, err);
     }
