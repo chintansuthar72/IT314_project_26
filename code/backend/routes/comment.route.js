@@ -12,6 +12,9 @@ router.get('/:id', [verifyToken], commentController.getCommentById);
 // POST new comment in announcement
 router.post('/announcement/:id', [verifyToken], commentController.postCommentInAnnouncement);
 
+// GET comments by announcement id
+router.get('/announcement/:id', [verifyToken], commentController.getCommentsByAnnouncementId);
+
 // POST new comment in assignment
 // router.post('/assignment/:id', [verifyToken], commentController.postCommentInAssignment);
 

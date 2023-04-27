@@ -1,4 +1,4 @@
-const {Comment} = require('../models/index.model');
+const {Comment, User} = require('../models/index.model');
 const response = require('../utils/responses.util');
 
 const getAllComments = async (req, res) => {
@@ -82,6 +82,24 @@ const deleteCommentById = async (req, res) => {
     }
 }
 
+const getCommentsByAnnouncementId = async (req, res) => {
+    try {
+        const comments = await Comment.find({announcement: req.params.id});
+        const commentsWithUserName = []
+        for(let i=0; i<comments.length; i++){
+            const comment = comments[i];
+            const user = await User.findById(comment.commentator);
+            commentsWithUserName.push({
+                ...comment,
+                commentatorName: user.username
+            })
+        }
+        return response.successResponse(res, commentsWithUserName);
+    } catch (err) {
+        return response.serverErrorResponse(res, err);
+    }
+}
+
 module.exports = {
     getAllComments,
     getCommentById,
@@ -89,5 +107,6 @@ module.exports = {
     postCommentInSubmission,
     postCommentInAssignment,
     deleteCommentById,
-    updateCommentById
+    updateCommentById,
+    getCommentsByAnnouncementId
 };

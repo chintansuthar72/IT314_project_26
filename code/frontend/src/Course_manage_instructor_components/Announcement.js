@@ -21,6 +21,8 @@ import {Alert} from '@mui/material';
 import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import CommentIcon from '@mui/icons-material/Comment';
+import SendIcon from '@mui/icons-material/Send';
 
 const set = (keyName, keyValue, ttl) => {
   const data = {
@@ -68,6 +70,10 @@ const Announcement = ({course }) => {
     const [title,setTitle] = useState('');
     const [description,setDescription] = useState('');
 
+    const [openComment, setOpenComment] = React.useState(false);
+    const [announcementId,setAnnouncementId] = useState(null);
+    const [comments, setComments] = useState([]);
+
     useEffect(() => {
       axios.get(`http://localhost:5000/announcement/course/${course._id}`,{headers:{'Authorization': get('token')}})
       .then((resp)=>{   // if no error
@@ -91,6 +97,28 @@ const Announcement = ({course }) => {
 
     const handleClose = () => {
       setOpen(false);
+    };
+
+    const handleClickOpenComment = async (id) => {
+      setAnnouncementId(id);
+      axios.get(`http://localhost:5000/comment/announcement/${id}`,{headers:{'Authorization':get('token')}})
+        .then((resp)=>{   // if no error
+          console.log("HandleClickOpenComment :\n");
+          console.log(resp);
+          setComments(resp.data.data);
+          setOpenComment(true);
+        })
+        .catch((err)=>{
+          console.log(err);
+          setError(err.response.data.error);
+        })
+
+    };
+
+    const handleCloseComment = () => {
+      setComments([]);
+      setAnnouncementId(null);
+      setOpenComment(false);
     };
 
   const handleSave = () => {
@@ -142,6 +170,69 @@ const Announcement = ({course }) => {
          
           {error ? <Alert severity="error">{error}</Alert> : ""}
           <div style={{padding:"10px"}}></div>
+          <Dialog
+            fullScreen
+            open={openComment}
+            onClose={handleCloseComment}
+            TransitionComponent={Transition}
+          >
+            <AppBar sx={{ position: 'relative' }}>
+              <Toolbar>
+                <IconButton
+                  edge="start"
+                  color="inherit"
+                  onClick={handleCloseComment}
+                  aria-label="close"
+                >
+                  <CloseIcon />
+                </IconButton>
+                <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+                  Comments
+                </Typography>
+                {/* <Button autoFocus color="inherit" onClick={handleClose}>
+                  save
+                </Button> */}
+              </Toolbar>
+            </AppBar>
+              <List>
+              <Box
+                sx={{
+                  width: 1200,
+                  paddingLeft: 5,
+                  paddingTop: 3,
+                  maxWidth: '100%',
+                  display: 'flex',
+                  flexDirection: 'row',
+                }}
+              >
+                <TextField fullWidth label="Add comment" id="fullWidth" />
+                <SendIcon />
+              </Box>
+              </List>
+              <List>
+                {comments.map(comment => 
+                <Item>
+                  <ListItem alignItems="flex-start">
+                    <ListItemText
+                      primary={comment.commentatorName}
+                      secondary={
+                        <React.Fragment>
+                          <Typography
+                            sx={{ display: 'inline' }}
+                            component="span"
+                            variant="body2"
+                            color="text.primary"
+                          >
+                            {comment.description}
+                          </Typography>
+                        </React.Fragment>
+                      }
+                    />
+                  </ListItem>
+                </Item>
+              )}
+              </List>
+          </Dialog>
           <Dialog
             fullScreen
             open={open}
@@ -199,6 +290,10 @@ const Announcement = ({course }) => {
                     </React.Fragment>
                   }
                 />
+                <IconButton edge="end" aria-label="delete">
+                  <CommentIcon onClick={() => handleClickOpenComment(announcement._id)}/>
+                </IconButton>
+                <Divider orientation="vertical" style={{paddingLeft:"10px",paddingRight:"10px"}}/>
                 {       
                     get('role') == 'TEACHER' ? 
                     <IconButton edge="end" aria-label="delete">
