@@ -425,7 +425,7 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
                     </Box> */}
 
 
-                    <Stack spacing={2}>
+<Stack spacing={2}>
                       {rows.map(row => 
                         <Item>
                           <ListItem alignItems="flex-start">
