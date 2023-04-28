@@ -12,6 +12,7 @@ import Profile from './Profile';
 import Progress from './Progress';
 import JoinCourse from './student_registration_component/Register';
 import EditAssignment from './instructor/edit_assignment';
+import ForgotPassword from './forgot_password';
 
 const set = (keyName, keyValue, ttl) => {
   const data = {
@@ -56,6 +57,7 @@ export default function App() {
 
   return (
     <div className='App'>
+
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<SignIn />} />
@@ -67,7 +69,7 @@ export default function App() {
           <Route path="/manage" element={<ManageInstructor />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/progress" element={<Progress />} />
-          {/* <Route path="/edit_assignment" element={<EditAssignment />} /> */}
+          <Route path="/forgot_password" element={<ForgotPassword />} />
         </Routes>
       </BrowserRouter>
     </div>

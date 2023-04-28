@@ -1,4 +1,4 @@
-const {User,Course} = require('../models/index.model');
+const {User,Course,Assignment,Submission} = require('../models/index.model');
 const response = require('../utils/responses.util');
 const {userValidation} = require('../validations/index.validation');
 const bcrypt = require('bcrypt');
@@ -131,6 +131,22 @@ const addCourseToUser = async (req, res) => {
         const updatedUser = await User.findByIdAndUpdate(userId, {
             $push: {courses: courseId}
         });
+        const allAssignments = await Assignment.find({course: courseId});
+        for(let i=0; i<allAssignments.length; i++){
+            const assignment = allAssignments[i];
+            const submissionToAdd = await Submission.create({
+                student: req.id,
+                assignment: assignment._id,
+                files : [],
+                grade: 0,
+                graded: false,
+                comments: [],
+                feedback : ""
+            });
+            const updatedAssignment = await Assignment.findByIdAndUpdate(assignment._id, {
+                $push: {submissions: submissionToAdd._id}
+            });
+        }
         return response.successResponse(res, {updatedUser,updatedCourse});
     } catch (err) {
         return response.serverErrorResponse(res, err);

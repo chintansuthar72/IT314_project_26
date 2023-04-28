@@ -107,7 +107,8 @@ EditToolbar.propTypes = {
 };
 
 export default function UpdateGrade({assignmentId}) {
-  const [rows, setRows] = React.useState(initialRows);
+  // const [rows, setRows] = React.useState(initialRows);
+  const [rows, setRows] = React.useState([]);
   const [rowModesModel, setRowModesModel] = React.useState({});
   const [error,setError] = React.useState('');
 
@@ -142,7 +143,7 @@ export default function UpdateGrade({assignmentId}) {
   const processRowUpdate = (newRow) => {
     const updatedRow = { ...newRow, isNew: false };
     console.log(updatedRow)
-    axios.put(`https://onlinecoursemanagementsystem.onrender.com/submission/grade/${updatedRow._id}`,{
+    axios.put(`https://onlinecoursemanagementsystem.onrender.com/submission/grade/${updatedRow.id}`,{
       grade : updatedRow.grade,
       feedback : updatedRow.feedback,
     },{headers:{'Authorization':get('token')}})
@@ -170,10 +171,18 @@ export default function UpdateGrade({assignmentId}) {
       console.log("UseEffect :\n");
       console.log(resp);
       let data = resp.data.data;
+      let newData = [];
       for(let i = 0; i < data.length; ++i){
-        data[i].id = randomId();
+        newData.push({
+          id : data[i]._id,
+          name : data[i].studentName,
+          updatedAt : data[i].updatedAt,
+          maxscore : 100,
+          grade : data[i].grade,
+          feedback : data[i].feedback,
+        })
       }
-      setRows(data);
+      setRows(newData);
       console.log(rows);
     })
     .catch((err)=>{

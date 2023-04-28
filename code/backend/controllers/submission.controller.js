@@ -1,5 +1,5 @@
 const response = require('../utils/responses.util');
-const Submission = require('../models/submission.model');
+const {Submission,User} = require('../models/index.model');
 
 // POST new submission
 exports.addSubmission = async (req, res) => {
@@ -72,8 +72,18 @@ exports.getSubmissionsByAssignmentId = async (req, res) => {
     try {
         if(!['ADMIN', 'TEACHER'].includes(req.role))
             return response.unauthorizedResponse(res);
-        const submissions = await Submission.find({assignment: req.params.id, student: req.id});
-        return response.successResponse(res, submissions);
+        // const submissions = await Submission.find({assignment: req.params.id, student: req.id});
+        const submissions = await Submission.find({assignment: req.params.id});
+        const submissionWithUserName = [];
+        for(let i = 0; i < submissions.length; i++) {
+            const submission = submissions[i];
+            const user = await User.findById(submission.student);
+            submissionWithUserName.push({
+                ...submission._doc,
+                studentName: user.username
+            });
+        }
+        return response.successResponse(res, submissionWithUserName);
     } catch (err) {
         return response.serverErrorResponse(res, err);
     }
