@@ -26,6 +26,12 @@ router.delete('/:id', [ verifyToken ] , userController.deleteUserById);
 // Add course to user
 router.get('/course/:id', [ verifyToken ] , userController.addCourseToUser);
 
+// Forgot password generate token and send email
+router.get('/change/generateToken', [  ] , userController.generateToken);
+
+// Forgot password verify token and reset password
+router.get('/change/resetPassword', [  ] , userController.resetPassword);
+
 // change password
 router.put('/change/password', [ verifyToken ] , userController.changePassword);
 
