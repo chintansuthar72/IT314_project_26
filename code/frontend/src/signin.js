@@ -148,7 +148,7 @@ export default function SignIn() {
                     // textDecoration: 'underline',
                     cursor: 'pointer',
                   }}
-                  onClick={() => navigate("/")}>{"Forgot Password?"}</ButtonBase>
+                  onClick={() => navigate("/forgot_password")}>{"Forgot Password?"}</ButtonBase>
               </Grid>
               <Grid item container justifyContent={'flex-end'}>
                 <ButtonBase 
