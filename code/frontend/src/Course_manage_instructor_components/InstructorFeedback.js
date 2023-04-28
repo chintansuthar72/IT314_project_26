@@ -146,13 +146,17 @@ function InstructorFeedback({course}) {
   if(get('role') === 'TEACHER') {
     return (
       <Box sx={{ flexGrow: 1 }}>
-        <Grid container spacing={1}>
-          {feedbacks.map(feedback => (
-            <Grid item md={3}>
-              <RecipeReviewCard feedback={feedback}/>
-            </Grid>
-          ))}
-        </Grid>
+        {feedbacks.length > 0 ? (
+          <Grid container spacing={1}>
+            {feedbacks.map(feedback => (
+              <Grid item md={3}>
+                <RecipeReviewCard feedback={feedback}/>
+              </Grid>
+            ))}
+          </Grid>
+        ) : (
+          <Typography variant="body1" align="center">No Feedback Available</Typography>
+        )}
       </Box>
     );
   }
