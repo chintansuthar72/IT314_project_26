@@ -13,8 +13,8 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import axios from 'axios'
 import Avatar from '@mui/material/Avatar';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useNavigate } from 'react-router-dom';
+import PasswordIcon from '@mui/icons-material/Password';
 
 const theme = createTheme();
 const steps = [
@@ -55,15 +55,14 @@ export default function ForgotPassword() {
     <ThemeProvider theme={theme}>
     <Container component="main" maxWidth="xs">
       <CssBaseline />
-    <Box sx={{
+    <Box component = "form" sx={{
             marginTop: 8,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            maxWidth:400
           }}>
         <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                <LockOutlinedIcon />
+                <PasswordIcon />
         </Avatar>
           <Typography component="h1" variant="h5">
             Forgot Password
@@ -110,7 +109,7 @@ export default function ForgotPassword() {
                     required
                     fullWidth
                     name="password"
-                    label="Password"
+                    label="New Password"
                     type="password"
                     id="password"
                     autoComplete="new-password"
@@ -142,9 +141,14 @@ export default function ForgotPassword() {
       {activeStep === steps.length && (
         <Paper square elevation={0} sx={{ p: 3 }}>
           <Typography>All steps completed - you&apos;re finished</Typography>
-          <Button onClick={() => navigate('/')} sx={{ mt: 1, mr: 1 }}>
-            Sign in 
+          <Button type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+              onClick={() => navigate('/')} sx={{ mt: 1, mr: 1 }}>
+            Go to Sign in 
           </Button>
+          
         </Paper>
       )}
     </Box>
