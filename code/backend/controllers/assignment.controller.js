@@ -105,6 +105,20 @@ exports.deleteAssignmentById = async (req, res) => {
 exports.getAssignmentsByCourseId = async (req,res) => {
     try {
         const assignments = await Assignment.find({course : req.params.id});
+        const assignmentWithGrade = [];
+        if(req.role === 'STUDENT'){
+            for(let i = 0; i < assignments.length; i++){
+                const submission = await Submission.findOne({student : req.id, assignment : assignments[i]._id});
+                if(submission){
+                    assignmentWithGrade.push({
+                        ...assignments[i]._doc,
+                        grade : submission.grade,
+                        graded : submission.graded ? "Graded" : "Not Graded"
+                    });
+                }
+            }
+            return response.successResponse(res,assignmentWithGrade);
+        }
         return response.successResponse(res,assignments);
     } catch (err) {
         return response.serverErrorResponse(res, err);
