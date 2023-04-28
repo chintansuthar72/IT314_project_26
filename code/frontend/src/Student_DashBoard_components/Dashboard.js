@@ -46,6 +46,50 @@ import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { Button } from '@mui/material';
 import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
+import SearchIcon from '@mui/icons-material/Search';
+import InputBase from '@mui/material/InputBase';
+import { alpha } from '@mui/material/styles';
+const Search = styled('div')(({ theme }) => ({
+  position: 'relative',
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.common.white, 0.25),
+  },
+  marginLeft: 0,
+  width: '100%',
+  [theme.breakpoints.up('sm')]: {
+    marginLeft: theme.spacing(1),
+    width: 'auto',
+  },
+}));
+
+const SearchIconWrapper = styled('div')(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: '100%',
+  position: 'absolute',
+  pointerEvents: 'none',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: 'inherit',
+  '& .MuiInputBase-input': {
+    padding: theme.spacing(1, 1, 1, 0),
+    // vertical padding + font size from searchIcon
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    transition: theme.transitions.create('width'),
+    width: '100%',
+    [theme.breakpoints.up('sm')]: {
+      width: '12ch',
+      '&:focus': {
+        width: '20ch',
+      },
+    },
+  },
+}));
 
 const set = (keyName, keyValue, ttl) => {
   const data = {
@@ -144,10 +188,15 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
 
   const [error, setError] = useState(null);
   const [rows, setRows] = useState([]);
+  const [searchInput, setSearchInput] = React.useState('');
+  const [filteredResults, setFilteredResults] = React.useState([]);
+
+
   useEffect(() => {
     axios.get('https://onlinecoursemanagementsystem.onrender.com/user/courses',{headers:{'Authorization': get('token')}})
       .then((resp)=>{   // if no error
         console.log(resp);
+        setFilteredResults(resp.data.data);
         setRows(resp.data.data.sort((a,b)=>{
           if(Date.parse(a.course.updatedAt) < Date.parse(b.course.updatedAt)) return 1;
           else return -1;
@@ -158,6 +207,19 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
         setError(err.response.data.error);
       })
   },[]);
+
+  useEffect(() => {
+    const len = searchInput.length;
+    if (len != 0) {
+      const filteredData = rows.filter((item) => {
+          const wholeString = item.instructor + " " + item.course.courseCode + " " + item.course.name + " " + item.course.description;
+          return wholeString.toLowerCase().includes(searchInput.toLowerCase());
+      });
+      setFilteredResults(filteredData);
+    } else {
+      setFilteredResults(rows);
+    }
+  }, [searchInput]);
 
   return (
     <ThemeProvider theme={mdTheme}>
@@ -195,6 +257,16 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
                 <NotificationsIcon />
               </Badge>
             </IconButton> */}
+            <Search>
+              <SearchIconWrapper>
+                <SearchIcon />
+              </SearchIconWrapper>
+              <StyledInputBase
+                placeholder="Search…"
+                inputProps={{ 'aria-label': 'search' }}
+                onChange={(e) => setSearchInput(e.target.value)}
+              />
+            </Search>
           </Toolbar>
         </AppBar>
         <Drawer variant="permanent" open={open}>
@@ -353,7 +425,7 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
                           <TableCell align="right">number of students</TableCell> */}
                         </TableRow>
                       </TableHead>
-                      <TableBody>
+                      {/* <TableBody>
                         {rows.map((row) => (
                           <TableRow key={row.course._id}>
                             <TableCell>{row.course.courseCode}</TableCell>
@@ -370,6 +442,29 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
                             }}>Open</Button></TableCell>
                           </TableRow>
                         ))}
+                      </TableBody> */}
+                      <TableBody>
+                        {filteredResults.map((val,idx) => {
+                          return (
+                            <TableRow key={val.course._id}>
+                              {/* {console.log(val.course.name,val.course.courseCode,val.course.description )} */}
+                              <TableCell>{val.course.courseCode}</TableCell>
+                              <TableCell>{val.course.name}</TableCell>
+                              <TableCell>{val.instructor}</TableCell>
+                              {/* <TableCell>{val.course.description }</TableCell>
+                              <TableCell>{ <Button variant="contained" onClick={() => handleEnroll(val.course._id)}>Enroll</Button>}</TableCell> */}
+                              <TableCell align='right'><Button onClick={() => {
+                              navigate('/manage',{
+                                state: {
+                                  course: val.course,
+                                  instructor: val.instructor, 
+                                  user: user,
+                                }
+                              })
+                            }}>Open</Button></TableCell>
+                            </TableRow>
+                                )
+                          })}
                       </TableBody>
                     </Table>
                     {/* <Link color="primary" href="#" onClick={preventDefault} sx={{ mt: 3 }}>
