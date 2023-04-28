@@ -218,59 +218,75 @@ export default function EditAssignment({course, created_assignment}) {
       valueGetter: ({ value }) => value && new Date(value),
       width: 200,
       editable: true,
-    },
-    {
-      
-      field: 'actions',
-      type: 'actions',
-      headerName: (get('role') != 'STUDENT'? 'Edit/Delete/Grade' : 'Grade'),
-      width: 150,
-      cellClassName: 'actions',
-      getActions: ({ id }) => {
-        const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
-
-        if (isInEditMode) {
-          return [
+    }
+  ];
+  
+  if(get('role') === "TEACHER") {
+      columns.push({
+        field: 'actions',
+        type: 'actions',
+        headerName: 'Edit/Delete/Grade',
+        width: 150,
+        cellClassName: 'actions',
+        getActions: ({ id }) => {
+          const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+  
+          if (isInEditMode) {
+            return [
+              <GridActionsCellItem
+                icon={<SaveIcon />}
+                label="Save"
+                onClick={handleSaveClick(id)}
+              />,
+              <GridActionsCellItem
+                icon={<CancelIcon />}
+                label="Cancel"
+                className="textPrimary"
+                onClick={handleCancelClick(id)}
+                color="inherit"
+              />,
+            ];
+          }
+          const return_array = get('role') == 'TEACHER' ? [
             <GridActionsCellItem
-              icon={<SaveIcon />}
-              label="Save"
-              onClick={handleSaveClick(id)}
-            />,
-            <GridActionsCellItem
-              icon={<CancelIcon />}
-              label="Cancel"
+              icon={<EditIcon />}
+              label="Edit"
               className="textPrimary"
-              onClick={handleCancelClick(id)}
+              onClick={handleEditClick(id)}
               color="inherit"
             />,
-          ];
-        }
-        const return_array = get('role') == 'TEACHER' ? [
-          <GridActionsCellItem
-            icon={<EditIcon />}
-            label="Edit"
-            className="textPrimary"
-            onClick={handleEditClick(id)}
-            color="inherit"
-          />,
-          <GridActionsCellItem
-            icon={<DeleteIcon />}
-            label="Delete"
-            onClick={handleDeleteClick(id)}
-            color="inherit"
-          />,
-          <GridActionsCellItem
-            icon={<GradingIcon />}
-            label="Grade"
-            onClick={() => handleGradeClick(id)}
-            color="inherit"
-          />,
-        ]: [];
-        return  return_array
-      },
-    },
-  ];
- 
+            <GridActionsCellItem
+              icon={<DeleteIcon />}
+              label="Delete"
+              onClick={handleDeleteClick(id)}
+              color="inherit"
+            />,
+            <GridActionsCellItem
+              icon={<GradingIcon />}
+              label="Grade"
+              onClick={() => handleGradeClick(id)}
+              color="inherit"
+            />,
+          ]: [];
+          return  return_array
+        },
+      })
+  }
+
+  if(get('role') === "STUDENT") {
+    columns.push({
+      field: 'grade',
+      headerName: 'Grade',
+      width: 100,
+      editable: false,
+    })
+    columns.push({
+      field: 'graded',
+      headerName: 'Graded',
+      width: 100,
+      editable: false,
+    })
+  }
 
   // Added
   useEffect(() => {
@@ -289,6 +305,11 @@ export default function EditAssignment({course, created_assignment}) {
       console.log(err);
       setError(err.response.data.error);
     })
+
+    if(get('role') === "STUDENT") {
+
+    }
+
   },[changed,created_assignment]);
 
   const handleGradeClick = (id) => {
@@ -346,9 +367,9 @@ export default function EditAssignment({course, created_assignment}) {
             <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
               Grades
             </Typography>
-            <Button autoFocus color="inherit" onClick={handleSave}>
+            {/* <Button autoFocus color="inherit" onClick={handleSave}>
               save
-            </Button>
+            </Button> */}
           </Toolbar>
         </AppBar>
           {error1 ? <Alert severity="error">{error1}</Alert> : ""}
