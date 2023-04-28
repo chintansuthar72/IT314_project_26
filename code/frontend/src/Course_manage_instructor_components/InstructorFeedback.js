@@ -111,7 +111,7 @@ function InstructorFeedback({course}) {
 
   React.useEffect(() => {
     if(get('role') === 'TEACHER') {
-      axios.get(`http://localhost:5000/feedback/course/${course._id}`,{ headers: { 'Authorization': get('token') } })
+      axios.get(`https://onlinecoursemanagementsystem.onrender.com/feedback/course/${course._id}`,{ headers: { 'Authorization': get('token') } })
       .then(res => {
           console.log(res.data.data);
           setFeedbacks(res.data.data);
@@ -127,7 +127,7 @@ function InstructorFeedback({course}) {
   ,[])
 
   const handleSubmit = () => {
-    axios.post(`http://localhost:5000/feedback/course/${course._id}`, {
+    axios.post(`https://onlinecoursemanagementsystem.onrender.com/feedback/course/${course._id}`, {
       topic: topic,
       description: description,
     }, { headers: { 'Authorization': get('token') } })

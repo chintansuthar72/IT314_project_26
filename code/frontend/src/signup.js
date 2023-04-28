@@ -61,7 +61,7 @@ export default function SignUp() {
       role: data.get('role'),
       username: data.get('firstName') + ' ' + data.get('lastName'),
     };
-    axios.post('http://localhost:5000/user/signup',signupData)
+    axios.post('https://onlinecoursemanagementsystem.onrender.com/user/signup',signupData)
     .then((resp)=>{   // if no error
       console.log(resp);
       // setError('Signed up successfully!'); // subject to change

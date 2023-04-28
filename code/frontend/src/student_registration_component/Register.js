@@ -196,7 +196,7 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
   };
 
   useEffect(() => {
-    axios.get('http://localhost:5000/course',{headers:{'Authorization': get('token')}})
+    axios.get('https://onlinecoursemanagementsystem.onrender.com/course',{headers:{'Authorization': get('token')}})
     .then((resp)=>{   // if no error
       console.log(resp);
       setRows(resp.data.data);
@@ -223,7 +223,7 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
   }, [searchInput]);
 
   const handleEnroll = (id) => {
-    axios.get(`http://localhost:5000/user/course/${id}`,{headers:{'Authorization': get('token')}})
+    axios.get(`https://onlinecoursemanagementsystem.onrender.com/user/course/${id}`,{headers:{'Authorization': get('token')}})
     .then((resp)=>{   // if no error
       console.log(resp);
       navigate('/dashboard',{

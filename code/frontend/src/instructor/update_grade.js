@@ -143,7 +143,7 @@ export default function UpdateGrade({assignmentId}) {
   const processRowUpdate = (newRow) => {
     const updatedRow = { ...newRow, isNew: false };
     console.log(updatedRow)
-    axios.put(`http://localhost:5000/submission/grade/${updatedRow.id}`,{
+    axios.put(`https://onlinecoursemanagementsystem.onrender.com/submission/grade/${updatedRow.id}`,{
       grade : updatedRow.grade,
       feedback : updatedRow.feedback,
     },{headers:{'Authorization':get('token')}})
@@ -166,7 +166,7 @@ export default function UpdateGrade({assignmentId}) {
   };
 
   useEffect(() => {
-    axios.get(`http://localhost:5000/submission/assignment/${assignmentId}`,{headers:{'Authorization': get('token')}})
+    axios.get(`https://onlinecoursemanagementsystem.onrender.com/submission/assignment/${assignmentId}`,{headers:{'Authorization': get('token')}})
     .then((resp)=>{   // if no error
       console.log("UseEffect :\n");
       console.log(resp);

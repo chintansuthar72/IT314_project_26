@@ -193,7 +193,7 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
 
 
   useEffect(() => {
-    axios.get('http://localhost:5000/user/courses',{headers:{'Authorization': get('token')}})
+    axios.get('https://onlinecoursemanagementsystem.onrender.com/user/courses',{headers:{'Authorization': get('token')}})
       .then((resp)=>{   // if no error
         console.log(resp);
         setFilteredResults(resp.data.data);

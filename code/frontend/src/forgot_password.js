@@ -58,7 +58,7 @@ export default function ForgotPassword() {
   };
 
   const hadnleEmailSubmit = async () => {
-    axios.get(`http://localhost:5000/user/change/generateToken?email=${email}`)
+    axios.get(`https://onlinecoursemanagementsystem.onrender.com/user/change/generateToken?email=${email}`)
     .then((res) => {
         console.log(res.data)
         if(res.data === "password reset OTP sent to your email account") {
@@ -77,7 +77,7 @@ export default function ForgotPassword() {
   }
 
   const handlePasswordSubmit = async () => {
-    axios.get(`http://localhost:5000/user/change/resetPassword?email=${email}&token=${otp}&password=${password}`)
+    axios.get(`https://onlinecoursemanagementsystem.onrender.com/user/change/resetPassword?email=${email}&token=${otp}&password=${password}`)
     .then((res) => {
         console.log(res.data)
         handleNext()

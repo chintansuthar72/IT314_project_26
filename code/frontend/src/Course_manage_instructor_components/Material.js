@@ -83,7 +83,7 @@ const Material = ({announcements, course, instructor }) => {
     const [announcementEdit, setAnnouncementEdit] = useState({});
 
     useEffect(() => {
-      axios.get(`http://localhost:5000/course/material/${course._id}`,{headers:{'Authorization': get('token')}})
+      axios.get(`https://onlinecoursemanagementsystem.onrender.com/course/material/${course._id}`,{headers:{'Authorization': get('token')}})
       .then((resp)=>{   // if no error
         console.log("UseEffect :\n");
         console.log(resp);
@@ -113,7 +113,7 @@ const Material = ({announcements, course, instructor }) => {
       description : description,
       data : item
     });
-    axios.post(`http://localhost:5000/course/material/${course._id}`,{
+    axios.post(`https://onlinecoursemanagementsystem.onrender.com/course/material/${course._id}`,{
       filename : title,
       data : item,
       description : description
@@ -131,7 +131,7 @@ const Material = ({announcements, course, instructor }) => {
   }
   
   const handleDelete = (id) => {
-    axios.delete(`http://localhost:5000/course/material/${id}?course_id=${course._id}`,{headers:{'Authorization':get('token')}})
+    axios.delete(`https://onlinecoursemanagementsystem.onrender.com/course/material/${id}?course_id=${course._id}`,{headers:{'Authorization':get('token')}})
     .then((resp)=>{   // if no error
       console.log("HandleDelete:\n");
       console.log(resp);
@@ -188,7 +188,7 @@ const Material = ({announcements, course, instructor }) => {
 
   const handleClickOpenComment = async (id) => {
     setAnnouncementId(id);
-    axios.get(`http://localhost:5000/comment/file/${id}`,{headers:{'Authorization':get('token')}})
+    axios.get(`https://onlinecoursemanagementsystem.onrender.com/comment/file/${id}`,{headers:{'Authorization':get('token')}})
       .then((resp)=>{   // if no error
         console.log("HandleClickOpenComment :\n");
         console.log(resp);
@@ -215,7 +215,7 @@ const Material = ({announcements, course, instructor }) => {
     console.log("handleCommentSubmit");
     console.log(announcementId);
     console.log(comment);
-    axios.post(`http://localhost:5000/comment/file/${announcementId}`,{
+    axios.post(`https://onlinecoursemanagementsystem.onrender.com/comment/file/${announcementId}`,{
       description : comment,
     },{headers:{'Authorization':get('token')}})
     .then(async (resp)=>{   // if no error
