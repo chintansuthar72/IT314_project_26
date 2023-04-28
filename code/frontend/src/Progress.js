@@ -32,7 +32,8 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate,useLocation } from 'react-router-dom';
 import Chart from './Student_DashBoard_components/Chart';
-
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Button, TextField  } from '@mui/material';
 
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -145,6 +146,9 @@ const mdTheme = createTheme();
 function DashboardContent({setIsLoggedIn,navigate,user }) {
   const [open, setOpen] = React.useState(false);
   const [openEdit, setOpenEdit] = React.useState(false);
+  const [rows, setRows] = useState([]);
+  const [error, setError] = useState(null);
+
 
   const toggleDrawer = () => {
     setOpen(!open);
@@ -162,7 +166,7 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
     //   title : title,
     //   description : description,
     //   files : [],
-    //   comments : []
+    //   rows : []
     // },{headers:{'Authorization':get('token')}})
     // .then((resp)=>{   // if no error
     //   console.log("HandleSave:\n");
@@ -188,6 +192,19 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
     //   setError(err.response.data.message);
     // })
   }
+
+  useEffect(() => {
+    axios.get('https://onlinecoursemanagementsystem.onrender.com/user/courses',{headers:{'Authorization': get('token')}})
+    .then((resp)=>{ 
+      console.log(resp);
+      setRows(resp.data.data);
+      console.log(rows);
+    })
+    .catch((err)=>{
+      console.log(err);
+      setError(err.response.data.error);
+    })
+  },[]);
 
   return (
     <ThemeProvider theme={mdTheme}>
@@ -403,17 +420,33 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
                       </List>
                     </Dialog> */}
                     </div>
-                    <Box sx={{ width: '100%' }}>
-                      <Stack spacing={2}>
-                      {/* {rows.map(announcement =>  */}
+                    {/* <Box sx={{ width: '100%' }}>
+                      
+                    </Box> */}
+
+
+                    <Stack spacing={2}>
+                      {rows.map(row => 
                         <Item>
                           <ListItem alignItems="flex-start">
                             <ListItemText
-                              primary={"Course name: "}
+                              primary={row.course.name}
+                              secondary={
+                                <React.Fragment>
+                                  <Typography
+                                    sx={{ display: 'inline' }}
+                                    component="span"
+                                    variant="body2"
+                                    color="text.primary"
+                                  >
+                                    [{row.course.courseCode}]  {row.instructor}
+                                  </Typography>
+                                </React.Fragment>
+                              }
                             />
                             <div>
                             <Button variant="outlined"  onClick={handleClickOpenEdit}>
-                              Check
+                              Progress
                             </Button>
                             {/* {error ? <Alert severity="error">{error}</Alert> : ""} */}
                              <div style={{padding:"10px"}}></div>
@@ -454,9 +487,34 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
                           </ListItem>
                           {/* {error1 ? <Alert severity="error">{error1}</Alert> : ""}   */}
                         </Item>
-                      {/* )} */}
+                      )}
                       </Stack>
-                    </Box>
+
+    {/* data start */}
+                      {/* {rows.map(row => 
+                    <Item>
+                      <ListItem alignItems="flex-start">
+                        <ListItemText
+                          primary={row.course.name}
+                          secondary={
+                            <React.Fragment>
+                              <Typography
+                                sx={{ display: 'inline' }}
+                                component="span"
+                                variant="body2"
+                                color="text.primary"
+                              >
+                                [{row.course.courseCode}]  {row.instructor}
+                              </Typography>
+                            </React.Fragment>
+                          }
+                        />
+                      </ListItem>
+                      <Divider />
+                    </Item>
+                    )} */}
+
+    {/* data start */}
 
                 </div>
                 {/*  */}
