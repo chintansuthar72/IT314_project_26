@@ -37,6 +37,12 @@ const steps = [
 export default function ForgotPassword() {
   const [activeStep, setActiveStep] = React.useState(0);
 
+  const [email, setEmail] = React.useState('');
+  const [otp, setOTP] = React.useState('');
+  const [password, setPassword] = React.useState('');
+
+  const [error, setError] = React.useState(null);
+
   const navigate = useNavigate();
 
   const handleNext = () => {
@@ -51,11 +57,42 @@ export default function ForgotPassword() {
     setActiveStep(0);
   };
 
+  const hadnleEmailSubmit = async () => {
+    axios.get(`http://localhost:5000/user/change/generateToken?email=${email}`)
+    .then((res) => {
+        console.log(res.data)
+        if(res.data === "password reset OTP sent to your email account") {
+            handleNext()
+        } else if(res.data === "Unable to send OTP to your email account"){
+            setError(res.data)
+        }
+    }).catch((err) => {
+        console.log(err)
+        setError(err.response.data.error)
+    })
+  }
+
+  const handleOTPSubmit = async () => {
+    handleNext()
+  }
+
+  const handlePasswordSubmit = async () => {
+    axios.get(`http://localhost:5000/user/change/resetPassword?email=${email}&token=${otp}&password=${password}`)
+    .then((res) => {
+        console.log(res.data)
+        handleNext()
+        setError(null)
+    }).catch((err) => {
+        console.log(err)
+        setError(err.response.data.error)
+    })
+  }
+
   return (
     <ThemeProvider theme={theme}>
     <Container component="main" maxWidth="xs">
       <CssBaseline />
-    <Box component = "form" sx={{
+          <Box component = "form" sx={{
             marginTop: 8,
             display: 'flex',
             flexDirection: 'column',
@@ -67,6 +104,7 @@ export default function ForgotPassword() {
           <Typography component="h1" variant="h5">
             Forgot Password
           </Typography>
+          {error && <Typography color="error">{error}</Typography>}
       <Stepper activeStep={activeStep} orientation="vertical">
         {steps.map((step, index) => (
           <Step key={step.label}>
@@ -90,6 +128,7 @@ export default function ForgotPassword() {
                     name="email"
                     autoComplete="email"
                     autoFocus
+                    onChange={(e) => setEmail(e.target.value)}
                   />:<></>
                 }
                 {
@@ -102,6 +141,7 @@ export default function ForgotPassword() {
                     name="otp"
                     autoComplete="number"
                     autoFocus
+                    onChange={(e) => setOTP(e.target.value)}
                   />:<></>
                 }
                 {
@@ -113,6 +153,7 @@ export default function ForgotPassword() {
                     type="password"
                     id="password"
                     autoComplete="new-password"
+                    onChange={(e) => setPassword(e.target.value)}
                   />:<></>
                 }
               <Typography>{step.description}</Typography>
@@ -120,7 +161,9 @@ export default function ForgotPassword() {
                 <div>
                   <Button
                     variant="contained"
-                    onClick={handleNext}
+                    onClick={
+                      index==0?hadnleEmailSubmit: index==1 ? handleOTPSubmit : handlePasswordSubmit
+                    }
                     sx={{ mt: 1, mr: 1 }}
                   >
                     {index === steps.length - 1 ? 'Finish' : 'Continue'}
@@ -145,7 +188,7 @@ export default function ForgotPassword() {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
-              onClick={() => navigate('/')} sx={{ mt: 1, mr: 1 }}>
+              onClick={() => navigate('/')} >
             Go to Sign in 
           </Button>
           

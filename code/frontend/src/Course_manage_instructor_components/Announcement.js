@@ -80,7 +80,7 @@ const Announcement = ({course }) => {
   const [comment, setComment] = useState('');
 
   useEffect(() => {
-    axios.get(`https://onlinecoursemanagementsystem.onrender.com/announcement/course/${course._id}`,{headers:{'Authorization': get('token')}})
+    axios.get(`http://localhost:5000/announcement/course/${course._id}`,{headers:{'Authorization': get('token')}})
     .then((resp)=>{   // if no error
       console.log("UseEffect :\n");
       console.log(resp);
@@ -106,7 +106,7 @@ const Announcement = ({course }) => {
 
   const handleClickOpenComment = async (id) => {
     setAnnouncementId(id);
-    axios.get(`https://onlinecoursemanagementsystem.onrender.com/comment/announcement/${id}`,{headers:{'Authorization':get('token')}})
+    axios.get(`http://localhost:5000/comment/announcement/${id}`,{headers:{'Authorization':get('token')}})
       .then((resp)=>{   // if no error
         console.log("HandleClickOpenComment :\n");
         console.log(resp);
@@ -142,7 +142,7 @@ const Announcement = ({course }) => {
   };
 
   const handleEditAnnouncementSave = async () => {
-    axios.put(`https://onlinecoursemanagementsystem.onrender.com/announcement/${announcementEdit._id}`,{
+    axios.put(`http://localhost:5000/announcement/${announcementEdit._id}`,{
       title : title,
       description : description,
     },{headers:{'Authorization':get('token')}})
@@ -160,7 +160,7 @@ const Announcement = ({course }) => {
 
   const handleClickOpenEdit = async (id) => {
     setAnnouncementId(id);
-    axios.get(`https://onlinecoursemanagementsystem.onrender.com/comment/announcement/${id}`,{headers:{'Authorization':get('token')}})
+    axios.get(`http://localhost:5000/comment/announcement/${id}`,{headers:{'Authorization':get('token')}})
       .then((resp)=>{   // if no error
         console.log("HandleClickOpenComment :\n");
         console.log(resp);
@@ -174,7 +174,7 @@ const Announcement = ({course }) => {
   };
 
   const handleSave = () => {
-    axios.post(`https://onlinecoursemanagementsystem.onrender.com/announcement/course/${course._id}`,{
+    axios.post(`http://localhost:5000/announcement/course/${course._id}`,{
       title : title,
       description : description,
       files : [],
@@ -193,7 +193,7 @@ const Announcement = ({course }) => {
   }
   
   const handleDelete = (id) => {
-    axios.delete(`https://onlinecoursemanagementsystem.onrender.com/announcement/${id}`,{headers:{'Authorization':get('token')}})
+    axios.delete(`http://localhost:5000/announcement/${id}`,{headers:{'Authorization':get('token')}})
     .then((resp)=>{   // if no error
       console.log("HandleDelete:\n");
       console.log(resp);
@@ -210,7 +210,7 @@ const Announcement = ({course }) => {
     console.log("handleCommentSubmit");
     console.log(announcementId);
     console.log(comment);
-    axios.post(`https://onlinecoursemanagementsystem.onrender.com/comment/announcement/${announcementId}`,{
+    axios.post(`http://localhost:5000/comment/announcement/${announcementId}`,{
       description : comment,
     },{headers:{'Authorization':get('token')}})
     .then(async (resp)=>{   // if no error

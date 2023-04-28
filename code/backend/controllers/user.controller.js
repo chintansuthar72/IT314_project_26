@@ -3,6 +3,10 @@ const response = require('../utils/responses.util');
 const {userValidation} = require('../validations/index.validation');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const sendEmail = require('../utils/sendEmail');
+const Token = require('../models/token.model');
+const crypto = require('crypto');
+const joi = require('joi');
 
 const loginUser = async (req, res) => {
     try {
@@ -167,6 +171,43 @@ const changePassword = async (req, res) => {
     }
 }
 
+const generateToken = async (req, res) => {
+    try {
+        const schema = joi.object({ email: joi.string().email().required() });
+        const { error } = schema.validate({email: req.query.email});
+        if (error) return response.badRequestResponse(res, error.details[0].message);
+        const user = await User.findOne({ email: req.query.email });
+        if (!user) return response.badRequestResponse(res, "No user found with this email");
+        let token = await Token.create({ email: req.query.email,token: crypto.randomBytes(32).toString("hex") });
+        const val = await sendEmail(user.email, "Password reset OTP", token.token);
+        if(val) return res.send("password reset OTP sent to your email account");
+        return res.send("Unable to send OTP to your email account")
+    } catch (err) {
+        return response.serverErrorResponse(res, err);
+    }
+}
+
+const resetPassword = async (req, res) => {
+    try {
+        const token = req.query.token;
+        if (!token) return response.badRequestResponse(res, "Invalid token");
+        const email = req.query.email;
+        const validToken = await Token.find({ email: email });
+        for(let i=0; i<validToken.length; i++){
+            if(validToken[i].token == token) {
+                const user = await User.findOne({ email: email });
+                const hashedPassword = await bcrypt.hash(req.query.password, 10);
+                user.password = hashedPassword;
+                await user.save();
+                return response.successResponse(res, "Successfully changed password");
+            }
+        }
+        return response.badRequestResponse(res, "Invalid token");
+    } catch (err) {
+        return response.serverErrorResponse(res, err);
+    }
+}
+
 module.exports = {
     loginUser,
     getAllUsers,
@@ -176,5 +217,7 @@ module.exports = {
     updateUserById,
     getAllCoursesOfUser,
     addCourseToUser,
-    changePassword
+    changePassword,
+    generateToken,
+    resetPassword
 }

@@ -185,7 +185,7 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
   };
 
   const handleSave = () => {
-    axios.put(`https://onlinecoursemanagementsystem.onrender.com/user/${user.user._id}`,{
+    axios.put(`http://localhost:5000/user/${user.user._id}`,{
       username : username,
       email : email,
       phone : phone
@@ -204,7 +204,7 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
   }
   
   useEffect(() => {
-    axios.get(`https://onlinecoursemanagementsystem.onrender.com/user/${user.user._id}`,{headers:{'Authorization':get('token')}})
+    axios.get(`http://localhost:5000/user/${user.user._id}`,{headers:{'Authorization':get('token')}})
     .then((resp)=>{   // if no error
       console.log(resp);
       setUsername(resp.data.data.username);
@@ -224,7 +224,7 @@ function DashboardContent({setIsLoggedIn,navigate,user }) {
       setChangePasswordError("New password cannot be same as old password");
       return;
     }
-    axios.put(`https://onlinecoursemanagementsystem.onrender.com/user/change/password`,{
+    axios.put(`http://localhost:5000/user/change/password`,{
       oldPassword : oldPassword,
       newPassword : newPassword
     },{headers:{'Authorization':get('token')}})

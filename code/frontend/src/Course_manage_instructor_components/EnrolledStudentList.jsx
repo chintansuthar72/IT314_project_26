@@ -41,7 +41,7 @@ export default function EnrolledStudentList({course}) {
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    axios.get('https://onlinecoursemanagementsystem.onrender.com/course/user/' + course._id,
+    axios.get('http://localhost:5000/course/user/' + course._id,
         {headers:{'Authorization': get('token')}})
       .then(response => {
         console.log(response.data.data);
@@ -55,7 +55,7 @@ export default function EnrolledStudentList({course}) {
   }, []);
 
   const onDelete = (id) => {
-    axios.delete('https://onlinecoursemanagementsystem.onrender.com/course/user/'+ id + '?courseId=' + course._id,{headers:{'Authorization': get('token')}})
+    axios.delete('http://localhost:5000/course/user/'+ id + '?courseId=' + course._id,{headers:{'Authorization': get('token')}})
       .then(response => {
         setRows(rows.filter(student => student._id !== id));
       })
